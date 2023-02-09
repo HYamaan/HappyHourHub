@@ -4,8 +4,6 @@
 
 
 
-
-
 * {
   box-sizing: border-box;
   padding: 0;
@@ -15,6 +13,22 @@
 html,
 body {
   max-width: 100vw;
+  height: 100vh;
   overflow-x: hidden;
+  font-family: 'Open Sans', sans-serif;
+}
+.btn-primary{
+@apply text-white px-[1.875rem] py-[0.5rem]
+rounded-3xl bg-primary cursor-pointer hover:opacity-70;
+}
+.slick-dots {
+  @apply !flex justify-start w-full ;
 }
 
+.slick-dots .slick-active div {
+  @apply !bg-primary scale-[1.6] border-primary ;
+}
+
+.slick-dots div {
+  @apply !m-5 !mt-8;
+}
