@@ -15,6 +15,7 @@ const CampaignItem = () => {
         >
             <Image
                 src="/images/o1.jpg"
+                alt="o1.jpg"
                 fill
                 sizes="w-full h-full"
                 style={{objectFit:"cover"}}

@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image"
 import Title from "./UI/Title";
 import Button from "./UI/Button";
-import Header from "./layout/Header";
+
 
 const About=()=>{
 return <React.Fragment>
@@ -11,7 +11,7 @@ return <React.Fragment>
         <div className="container mx-auto flex justify-center items-center lg:gap-20 gap-10 text-white sm:flex-nowrap flex-wrap">
             <div className="sm:order-1 order-2">
                 <div className="relative md:w-[445px] sm:w-[384px] w-[345px] md:h-[600px] sm:h-[525px] h-[472px]">
-                    <Image src="/images/about-img.png" alt="" fill sizes="w-full h-full"/>
+                    <Image src="/images/about-img.png" alt="about-img.png" fill sizes="w-full h-full"/>
                 </div>
             </div>
             <div className="sm:order-2 order-1 md:w-[555px] md:p-0 px-3 ">

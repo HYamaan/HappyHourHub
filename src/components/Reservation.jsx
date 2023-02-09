@@ -4,7 +4,7 @@ import {useFormik} from 'formik';
 import Input from "./form/Input";
 import Title from "./UI/Title";
 import {reservationSchema} from "../schema/reservationSchema";
-import {error} from "next/dist/build/output/log";
+
 
 
 const Reservation = () => {
@@ -81,7 +81,7 @@ const Reservation = () => {
             </div>
             <div className="flex justify-between gap-10 lg:flex-wrap flex-wrap-reverse">
                 <form className="lg:flex-1 w-full h- lg:p-0 px-5" onSubmit={formik.handleSubmit}>
-                    <div className="flex flex-col gap-y-4">
+                    <div className="flex flex-col gap-y-4 inputSelector" id="inputSelector">
                         {
                             inputsInf.map((input) => (
                                 <Input
@@ -94,13 +94,13 @@ const Reservation = () => {
                     </div>
                     <button className="btn-primary lg:mt-4 my-4 !py-[10px] !px-[45px]" type="submit">BOOK NOW</button>
                 </form>
-                <div className="lg:flex-1 w-full  ">
+                <div className="lg:flex-1 w-full rounded-4" >
                     <iframe
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d36767.463204133965!2d36.20685309191802!3d36.596937637191445!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x152f5ea37cd6fc2f%3A0xc724c52937ae9d26!2sLiMAKPORT!5e0!3m2!1sen!2str!4v1675872601661!5m2!1sen!2str"
                         allowFullScreen=""
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
-                        className="w-full h-full"></iframe>
+                        className="rounded-xl w-full border h-full" ></iframe>
                 </div>
             </div>
         </div>

@@ -8,13 +8,12 @@ const Carousel = () => {
     const settings = {
         dots: true,
         infinite: true,
-
-        speed: 500,
+        speed: 1000,
         slidesToShow: 1,
         slidesToScroll: 1,
         arrows: false,
         autoplay: true,
-        autoplaySpeed: 5306660,
+        autoplaySpeed: 2000,
         appendDots: dots => (
             <div
                 style={{
@@ -30,11 +29,13 @@ const Carousel = () => {
         )
 
 
+
+
     };
 
     return (<div className="h-screen container mx-auto -mt-[88px]">
         <div className="absolute top-0 left-0 w-full h-full">
-            <Image src="/images/hero-bg.jpg" alt="" fill style={{objectFit:"cover"}} sizes="w-full h-full"/>
+            <Image src="/images/hero-bg.jpg" alt="hero-bg.png" fill style={{objectFit:"cover"}} sizes="w-full h-full"/>
         </div>
 
         <Slider {...settings}>

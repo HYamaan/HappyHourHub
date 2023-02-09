@@ -1,10 +1,11 @@
 import React from "react";
+
 import Carousel from "../../components/Carousel";
 import Campaigns from "../../components/Campaigns";
 import MenuWrapper from "../../components/products/MenuWrapper";
 import About from "../../components/About";
-
 import Reservation from "../../components/Reservation";
+import Customers from "../../components/customers/Customers";
 
 const Home=()=>{
     return <div >
@@ -15,6 +16,8 @@ const Home=()=>{
         <MenuWrapper/>
         <About/>
         <Reservation/>
+        <Customers/>
+
     </div>
 }
 export default Home;
