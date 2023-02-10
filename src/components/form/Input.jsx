@@ -1,11 +1,10 @@
 import React from "react";
-import InputMask from 'react-input-mask';
 
 const Input = (props) => {
     const {placeholder,errorMessage,touched,value, ...inputs} = props
 
     return <React.Fragment>
-        <div className="w-full ">
+        <div className={`w-full ${props.className}`} >
             <label className="relative block ">
                 <input {...inputs}
                        className={`h-14 w-full border border outline-none px-4  peer
@@ -15,7 +14,7 @@ const Input = (props) => {
 
                 />
                 {inputs.type !== "datetime-local" && <span className={`
-                    absolute top-0 left-0 px-4 text-sm f
+                    absolute top-0 left-0 px-4 text-sm 
                     flex items-center h-full
                     peer-focus:h-7 peer-focus:text-xs peer-focus:transition-all peer:focus:bg-tertiary
                     peer-valid:h-7 peer-valid:text-xs ${value.length >0 && "peer-invalid:h-7"}`} >

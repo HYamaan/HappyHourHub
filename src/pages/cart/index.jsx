@@ -30,8 +30,8 @@ const Cart = () => {
                         <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">$20</td>
                         <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">1</td>
                     </tr>
-                    <tr className="border-b border-gray-700 bg-secondary hover:bg-primary
-                    hover:border-primary transition-all">
+                    <tr className= "border-b border-gray-700 bg-secondary
+                    hover:bg-primary hover:border-primary transition-all">
                         <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2">
                             <Image
                                 src="/images/f1.png"
@@ -58,6 +58,8 @@ const Cart = () => {
                         <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">$20</td>
                         <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">1</td>
                     </tr>
+
+
 
 
                     </tbody>
