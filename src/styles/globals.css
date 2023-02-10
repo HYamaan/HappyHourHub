@@ -22,7 +22,7 @@ body {
 rounded-3xl bg-primary cursor-pointer hover:opacity-70;
 }
 .slick-dots {
-  @apply !flex justify-start w-full ;
+  @apply !flex justify-start w-full m-0;
 }
 
 .slick-dots .slick-active div {

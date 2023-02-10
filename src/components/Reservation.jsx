@@ -80,8 +80,8 @@ const Reservation = () => {
                 <Title className="text-[2.5rem] text-bold mb-3 lg:p-0 px-2">Book A Table</Title>
             </div>
             <div className="flex justify-between gap-10 lg:flex-wrap flex-wrap-reverse">
-                <form className="lg:flex-1 w-full h- lg:p-0 px-5" onSubmit={formik.handleSubmit}>
-                    <div className="flex flex-col gap-y-4 inputSelector" id="inputSelector">
+                <form className="lg:flex-1 w-full  lg:p-0 px-5" onSubmit={formik.handleSubmit}>
+                    <div className="flex flex-col gap-y-4">
                         {
                             inputsInf.map((input) => (
                                 <Input

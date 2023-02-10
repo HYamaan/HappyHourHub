@@ -8,7 +8,8 @@ export const reservationSchema=Yup.object({
         .max(10, 'Must be 11 characters ')
         .min(10,'Must be 11 characters ')
         .required('Phone required'),
-    email: Yup.string().email('Invalid email address').required('email required'),
+    email: Yup.string().email('Invalid email address').required('Email is required'),
     persons:Yup.string().min(1,"Minimum 0 person").required("Persons is required"),
     date:Yup.string().required("Date is required"),
+
 });
