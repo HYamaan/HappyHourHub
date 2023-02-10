@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React, {useState} from "react";
 import Title from "../UI/Title";
 import Input from "../form/Input";
 import {useFormik} from "formik";
@@ -8,16 +8,16 @@ const Footer = () => {
     const [linkAddress, setLinkAddress] = useState("");
     const [iconName, setIconName] = useState("");
     const [icons, setIcons] = useState([
-        "fa fa-facebook",
-        "fa fa-twitter",
-        "fa fa-instagram",
+        "fa-brands fa-google",
+        "fa-brands fa-discord",
+        "fa-brands fa-instagram",
     ]);
     const onSubmit = async (values, actions) => {
         await new Promise((resolve) => setTimeout(resolve, 4000));
         actions.resetForm();
     };
 
-    const { values, errors, touched, handleSubmit, handleChange, handleBlur } =
+    const {values, errors, touched, handleSubmit, handleChange, handleBlur} =
         useFormik({
             initialValues: {
                 location: "",
@@ -101,12 +101,18 @@ const Footer = () => {
             </div>
             <div className="mt-4 flex justify-between md:items-center md:flex-row flex-col gap-4">
                 <div className="flex items-center gap-4">
-                    <Input placeholder="Link Address" value="https://" onChange="" />
+                    <Input
+                        placeholder="Link Address"
+                        value={linkAddress}
+                        defaultValue="https://"
+                        onChange={handleChange}/>
                     <Input
                         placeholder="Icon Name"
-                        defaulValue="fa fa-"
+                        defaultValue="fa fa-"
                         onChange={(e) => setIconName(e.target.value)}
+
                         value={iconName}
+
                     />
                     <button
                         className="btn-primary"
@@ -114,6 +120,7 @@ const Footer = () => {
                         onClick={() => {
                             setIcons([...icons, iconName]);
                             setIconName("fa fa-");
+                            setLinkAddress("https://")
                         }}
                     >
                         Add
@@ -140,5 +147,4 @@ const Footer = () => {
         </form>
     );
 };
-
 export default Footer;
