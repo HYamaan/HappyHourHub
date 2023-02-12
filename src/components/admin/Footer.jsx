@@ -30,6 +30,7 @@ const Footer = () => {
             onSubmit,
             validationSchema: footerSchema,
         });
+
     const inputs = [
         {
             id: 1,
