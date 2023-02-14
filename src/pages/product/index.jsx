@@ -2,6 +2,9 @@ import React, {useState} from "react";
 import Image from "next/image";
 import Title from "../../components/UI/Title";
 
+import {useSelector, useDispatch} from "react-redux";
+import {cartActions} from "../../redux/cartSlice"
+
 const sizeItems = [
     {
         id: 1,
@@ -19,34 +22,71 @@ const sizeItems = [
         price: 3,
     }
 ]
+const foodItems = [
+    {
+        id: 1,
+        name: "Pizza 1",
+        price: 10,
+        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda fugit corporis ex laboriosam tenetur at ad aspernatur",
+        quantity:1,
+        extraOptions: [
+            {
+                id: 1,
+                name: "Extra 1",
+                price: 1,
+            },
+            {
+                id: 2,
+                name: "Extra 2",
+                price: 2,
+            },
+            {
+                id: 3,
+                name: "Extra 3",
+                price: 4,
+            },
+        ],
+    },
+];
 
 const Index = () => {
+    const dispatch = useDispatch();
+    const cart = useSelector((state) => state.cart);
+
     const [prices, setPrices] = useState([10, 20, 30]);
     const [price, setPrice] = useState(prices[0]);
     const [size, setSize] = useState(0);
     const [extraItems, setExtraItems] = useState(sizeItems);
-    const [extras,setExtras]=useState([])
-    const handleSize = (sizeIndex)=>{
+    const [extras, setExtras] = useState([])
+    const handleSize = (sizeIndex) => {
         const difference = prices[sizeIndex] - prices[size];
         setSize(sizeIndex)
         changePrice(difference)
 
     }
-    const changePrice=(number)=>{
+    const changePrice = (number) => {
         setPrice(price + number)
-        console.log(price)
+
+        //console.log(price)
     }
-    const handleChange = (e,item)=>{
+    const handleChange = (e, item) => {
         const checked = e.target.checked;
-        if(checked){
+        if (checked) {
             changePrice(item.price);
-            setExtras([...extras,item])
-        }else{
+            setExtras([...extras, item])
+        } else {
             changePrice(-item.price)
-            setExtras( extras.filter(el=>el.id !== item.id));
+            setExtras(extras.filter(el => el.id !== item.id));
         }
 
     }
+    //console.log(extras);
+
+    const handleClick=()=>{
+        dispatch(cartActions.addProduct({...foodItems[0],extras,price}));
+    }
+
+
 
     return <React.Fragment>
 
@@ -69,21 +109,21 @@ const Index = () => {
                     <h4 className="font-bold text-xl mb-2">Choose the Size</h4>
                     <div className="flex items-center gap-x-20
                                 lg:justify-start justify-center">
-                        <div className="relative w-8 h-8 cursor-pointer" onClick={()=>handleSize(0)}>
+                        <div className="relative w-8 h-8 cursor-pointer" onClick={() => handleSize(0)}>
                             <Image src="/images/size.png" alt="size" fill sizes="w-full h-full"/>
                             <span className="absolute top-0 -right-6 text-xs
                         bg-primary rounded-full px-[5px] font-medium">
                             Small
                         </span>
                         </div>
-                        <div className="relative w-12 h-12 cursor-pointer" onClick={()=>handleSize(1)}>
+                        <div className="relative w-12 h-12 cursor-pointer" onClick={() => handleSize(1)}>
                             <Image src="/images/size.png" alt="size" fill sizes="w-full h-full"/>
                             <span className="absolute top-0 -right-8 text-xs
                         bg-primary rounded-full px-[5px] font-medium">
                             Medium
                         </span>
                         </div>
-                        <div className="relative w-16 h-16 cursor-pointer" onClick={()=>handleSize(2)}>
+                        <div className="relative w-16 h-16 cursor-pointer" onClick={() => handleSize(2)}>
                             <Image src="/images/size.png" alt="size" fill sizes="w-full h-full"/>
                             <span className="absolute top-0 -right-5 text-xs
                         bg-primary rounded-full px-[10px] font-medium">
@@ -93,14 +133,16 @@ const Index = () => {
                     </div>
                 </div>
                 <div className="flex gap-x-4 my-6 lg:justify-start justify-center">
-                    {extraItems.map((item) =>
+                    {foodItems.map((el) => el.extraOptions.map((item)=>
                         <label className="flex items-center gap-x-1" key={item.id}>
-                            <input type="checkbox" className="w-5 h-5 accent-primary " onChange={(e)=>handleChange(e,item)}/>
+                            <input type="checkbox" className="w-5 h-5 accent-primary "
+                                   onChange={(e) => handleChange(e, item)}/>
                             <span className="text-sm font-semibold">{item.name}</span>
                         </label>
-                    )}
+                    ))}
+
                 </div>
-                <button className="btn-primary ">Add to Cart</button>
+                <button className="btn-primary " onClick={handleClick}>Add to Cart</button>
             </div>
         </div>
     </React.Fragment>

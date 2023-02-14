@@ -4,12 +4,14 @@ import Link from "next/link";
 
 import Logo from "./../UI/Logo";
 import Search from "./../UI/Search";
+import {useSelector} from "react-redux";
 
 import { FaUserAlt,FaShoppingCart } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import {GiCancel, GiHamburgerMenu} from "react-icons/gi"
 
 const Header = () => {
+  const cart = useSelector(state=>state.cart);
   const router = useRouter();
   const [isSearchModal, setIsSearchModal] = useState(false);
   const [isMenuModal, setIsMenuModal] = useState(false);
@@ -55,10 +57,17 @@ const Header = () => {
         </nav>
         <div className="flex gap-x-4 items-center">
           <Link href="/auth/login" className={router.pathname == "/auth/login" ? "text-primary" : ""}>
-            <FaUserAlt className="hover:text-primary transition-all cursor-pointer" />
+             <FaUserAlt className="hover:text-primary transition-all cursor-pointer" />
+
+
           </Link>
-          <Link href="/cart" className={router.pathname == "/cart" ? "text-primary" : ""}>
-            <FaShoppingCart className="hover:text-primary transition-all cursor-pointer" />
+          <Link href="/cart" className= {` ${router.pathname == "/cart" ? "text-primary" : ""}` }>
+            <span className="relative">
+            <FaShoppingCart className="hover:text-primary transition-all cursor-pointer peer" />
+             <span className={`absolute text-xs -top-2 -right-2 rounded-full w-4 h-4  font-bold
+             flex justify-center items-center ${router.pathname == "/cart" ? "text-secondary bg-tertiary" : "bg-primary text-black"} `}
+             >{cart.totalQuantity=== 0 ? "0" : cart.totalQuantity}</span>
+           </span>
           </Link>
           <button onClick={() => setIsSearchModal(true)}>
             <BsSearch className="hover:text-primary transition-all cursor-pointer" />

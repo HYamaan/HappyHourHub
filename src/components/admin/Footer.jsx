@@ -40,8 +40,7 @@ const Footer = () => {
             value: values.location,
             errorMessage: errors.location,
             touched: touched.location,
-        },
-        {
+        }, {
             id: 2,
             name: "email",
             type: "text",
@@ -49,8 +48,7 @@ const Footer = () => {
             value: values.email,
             errorMessage: errors.email,
             touched: touched.email,
-        },
-        {
+        }, {
             id: 3,
             name: "phoneNumber",
             type: "number",
@@ -58,8 +56,7 @@ const Footer = () => {
             value: values.phoneNumber,
             errorMessage: errors.phoneNumber,
             touched: touched.phoneNumber,
-        },
-        {
+        }, {
             id: 4,
             name: "desc",
             type: "text",
@@ -67,8 +64,7 @@ const Footer = () => {
             value: values.desc,
             errorMessage: errors.desc,
             touched: touched.desc,
-        },
-        {
+        }, {
             id: 5,
             name: "day",
             type: "text",
@@ -76,8 +72,7 @@ const Footer = () => {
             value: values.day,
             errorMessage: errors.day,
             touched: touched.day,
-        },
-        {
+        },{
             id: 6,
             name: "time",
             type: "text",
@@ -101,7 +96,7 @@ const Footer = () => {
                 ))}
             </div>
             <div className="mt-4 flex justify-between md:items-center md:flex-row flex-col gap-4">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 ">
                     <Input
                         placeholder="Link Address"
                         value={linkAddress}
@@ -115,6 +110,7 @@ const Footer = () => {
                         value={iconName}
 
                     />
+
                     <button
                         className="btn-primary"
                         type="button"
