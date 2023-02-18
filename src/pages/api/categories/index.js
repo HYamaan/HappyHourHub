@@ -1,5 +1,5 @@
 import dbConnect from "../../../utilities/dbConnect";
-import User from "../../../models/User"
+import Category from "../../../models/Category"
 
 const handler = async (req, res) => {
     await dbConnect();
@@ -7,7 +7,7 @@ const handler = async (req, res) => {
 
     if (method === "GET") {
     try{
-        const users = await User.find();
+        const users = await Category.find();
         res.status(200).json(users);
     }catch (err){
 
@@ -16,7 +16,7 @@ const handler = async (req, res) => {
     }
     if (method === "POST") {
         try{
-            const newUsers = await User.create(req.body);
+            const newUsers = await Category.create(req.body);
             res.status(200).json(newUsers);
         }catch (err){
             console.log(err);
