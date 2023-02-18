@@ -10,7 +10,7 @@ const MenuItem = ()=>{
                     rounded-bl-[46px] rounded-tl-2xl rounded-tr-2xl peer-hover:scale-120  ">
                 <Link href="/product">
                     <div className="relative w-36 h-36 sm:hover:scale-110 transition-all">
-                        <Image src="/images/f1.png" alt="f1.png" fill style={{objectFit:"cover"}} sizes="w-full h-full"/>
+                        <Image src="/images/f1.png" alt="f1.png" fill style={{objectFit:"cover"}} sizes="w-full h-full" priority={true}/>
                     </div>
                 </Link>
             </div>

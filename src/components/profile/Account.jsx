@@ -3,86 +3,109 @@ import Title from "../UI/Title";
 import Input from "../form/Input";
 import {useFormik} from "formik";
 import {profileSchema} from "../../schema/profileSchema";
+import axios from "axios";
 
-const Account = ()=>{
+const Account = ({ user }) => {
     const onSubmit = async (values, actions) => {
-        await new Promise((resolve, _) => setTimeout(resolve, 2000));
+        try {
+            const res = await axios.put(
+                `${process.env.NEXT_PUBLIC_API_URL}/users/${user._id}`,
+                values
+            );
+        } catch (err) {
+            console.log(err);
+        }
         actions.resetForm();
-    }
+    };
 
-    const formik = useFormik({
-        initialValues: {
-            fullName: "", phoneNumber: "", email: "", address: "", job: "", bio: "",
-        }, onSubmit, validationSchema: profileSchema,
-    });
-
-    const inputsInf = [{
-        id: 1,
-        name: "fullName",
-        type: "text",
-        placeholder: "Your Full Name",
-        value: formik.values.fullName,
-        errorMessage: formik.errors.fullName,
-        touched: formik.touched.fullName
-    }, {
-        id: 2,
-        name: "email",
-        type: "email",
-        placeholder: "Your Email",
-        value: formik.values.email,
-        errorMessage: formik.errors.email,
-        touched: formik.touched.email
-    }, {
-        id: 3,
-        name: "phoneNumber",
-        type: "number",
-        placeholder: "Your Phone Number",
-        value: formik.values.phoneNumber,
-        errorMessage: formik.errors.phoneNumber,
-        touched: formik.touched.phoneNumber
-    }, {
-        id: 4,
-        name: "address",
-        type: "text",
-        placeholder: "Your Address",
-        value: formik.values.address,
-        errorMessage: formik.errors.address,
-        touched: formik.touched.address
-    }, {
-        id: 5,
-        name: "job",
-        type: "text",
-        placeholder: "Your Job",
-        value: formik.values.job,
-        errorMessage: formik.errors.job,
-        touched: formik.touched.job
-    }, {
-        id: 6,
-        name: "bio",
-        type: "text",
-        placeholder: "Your Bio",
-        value: formik.values.bio,
-        errorMessage: formik.errors.bio,
-        touched: formik.touched.bio
-    },
-
+    const { values, errors, touched, handleSubmit, handleChange, handleBlur } =
+        useFormik({
+            enableReinitialize: true,
+            initialValues: {
+                fullName: user?.fullName,
+                phoneNumber: user?.phoneNumber,
+                email: user?.email,
+                address: user?.address,
+                job: user?.job,
+                bio: user?.bio,
+            },
+            onSubmit,
+            validationSchema: profileSchema,
+        });
+    const inputs = [
+        {
+            id: 1,
+            name: "fullName",
+            type: "text",
+            placeholder: "Your Full Name",
+            value: values.fullName,
+            errorMessage: errors.fullName,
+            touched: touched.fullName,
+        },
+        {
+            id: 2,
+            name: "phoneNumber",
+            type: "number",
+            placeholder: "Your Phone Number",
+            value: values.phoneNumber,
+            errorMessage: errors.phoneNumber,
+            touched: touched.phoneNumber,
+        },
+        {
+            id: 3,
+            name: "email",
+            type: "email",
+            placeholder: "Your Email Address",
+            value: values.email,
+            errorMessage: errors.email,
+            touched: touched.email,
+        },
+        {
+            id: 4,
+            name: "address",
+            type: "text",
+            placeholder: "Your Address",
+            value: values.address,
+            errorMessage: errors.address,
+            touched: touched.address,
+        },
+        {
+            id: 5,
+            name: "job",
+            type: "text",
+            placeholder: "Your Job",
+            value: values.job,
+            errorMessage: errors.job,
+            touched: touched.job,
+        },
+        {
+            id: 6,
+            name: "bio",
+            type: "text",
+            placeholder: "Your Bio",
+            value: values.bio,
+            errorMessage: errors.bio,
+            touched: touched.bio,
+        },
     ];
-    return(
-        <form className="flex-1 lg:p-8 lg:mt-0 mt-5"
-              onSubmit={formik.handleSubmit}>
-            <Title className="text-[40px]">Account Settings</Title>
-            <div className="md:grid lg:grid-cols-2 grid-cols-1 md:gap-4 gap-x-11 mt-4">
-                {inputsInf.map((input) => {
-                    return <Input className="md:mt-0 mt-2"
-                                  key={input.id}
-                                  {...input}
-                                  onChange={formik.handleChange}
-                                  onBlur={formik.handleBlur}
+    return (
+        <form className="lg:p-8 flex-1 lg:mt-0 mt-5" onSubmit={handleSubmit}>
+            <Title addClass="text-[40px]">Account Settings</Title>
+            <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mt-4">
+                {inputs.map((input) => (
+                    <Input
+                        key={input.id}
+                        {...input}
+                        onBlur={handleBlur}
+                        onChange={handleChange}
                     />
-                })}
+                ))}
             </div>
-            <button className="btn-primary mt-4" type="submit">Update</button>
+            <button className="btn-primary mt-4" type="submit">
+                Update
+            </button>
         </form>
     );
-}
+};
+
 export default Account;

@@ -35,7 +35,7 @@ const Carousel = () => {
 
     return (<div className="h-screen container mx-auto -mt-[88px]">
         <div className="absolute top-0 left-0 w-full h-full">
-            <Image src="/images/hero-bg.jpg" alt="hero-bg.png" fill style={{objectFit:"cover"}} sizes="w-full h-full"/>
+            <Image src="/images/hero-bg.jpg" alt="hero-bg.png" priority={true} fill style={{objectFit:"cover"}} sizes="w-full h-full"/>
         </div>
 
         <Slider {...settings}>
