@@ -7,13 +7,14 @@ import About from "../../components/About";
 import Reservation from "../../components/Reservation";
 import Customers from "../../components/customers/Customers";
 
-const Home=()=>{
+const Home=({categoryList})=>{
+    console.log(categoryList)
     return <div >
         <div className="relative">
             <Carousel/>
         </div>
         <Campaigns/>
-        <MenuWrapper/>
+        <MenuWrapper categoryList={categoryList}/>
         <About/>
         <Reservation/>
         <Customers/>

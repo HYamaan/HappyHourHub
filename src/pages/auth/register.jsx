@@ -4,13 +4,26 @@ import Link from "next/link";
 
 import Title from "../../components/UI/Title";
 import Input from "../../components/form/Input";
+import { toast } from 'react-toastify';
 import {registerSchema} from "../../schema/registerSchema";
+import axios from "axios";
+import {useRouter} from "next/router";
 
 const Register = () => {
-    const onSubmit = async () => {
-        await new Promise((resolve, _) => {
-            return setTimeout(resolve, 2000);
-        })
+    const router =useRouter();
+    const onSubmit = async (values,actions) => {
+      try {
+          const res =await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/register`,values)
+
+          if (res.status===200){
+              toast.success("Success Notification !");
+              await router.push(`/auth/login`);
+          }
+      }catch (err){
+          toast.error(err.response.data.message);
+      }
+      actions.resetForm();
+
     }
     const formik = useFormik({
         initialValues: {
@@ -78,7 +91,7 @@ const Register = () => {
                         />
                     })}
                 </div>
-                <button type="button" className="btn-primary w-full text-lg">Register</button>
+                <button type="submit" className="btn-primary w-full text-lg" >Register</button>
 
 
                 <Link href="/auth/login">
