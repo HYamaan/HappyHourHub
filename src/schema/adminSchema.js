@@ -3,10 +3,8 @@ import * as Yup from 'yup';
 export const adminSchema=Yup.object({
     username: Yup.string().required('Username is required')
         .min(3,"Username must be at least 3 characters"),
-    password:Yup.string().min(1,"Minimum 1 character")
+
+    password:Yup.string().min(5,"Minimum 5 character")
         .required('Password is required')
-        .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-            "Password must contain at least one uppercase, one lowercase, one number and one special character."
-        ),
+
 });
