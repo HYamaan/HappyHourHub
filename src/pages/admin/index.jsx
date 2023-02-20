@@ -73,7 +73,6 @@ const Login = () => {
                 </div>
                 <button type="submit" className="btn-primary w-full text-lg">LOGIN</button>
 
-
                 <Link href="/">
             <span className="text-sm underline cursor-pointer text-secondary">
                   Home Page
