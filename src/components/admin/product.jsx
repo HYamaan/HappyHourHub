@@ -6,7 +6,7 @@ const Product =()=>{
     <div>
         <div className=" flex-1 lg:p-8 lg:mt-0 mt-5">
             <Title className="text-[40px]">Account Settings</Title>
-            <div className="overflow-x-auto w-full ">
+            <div className="overflow-x-auto w-full  ">
                 <table className="w-full h-full text-sm text-center text-gray-500 min-w-[1200px]">
                     <thead className="text-xs bg-gray-700 text-gray-400 uppercase">
                     <tr>
