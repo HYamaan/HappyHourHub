@@ -4,10 +4,7 @@ import bcrypt from "bcryptjs";
 
 const handler = async (req, res) => {
     await dbConnect();
-    const {
-        method,
-        query: { id },
-    } = req;
+    const {method, query: { id }} = req;
 
     if (method === "GET") {
         try {
