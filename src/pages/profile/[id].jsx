@@ -5,17 +5,17 @@ import Image from "next/image";
 import Account from "../../components/profile/Account";
 import Password from "../../components/profile/Password";
 import Order from "../../components/profile/Order";
-import {getSession, signOut} from "next-auth/react";
+import {getSession, signOut, useSession} from "next-auth/react";
 import {useRouter} from "next/router";
 import axios from "axios";
 
 
 
 const Profile = ({ user }) => {
-
+const session=useSession();
     const [tabs, setTabs] = useState(0);
     const { push } = useRouter();
-
+    console.log("session",session);
     const handleSignOut =  () => {
         if (confirm("Are you sure you want to sign out?")) {
              signOut({ redirect: false });

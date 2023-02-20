@@ -131,9 +131,6 @@ export async function getServerSideProps({req}) {
     console.log("user._id", user?._id)
     if (session && user) {
         return {
-            props: {
-                user: user ? user.data : null,
-            },
             redirect: {
                 destination: "/profile/" + user._id,
                 permanent: false,
