@@ -8,7 +8,7 @@ import Reservation from "../../components/Reservation";
 import Customers from "../../components/customers/Customers";
 
 const Home=({categoryList})=>{
-    console.log(categoryList)
+   // console.log(categoryList)
     return <div >
         <div className="relative">
             <Carousel/>

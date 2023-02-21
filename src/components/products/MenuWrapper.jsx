@@ -4,7 +4,7 @@ import MenuItem from "./MenuItem";
 
 const MenuWrapper = ({categoryList})=>{
     const [isActive,setIsActive]=useState(0)
-    console.log(categoryList)
+    //console.log(categoryList)
 
     return<React.Fragment>
         <div className="container mx-auto ">
