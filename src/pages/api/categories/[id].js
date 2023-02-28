@@ -4,7 +4,7 @@ import dbConnect from "../../../utilities/dbConnect";
 
 const handler = async (req, res) => {
     await dbConnect();
-    const {method, query: { id }} = req;
+    const {method, query:{id}} = req;
 
     if (method === "GET") {
         try {
@@ -16,9 +16,10 @@ const handler = async (req, res) => {
     }
     if (method === "DELETE") {
         try {
-            const category = await Category.findByIdAndDelete(id);
-            res.status(200).json(category);
-        } catch (err) {
+            const categoryDelete= await Category.findByIdAndDelete(id);
+            res.status(200).json(categoryDelete);
+
+        }catch (err){
             console.log(err);
         }
     }

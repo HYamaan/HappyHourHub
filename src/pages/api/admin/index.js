@@ -6,8 +6,8 @@ const handler =(req,res)=>{
     if (method==="POST"){
         const {username,password}=req.body;
         if(username ===process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD){
-            const token =jwt.sign({username,password},"secret123")
-                res.setHeader("Set-Cookie",cookie.serialize("token",process.env.ADMIN_TOKEN,{
+            //const token =jwt.sign({username,password},"secret123")
+            res.setHeader("Set-Cookie",cookie.serialize("token",process.env.ADMIN_TOKEN,{
                 maxAge:60*60,
                 sameSite:"strict",
                 path:"/",
