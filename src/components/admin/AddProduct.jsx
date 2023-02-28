@@ -1,238 +1,237 @@
-import React, {useState} from "react";
+import Image from "next/image";
+import React, {useEffect, useState} from "react";
 import OutsideClickHandler from "react-outside-click-handler";
-
-import {GiCancel} from "react-icons/gi"
 import Title from "../UI/Title";
+import {GiCancel} from "react-icons/gi";
 import axios from "axios";
+import localFont from "@next/font/local";
+import {toast} from "react-toastify";
 import {useFormik} from "formik";
-import {addProductSchema} from "../../schema/addProductSchema";
 
-
-function AddProduct({setIsProductModal}) {
+const AddProduct = ({setIsProductModal}) => {
     const [file, setFile] = useState();
     const [imageSrc, setImageSrc] = useState();
-    const[imgControl,setImgControl] = useState(false);
+
+    const [title, setTitle] = useState("");
+    const [desc, setDesc] = useState("");
+    const [category, setCategory] = useState("");
+    const [prices, setPrices] = useState([]);
+
+    const [extra, setExtra] = useState("");
+    const [extraOptions, setExtraOptions] = useState([]);
+
+    const [categories,setCategories] = useState("");
+
+
+
+
+    useEffect(()=>{
+        const getProducts = async ()=>{
+            try {
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
+                setCategories(res.data);
+            }catch (err){
+                console.log(err);
+            }
+        }
+        getProducts();
+    },[])
+    const handleExtra = () => {
+        if (extra) {
+            if (extra.text && extra.price) {
+                setExtraOptions([...extraOptions, extra]);
+            }
+        }
+    }
 
     const handleOnChange = (changeEvent) => {
-        console.log(changeEvent);
         const reader = new FileReader();
-        console.log("FileReader", reader)
+
         reader.onload = function (onLoadEvent) {
-            //console.log("onLoadEvent",onLoadEvent);
-            setImageSrc(onLoadEvent.target.result); //Base64 formatın da data döndü.
+            setImageSrc(onLoadEvent.target.result);
             setFile(changeEvent.target.files[0]);
-            setImgControl(false);
         }
-        reader.readAsDataURL(changeEvent.target.files[0])
-        console.log("changeEvent.target.files[0]", changeEvent.target.files[0]); // type=file içindeki veriler
+        reader.readAsDataURL(changeEvent.target.files[0]);
     }
-    const handleCreate = async () => {
-        const data = new FormData();
-        data.append("file", file);
-        data.append("upload_preset", "fast-food");
+
+    const handleCrate = async () => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "fast-food");
         try {
-            const uploadRes = await axios.post("https://api.cloudinary.com/v1_1/dqotmpx6v/image/upload", data);
+            const uploadRes = await axios.post("https://api.cloudinary.com/v1_1/dqotmpx6v/image/upload", formData)
+
+            const {url} = uploadRes.data;
+            console.log("url", url);
+
+            const newProduct = {
+                image: url,
+                title,
+                desc,
+                category: category.toLowerCase(),
+                prices,
+                extraOptions,
+            };
+
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/products`, newProduct);
+            console.log("res", res);
+            if (res.status === 200) {
+                setIsProductModal(false);
+                toast.success("Product created successfully");
+            }
+
         } catch (err) {
             console.log(err);
         }
-
     }
 
-    const onSubmit =  async () => {
-        if(!file || !imageSrc){
-            setImgControl(true)
-            await handleCreate();
+
+
+        const changePrice = (e, index) => {
+            const currentPrices = prices;
+            currentPrices[index] = e.target.value;
+            setPrices(currentPrices);
         }
-        console.log(imgControl);
-
-    }
-
-    const formik = useFormik({
-        initialValues: {
-            title: "",
-            description: "",
-            category: "Category 1",
-            small: "",
-            medium: "",
-            large: "",
-            item: "",
-            price: "",
-        },
-        onSubmit,
-        validationSchema: addProductSchema
-
-    });
 
 
-
-    return <React.Fragment>
-        <div
-            className="fixed w-screen h-screen z-50 top-0 left-0
-    after:content-[''] after:w-screen after:h-screen after:bg-white
-    after:opacity-60 after:absolute after:top-0 after:left-0  grid place-content-center"
-        >
+        return (<div
+            className="fixed top-0 left-0 w-screen h-screen z-50 after:content-['']
+            after:w-screen after:h-screen after:bg-white after:absolute after:top-0 after:left-0 after:opacity-60 grid place-content-center">
             <OutsideClickHandler onOutsideClick={() => setIsProductModal(false)}>
-                <div className="w-full h-full grid place-content-center ">
-                    <div className="relative z-50 md:w-[37.5rem] w-[23.125rem]
-           bg-white border-2 p-8 shadow-lg rounded-3xl">
-                        <Title className="text-center text-[40px]">Search</Title>
+                <div className="w-full h-full grid place-content-center relative">
+                    <div className="relative z-50 md:w-[600px] w-[370px]  bg-white border-2 p-10 rounded-3xl">
+                        <Title className="text-[40px] text-center">Add a New Product</Title>
 
-                        <div className="flex flex-col text-sm mt-3">
-                            <label className="flex items-center gap-4">
-                                <input type="file"
-                                       name="image"
-                                       id="image"
-                                       className="hidden"
-                                       onBlur={formik.handleBlur}
-                                       onChange={(event) =>  handleOnChange(event)}
-                                />
-                                <button
-                                    className="btn-primary !rounded-none !bg-blue-600 pointer-events-none cursor-pointer">Choose
-                                    an Image
+                        <div className="flex flex-col text-sm mt-6">
+                            <label className="flex gap-2 items-center">
+                                <input type="file" onChange={(e) => handleOnChange(e)} className="hidden"/>
+                                <button className="btn-primary !rounded-none bg-blue-500 pointer-events-none"> Choose an
+                                    Image
                                 </button>
-                                {imageSrc && <img src={imageSrc} width={48} height={48} className="rounded-full "/>}
-                                {imgControl && <div className="mt-[2px] -mb-[22px] text-danger">{'File is required'}</div>  }
+                                {imageSrc && (<img src={imageSrc} className="rounded-full w-20 h-20" alt=""/>)}
                             </label>
-
                         </div>
-                        <form onSubmit={formik.handleSubmit}>
-                            <div className="flex flex-col text-sm mt-3.5">
-                                <label htmlFor="title"
-                                       className="font-semibold mb-1">Title</label>
-                                <input type="text" name="title"
-                                       className="border-2 px-1 outline-none "
-                                       placeholder="Write a title..."
-                                       onChange={formik.handleChange}
-                                       onBlur={formik.handleBlur}
-                                       value={formik.values.title}
-                                />
-                                {formik.touched.title && formik.errors.title ?
-                                    <div className="mt-[2px] -mb-[22px] text-danger">{formik.errors.title}</div> : null}
-
-                            </div>
-
-                            <div className="flex flex-col text-sm mt-5">
-                                <label htmlFor="description" className="font-semibold mb-[2px]">Description</label>
-                                <textarea  name="description"
-                                          className="border-2 px-1 outline-none resize-none w-full h-16"
-                                          placeholder="Write a title..."
-                                          onChange={formik.handleChange}
-                                          onBlur={formik.handleBlur}
-                                          value={formik.values.description}
-                                />
-                                { formik.touched.description &&  formik.errors.description ?
-                                    <div className="mt-[2px] -mb-[22px] text-danger">{formik.errors.description}</div> : null}
-                            </div>
-
-
-                            <div className="flex flex-col text-sm mt-5">
-                                <label htmlFor="category" className="font-semibold mb-[2px]">Category</label>
-                                <select name="category"
-                                        className="border-2 px-1 outline-none"
-                                        placeholder="Write a title..."
-                                        value={formik.values.category}
-                                        onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}>
-                                    <option value="1">Category 1</option>
-                                    <option value="2">Category 2</option>
-                                    <option value="3">Category 3</option>
-                                    <option value="4">Category 4</option>
-                                </select>
-                                {formik.touched.category &&  formik.errors.category ?
-                                    <div className="mt-[2px] -mb-[22px] text-danger">{formik.errors.category}</div> : null}
-                            </div>
-
-                            <div className="flex flex-col text-sm mt-3">
-                                <p className="font-semibold mb-[2px]">Title</p>
-                                <div className="flex flex-between gap-2 w-full md:flex-nowrap flex-wrap">
-                                    <div className="flex flex-col">
-                                        <input type="number" name="small"
-                                               className="border-1 px-1 outline-none shadow-md"
-                                               placeholder="small"
-                                               onChange={formik.handleChange}
-                                               onBlur={formik.handleBlur}/>
-                                        {formik.touched.small && formik.errors.small ?
-                                            <div className="mt-[2px] -mb-[22px] text-danger">{formik.errors.small}</div> : null}
-                                    </div>
-
-                                    <div className="flex flex-col">
-                                        <input type="number" name="medium"
-                                               className="border-1 px-1 outline-none  shadow-md"
-                                               placeholder="medium"
-                                               onChange={formik.handleChange}
-                                               onBlur={formik.handleBlur}
-                                        />
-                                        {formik.touched.medium && formik.errors.medium ?
-                                            <div className="mt-[2px] -mb-[22px] text-danger">{formik.errors.medium}</div> : null}
-                                    </div>
-
-                                    <div className="flex flex-col">
-                                        <input type="number" name="large"
-                                               className="border-1 px-1 outline-none shadow-md"
-                                               placeholder="large"
-                                               onChange={formik.handleChange}
-                                               onBlur={formik.handleBlur}
-                                        />
-                                        {formik.touched.large && formik.errors.large ?
-                                            <div className="mt-[2px] -mb-[22px] text-danger">{formik.errors.large}</div> : null}
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div className="flex flex-col text-sm mt-4">
-                                <p className="font-semibold mt-2 -mb-[2px] ">Extras</p>
-                                <div className="flex items-center flex-between gap-2 w-full md:flex-nowrap flex-wrap">
-
-                                    <div className="flex flex-col">
-                                        <input type="number" name="item"
-                                               className="border-1 px-1 outline-none shadow-md"
-                                               placeholder="item"
-                                               onChange={formik.handleChange}
-                                               onBlur={formik.handleBlur}
-                                        />
-                                        {formik.touched.item && formik.errors.item ?
-                                            <div className="mt-[2px] -mb-[22px] text-danger">{formik.errors.item}</div> : null}
-                                    </div>
-
-                                    <div className="flex flex-col">
-                                        <input type="number" name="price"
-                                               className="border-1 px-1 outline-none  shadow-md"
-                                               placeholder="Price"
-                                               onChange={formik.handleChange}
-                                               onBlur={formik.handleBlur}
-                                        />
-                                        {formik.touched.price && formik.errors.price ?
-                                            <div className="mt-[2px] -mb-[22px] text-danger">{formik.errors.price}</div> : null}
-                                    </div>
-
-                                    <button className="btn-primary ml-auto" type="submit">Add</button>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-between mt-2">
-                                <div className="mt-2">
-                                <span
-                                    className="inline-block border-orange-400 text-orange-300 p-1 border rounded-3xl text-xs">Ketçap</span>
-                                </div>
-                                <button className="btn-primary !bg-success mt-2"
-                                        type="submit">Create
-                                </button>
-                            </div>
-
-                        </form>
-                        <button className="absolute top-4 right-4"
-                                onClick={() => setIsProductModal(false)}>
-                            <GiCancel
-                                size={30}
-                                className="hover:text-primary transition-all"
+                        <div className="flex flex-col text-sm mt-4">
+                            <span className="font-semibold mb-[2px]">Title</span>
+                            <input
+                                type="text"
+                                className="border-2 p-1 text-sm px-1 outline-none"
+                                placeholder="Write a title..."
+                                onChange={(e) => setTitle(e.target.value)}
                             />
-                        </button>
+                        </div>
+                        <div className="flex flex-col text-sm mt-4">
+                            <span className="font-semibold mb-[2px]">Description</span>
+                            <textarea
+                                className="border-2 p-1 text-sm px-1 outline-none"
+                                placeholder="Write a description..."
+                                onChange={(e) => setDesc(e.target.value)}
+                            />
+                        </div>
 
+                        <div className="flex flex-col text-sm mt-4">
+                            <span className="font-semibold mb-[2px]">Select Category</span>
+                            <select
+                                className="border-2 p-1 text-sm px-1 outline-none"
+                                placeholder="Write a title..."
+                                onChange={(e) => setCategory(e.target.value)}
+                            >
+                                {categories.length>0 && categories.map((categoryItem)=>(
+                                    <option value={categoryItem.title} key={categoryItem._id}>{categoryItem.title}</option>
+                                ))}
+
+                            </select>
+                        </div>
+
+                        <div className="flex flex-col text-sm mt-4 w-full">
+                            <span className="font-semibold mb-[2px]">Prices</span>
+                            {category==="pizza" ? (
+                                <div className="flex justify-between gap-6 w-full md:flex-nowrap flex-wrap">
+                                    <input
+                                        type="number"
+                                        className="border-b-2 p-1 pl-0 text-sm px-1 outline-none w-36"
+                                        placeholder="small"
+                                        onChange={(e) => changePrice(e, 0)}
+                                    />
+                                    <input
+                                        type="number"
+                                        className="border-b-2 p-1 pl-0 text-sm px-1 outline-none w-36"
+                                        placeholder="medium"
+                                        onChange={(e) => changePrice(e, 1)}
+                                    />
+                                    <input
+                                        type="number"
+                                        className="border-b-2 p-1 pl-0 text-sm px-1 outline-none w-36"
+                                        placeholder="large"
+                                        onChange={(e) => changePrice(e, 2)}
+                                    />
+                                </div>
+                            ) :(
+                                <div className="flex justify-between gap-6 w-full md:flex-nowrap flex-wrap">
+                                    <input
+                                        type="number"
+                                        className="border-b-2 p-1 pl-0 text-sm px-1 outline-none w-36"
+                                        placeholder="small"
+                                        onChange={(e) => changePrice(e, 0)}
+                                    />
+                                </div>
+                            ) }
+                        </div>
+                        <div className="flex flex-col text-sm mt-4 w-full">
+                            <span className="font-semibold mb-[2px]">Extra</span>
+                            <div className="flex  gap-6 w-full md:flex-nowrap flex-wrap">
+                                <input
+                                    type="text"
+                                    className="border-b-2 p-1 pl-0 text-sm px-1 outline-none w-36"
+                                    placeholder="item"
+                                    name="text"
+                                    onChange={(e) =>
+                                        setExtra((prev) => ({...prev, [e.target.name]: e.target.value}))
+                                    }
+                                />
+                                <input
+                                    type="number"
+                                    className="border-b-2 p-1 pl-0 text-sm px-1 outline-none w-36"
+                                    placeholder="price"
+                                    name="price"
+                                    onChange={(e) =>
+                                        setExtra((prev) => ({...prev, [e.target.name]: e.target.value}))
+                                    }
+                                />
+                                <button className="btn-primary ml-auto" onClick={handleExtra}>Add</button>
+                            </div>
+
+                            <div className="mt-2 flex gap-2 items-start">
+                                {extraOptions.map((item, index) =>
+                                    (
+                                        <span
+                                            className="inline-block border border-orange-500 text-orange-500  p-1 rounded-xl text-xs cursor-pointer"
+                                            key={index}
+                                            onClick={() => {
+                                                setExtraOptions(extraOptions.filter((_, i) => i !== index))
+                                            }}
+                                        >
+                                            {item.text}
+                                        </span>
+                                    )
+                                )}
+                            </div>
+                        </div>
+                        <div className="flex justify-end">
+                            <button className="btn-primary !bg-success "
+                                    onClick={handleCrate}>Create
+                            </button>
+                        </div>
+                        <button
+                            className="absolute  top-4 right-4"
+                            onClick={() => setIsProductModal(false)}
+                        >
+                            <GiCancel size={25} className=" transition-all"/>
+                        </button>
                     </div>
                 </div>
             </OutsideClickHandler>
-        </div>
-    </React.Fragment>;
-}
+        </div>);
+    }
 
 export default AddProduct;
