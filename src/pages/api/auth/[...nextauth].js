@@ -48,7 +48,7 @@ export const authOptions = {
         signIn:"/auth/login",
     },
     database:process.env.MONGODB_URI,
-    secret:"secret",
+    secret:"secret121",
 }
 const signInUser = async ({user,password,email})=>{
     const isMatch = await bcrypt.compare(password,user.password);
