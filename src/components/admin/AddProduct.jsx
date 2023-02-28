@@ -62,7 +62,7 @@ const AddProduct = ({setIsProductModal}) => {
             const uploadRes = await axios.post("https://api.cloudinary.com/v1_1/dqotmpx6v/image/upload", formData)
 
             const {url} = uploadRes.data;
-            console.log("url", url);
+
 
             const newProduct = {
                 image: url,
@@ -74,7 +74,7 @@ const AddProduct = ({setIsProductModal}) => {
             };
 
             const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/products`, newProduct);
-            console.log("res", res);
+
             if (res.status === 200) {
                 setIsProductModal(false);
                 toast.success("Product created successfully");
