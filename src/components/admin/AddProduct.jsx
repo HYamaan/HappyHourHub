@@ -108,7 +108,7 @@ const AddProduct = ({setIsProductModal}) => {
                                 <button className="btn-primary !rounded-none bg-blue-500 pointer-events-none"> Choose an
                                     Image
                                 </button>
-                                {imageSrc && (<img src={imageSrc} className="rounded-full w-20 h-20" alt=""/>)}
+                                {imageSrc && (<img src={imageSrc} className="rounded-full w-20 h-20 object-contain" alt=""/>)}
                             </label>
                         </div>
                         <div className="flex flex-col text-sm mt-4">
@@ -133,9 +133,11 @@ const AddProduct = ({setIsProductModal}) => {
                             <span className="font-semibold mb-[2px]">Select Category</span>
                             <select
                                 className="border-2 p-1 text-sm px-1 outline-none"
-                                placeholder="Write a title..."
+                                placeholder="Choose a category"
+
                                 onChange={(e) => setCategory(e.target.value)}
                             >
+                                <option value="" selected disabled hidden>Choose here</option>
                                 {categories.length>0 && categories.map((categoryItem)=>(
                                     <option value={categoryItem.title} key={categoryItem._id}>{categoryItem.title}</option>
                                 ))}
