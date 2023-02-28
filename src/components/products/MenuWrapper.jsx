@@ -1,10 +1,17 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Title from "../UI/Title"
 import MenuItem from "./MenuItem";
+import Link from "next/link";
 
-const MenuWrapper = ({categoryList})=>{
+const MenuWrapper = ({categoryList ,productList})=>{
+
     const [isActive,setIsActive] =useState(0);
-    //console.log(categoryList)
+    const [filter,setFilter] =useState(0);
+
+    useEffect(()=>{
+        setFilter(productList.filter((product)=>product.category === categoryList[isActive].title.toLowerCase()))
+    },[productList,categoryList,isActive]);
+
 
     return<React.Fragment>
         <div className="container mx-auto ">
@@ -19,24 +26,18 @@ const MenuWrapper = ({categoryList})=>{
                             {categories.title}
                         </button>
                         ))}
-
-
-
                 </div>
             </div>
-            <div className="mt-8 mb-11 grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
-                <MenuItem />
-                <MenuItem />
-                <MenuItem />
-                <MenuItem />
-                <MenuItem />
-                <MenuItem />
-                <MenuItem />
-                <MenuItem />
-                <MenuItem />
-            </div>
-            <div className="flex justify-center">
-                <button className="btn-primary mb-24 !py-[10px] !px-[55px]">View More</button>
+            <div className="min-h-[596px]">
+                <div className="mt-8 mb-11 grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 ">
+
+                    { filter.length>0 &&
+                        filter.map((product,index)=>(<MenuItem key={product._id} {...product}/>))}
+
+                </div>
+                <div className="flex justify-center">
+                    <Link href="/menu" className="btn-primary mb-24 !py-[10px] !px-[55px]">View More</Link>
+                </div>
             </div>
         </div>
     </React.Fragment>
