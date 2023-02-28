@@ -21,8 +21,8 @@ const Category = () => {
     }, []);
     const handleCreate = async () => {
         try {
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {title: inputText});
-            setCategories([...categories, res?.data])
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/categories`,{title:inputText});
+            setCategories([...categories,res]);
             setInputText("");
 
         } catch (err) {

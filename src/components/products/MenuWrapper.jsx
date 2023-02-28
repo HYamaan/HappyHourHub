@@ -3,7 +3,7 @@ import Title from "../UI/Title"
 import MenuItem from "./MenuItem";
 
 const MenuWrapper = ({categoryList})=>{
-    const [isActive,setIsActive]=useState(0)
+    const [isActive,setIsActive] =useState(0);
     //console.log(categoryList)
 
     return<React.Fragment>

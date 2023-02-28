@@ -13,7 +13,7 @@ export const addProductSchema=Yup.object({
     small:Yup.number().required('Small is required').positive("Must a positive number").integer(),
     medium:Yup.number().required('Medium is required').positive("Must a positive number").integer(),
     large:Yup.number().required('Large is required').positive("Must a positive number").integer(),
-    item:Yup.number().required('items is required').positive("Must a positive number").integer(),
+    extra:Yup.string().required('items is required'),
     price:Yup.number().required('items is required').positive("Must a positive number").integer(),
 
 });
