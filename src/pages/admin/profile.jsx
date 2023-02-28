@@ -14,7 +14,7 @@ import AddProduct from "../../components/admin/AddProduct";
 
 const Profile = () => {
     const[tabs,setTabs]=useState(0);
-    const[isProductModal,setIsProductModal]=useState(true);
+    const[isProductModal,setIsProductModal]=useState(false);
     const router =useRouter();
     const closeAdminAccount = async ()=>{
         try {
