@@ -4,6 +4,7 @@ import Title from "../../components/UI/Title";
 
 import {useSelector, useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice"
+import axios from "axios";
 
 const sizeItems = [
     {
@@ -49,7 +50,8 @@ const foodItems = [
     },
 ];
 
-const Index = () => {
+const Index = ({productList}) => {
+    console.log(productList)
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart);
 
@@ -146,5 +148,13 @@ const Index = () => {
             </div>
         </div>
     </React.Fragment>
+}
+export const getServerSideProps = async ()=>{
+    const product = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products`)
+    return{
+        props:{
+            productList: product.data ? product.data :[],
+        }
+    }
 }
 export default Index;
