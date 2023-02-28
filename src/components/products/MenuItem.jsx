@@ -8,9 +8,9 @@ const MenuItem = (props)=>{
         <div className="rounded-3xl bg-secondary">
             <div className="w-full bg-tertiary h-[215px] grid place-content-center
                     rounded-bl-[46px] rounded-tl-2xl rounded-tr-2xl peer-hover:scale-120  ">
-                <Link href="/product">
+                <Link href={`/product/${props._id}`}>
                     <div className="relative w-36 h-36 sm:hover:scale-110 transition-all">
-                        <Image src={props.image} alt="f1.png" fill style={{objectFit:"contain"}} sizes="w-full h-full" priority={true}/>
+                        <Image src={props.image} alt={props.image} fill style={{objectFit:"contain"}} sizes="w-full h-full" priority={true}/>
                     </div>
                 </Link>
             </div>
