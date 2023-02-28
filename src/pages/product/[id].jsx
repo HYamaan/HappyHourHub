@@ -6,60 +6,19 @@ import {useSelector, useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice"
 import axios from "axios";
 
-const sizeItems = [
-    {
-        id: 1,
-        name: "Extra 1",
-        price: 1,
-    },
-    {
-        id: 2,
-        name: "Extra 2",
-        price: 2,
-    },
-    {
-        id: 3,
-        name: "Extra 3",
-        price: 3,
-    }
-]
-const foodItems = [
-    {
-        id: 1,
-        name: "Pizza 1",
-        price: 10,
-        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda fugit corporis ex laboriosam tenetur at ad aspernatur",
-        quantity:1,
-        extraOptions: [
-            {
-                id: 1,
-                name: "Extra 1",
-                price: 1,
-            },
-            {
-                id: 2,
-                name: "Extra 2",
-                price: 2,
-            },
-            {
-                id: 3,
-                name: "Extra 3",
-                price: 4,
-            },
-        ],
-    },
-];
 
-const Index = ({productList}) => {
-    console.log(productList)
+
+const Id = ({ food}) => {
+    console.log(food)
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart);
 
-    const [prices, setPrices] = useState([10, 20, 30]);
+    const [prices, setPrices] = useState(food.prices);
     const [price, setPrice] = useState(prices[0]);
     const [size, setSize] = useState(0);
-    const [extraItems, setExtraItems] = useState(sizeItems);
+    const [extraItems, setExtraItems] = useState(food.extraOptions);
     const [extras, setExtras] = useState([])
+
     const handleSize = (sizeIndex) => {
         const difference = prices[sizeIndex] - prices[size];
         setSize(sizeIndex)
@@ -72,6 +31,7 @@ const Index = ({productList}) => {
         //console.log(price)
     }
     const handleChange = (e, item) => {
+
         const checked = e.target.checked;
         if (checked) {
             changePrice(item.price);
@@ -85,7 +45,8 @@ const Index = ({productList}) => {
     //console.log(extras);
 
     const handleClick=()=>{
-        dispatch(cartActions.addProduct({...foodItems[0],extras,price}));
+        dispatch(cartActions.addProduct({...food,extras,price}));
+        console.log(cart)
     }
 
 
@@ -94,20 +55,18 @@ const Index = ({productList}) => {
 
         <div className="h-[calc(100vh_-_88px)] flex flex-wrap  items-center md:gap-14 md:p-20 ">
             <div className="relative lg:flex-1 w-[80%] lg:h-full md:h-[50%] h-[40%] lg:mx-0 mx-20">
-                <Image src="/images/f1.png" alt="f1" fill style={{objectFit: "contain"}} sizes="w-full h-full"/>
+                <Image src={food.image} alt="f1" fill style={{objectFit: "contain"}} sizes="w-full h-full"/>
             </div>
             <div className="lg:flex-1  lg:text-start text-center ">
-                <Title className="text-5xl">Good Pizza</Title>
+                <Title className="text-5xl">{food.title}</Title>
                 <span className="text-primary text-2xl font-bold underline
             underline-offset-3 inline-block my-4">
                     ${price}
                 </span>
-                <p className="text-sm lg:my-4 lg:pr-24 py-4 lg:mx-0 mx-[1rem]">Lorem ipsum dolor sit amet, consectetur
-                    adipisicing elit. Adipisci aperiam consequatur culpa cum eum ex
-                    exercitationem id, maiores natus numquam officia officiis recusandae sapiente sed sint tempora
-                    voluptatem voluptatibus voluptatum.
+                <p className="text-sm lg:my-4 lg:pr-24 py-4 lg:mx-0 mx-[1rem]">
+                    {food.desc}
                 </p>
-                <div>
+                {food.prices.length > 1  && <div>
                     <h4 className="font-bold text-xl mb-2">Choose the Size</h4>
                     <div className="flex items-center gap-x-20
                                 lg:justify-start justify-center">
@@ -133,15 +92,15 @@ const Index = ({productList}) => {
                         </span>
                         </div>
                     </div>
-                </div>
+                </div>}
                 <div className="flex gap-x-4 my-6 lg:justify-start justify-center">
-                    {foodItems.map((el) => el.extraOptions.map((item)=>
-                        <label className="flex items-center gap-x-1" key={item.id}>
+                    {food.extraOptions.map((item)=>
+                        <label className="flex items-center gap-x-1" key={item._id}>
                             <input type="checkbox" className="w-5 h-5 accent-primary "
                                    onChange={(e) => handleChange(e, item)}/>
-                            <span className="text-sm font-semibold">{item.name}</span>
+                            <span className="text-sm font-semibold">{item.text}</span>
                         </label>
-                    ))}
+                    )}
 
                 </div>
                 <button className="btn-primary " onClick={handleClick}>Add to Cart</button>
@@ -149,12 +108,13 @@ const Index = ({productList}) => {
         </div>
     </React.Fragment>
 }
-export const getServerSideProps = async ()=>{
-    const product = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products`)
+export const getServerSideProps = async ({params})=>{
+
+    const product = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/${params.id}`)
     return{
         props:{
-            productList: product.data ? product.data :[],
+            food: product.data ? product.data :[],
         }
     }
 }
-export default Index;
+export default Id;
