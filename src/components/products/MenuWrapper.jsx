@@ -4,7 +4,7 @@ import MenuItem from "./MenuItem";
 import Link from "next/link";
 
 const MenuWrapper = ({categoryList ,productList})=>{
-
+    //console.log("categoryList",categoryList,"\n",productList)
     const [isActive,setIsActive] =useState(0);
     const [filter,setFilter] =useState(0);
 
