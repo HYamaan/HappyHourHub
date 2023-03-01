@@ -1,9 +1,43 @@
-import React from "react";
-import Image from "next/image";
+import React, {useEffect, useState} from "react";
+import {useSelector} from "react-redux";
 import Title from "../UI/Title";
+import axios from "axios";
+import {useSession} from "next-auth/react";
 
 
 const Order = () => {
+    const{data:session}=useSession();
+    const status = ["Preparing","On the way","Delivered"];
+    const [orders,setOrders]=useState([]);
+    const [currentUser,setCurrentUser]=useState([]);
+
+    useEffect(()=>{
+        const getOrders= async ()=>{
+            try {
+                const order = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/orders`);
+                setOrders(order.data.filter((user)=> ((user.email === currentUser.email) && (user.customer === currentUser?.fullName))) );
+
+            }catch (err){
+                console.log(err);
+            }
+        }
+        getOrders();
+    },[currentUser]);
+    console.log("ORDERS",orders);
+
+    useEffect( ()=>{
+        const getUser =async ()=>{
+            try {
+                const user = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users`);
+                setCurrentUser(user.data.filter((existUser)=>existUser.email === session?.user?.email)[0]);
+            }catch (err){
+                console.log(err);
+            }
+        }
+        getUser();
+    },[session])
+
+
     return(
         <form className=" flex-1 lg:p-8 lg:mt-0 mt-5">
             <Title className="text-[40px]">Account Settings</Title>
@@ -19,22 +53,21 @@ const Order = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    <tr className=" border-b border-gray-700 bg-secondary
-                    hover:bg-primary hover:border-primary transition-all">
-                        <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2">
-                            <Image
-                                src="/images/f1.png"
-                                alt="f1.png"
-                                width={50}
-                                height={50}
+                    {
+                        orders.length>0 &&
+                        orders.map((order)=>(
+                            <tr className=" border-b border-gray-700 bg-secondary
+                    hover:bg-primary hover:border-primary transition-all" key={order._id} >
+                                <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2">
+                                    <span>{order._id.substring(0,5)}...</span></td>
+                                <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white "><span>{order?.address}</span></td>
+                                <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{order?.updatedAt.slice(0,10)}</td>
+                                <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{order?.quantity}</td>
+                                <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{status[order.status]}</td>
 
-                            /> <span>Good Pizza</span></td>
-                        <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white"><span>mayonez,acı sos, ketçap</span></td>
-                        <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">$20</td>
-                        <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">1</td>
-                        <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">preparing</td>
-
-                    </tr>
+                            </tr>
+                        ))
+                    }
 
 
                     </tbody>
