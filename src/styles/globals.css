@@ -19,7 +19,7 @@ body {
 }
 .btn-primary{
 @apply text-white px-[1.875rem] py-[0.5rem]
-rounded-3xl bg-primary cursor-pointer hover:opacity-70;
+rounded-3xl bg-primary cursor-pointer hover:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed;
 }
 .slick-dots {
   @apply !flex justify-start w-full m-0;

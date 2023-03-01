@@ -12,14 +12,12 @@ import axios from "axios";
 
 
 const Profile = ({ user }) => {
-const session=useSession();
     const [tabs, setTabs] = useState(0);
     const { push } = useRouter();
-    console.log("session",session);
-    const handleSignOut =  () => {
+    const handleSignOut =  async () => {
         if (confirm("Are you sure you want to sign out?")) {
-             signOut({ redirect: false });
-             push("/auth/login");
+             await signOut({ redirect: false });
+             await push("/auth/login");
         }
     };
 
@@ -85,9 +83,8 @@ const session=useSession();
     );
 };
 
-export async function getServerSideProps({ req, params,query:{id}}) {
+export async function getServerSideProps({ req,query:{id}}) {
     const session = await getSession({ req })
-    //Params kullanmak yerine query kullanıldı.
     if(session){
         const user = await axios.get(
             `${process.env.NEXT_PUBLIC_API_URL}/users/${id}`
@@ -95,7 +92,7 @@ export async function getServerSideProps({ req, params,query:{id}}) {
 
         return {
             props: {
-                user: user ? user.data : null,
+                user: user?.data ? user.data : null,
             },
         };
     }
