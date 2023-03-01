@@ -8,8 +8,8 @@ import axios from "axios";
 
 
 
-const Id = ({ food}) => {
-    //console.log(food)
+const Id = ({food}) => {
+;
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart);
 

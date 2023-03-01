@@ -16,7 +16,7 @@ const Header = () => {
   const [isSearchModal, setIsSearchModal] = useState(false);
   const [isMenuModal, setIsMenuModal] = useState(false);
 
-  console.log("HeaderCart",cart);
+  //console.log("HeaderCart",cart);
 
   return (
     <div className={`h-[5.5rem] z-[1000] relative 

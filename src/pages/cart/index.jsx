@@ -15,7 +15,7 @@ const Cart = ({userList}) => {
     const router = useRouter();
     const cart = useSelector(state=>state.cart);
     const user = userList?.find((user)=>user.email === session?.user?.email);
-    console.log("user",user)
+    console.log("ProductCart",cart.products);
 
 
     const newOrder= {
