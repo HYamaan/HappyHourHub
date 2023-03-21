@@ -8,6 +8,7 @@ import Order from "../../components/profile/Order";
 import {getSession, signOut, useSession} from "next-auth/react";
 import {useRouter} from "next/router";
 import axios from "axios";
+import {toast} from "react-toastify";
 
 
 
@@ -16,6 +17,7 @@ const Profile = ({ user }) => {
     const { push } = useRouter();
     const handleSignOut =  async () => {
         if (confirm("Are you sure you want to sign out?")) {
+            toast.success("You have successfully exited.")
              await signOut({ redirect: false });
              await push("/auth/login");
         }
