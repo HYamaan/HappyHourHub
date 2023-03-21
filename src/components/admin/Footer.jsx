@@ -1,31 +1,70 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Title from "../UI/Title";
 import Input from "../form/Input";
 import {useFormik} from "formik";
 import {footerSchema} from "../../schema/footerSchema";
+import axios from "axios";
+import {toast} from "react-toastify";
 
 const Footer = () => {
-    const [linkAddress, setLinkAddress] = useState("");
-    const [iconName, setIconName] = useState("");
-    const [icons, setIcons] = useState([
-        "fa-brands fa-google",
-        "fa-brands fa-discord",
-        "fa-brands fa-instagram",
-    ]);
+    const [linkAddress, setLinkAddress] = useState("https://");
+    const [iconName, setIconName] = useState("fa fa-");
+    const [socialMedia, setSocialMedia] = useState([]);
+    const [footerInfo,setFooterInfo]=useState([]);
+    console.log("AAA",socialMedia);
+
+    const getFooterData = async ()=>{
+        try {
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/footer`);
+            setFooterInfo(res.data[0]);
+            setSocialMedia(res.data[0].socialMedia);
+        }catch (err){
+            console.log(err);
+        }
+    }
+
+   useEffect(()=>{
+       getFooterData();
+   },[]);
+
+
     const onSubmit = async (values, actions) => {
-        await new Promise((resolve) => setTimeout(resolve, 4000));
-        actions.resetForm();
+        // await new Promise((resolve) => setTimeout(resolve, 4000));
+        // actions.resetForm();
+        //console.log("values",values);
+        try {
+            const res = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/footer/${footerInfo._id}`,{
+                location: values.location,
+                email: values.email,
+                phoneNumber: values.phoneNumber,
+                desc: values.desc,
+                openingHours:{
+                    day: values.day,
+                    hour: values.time,
+                },
+                    socialMedia:socialMedia,
+
+            });
+           if(res.status === 201){
+               getFooterData();
+               toast.success("You have successfuly updates");
+           }
+        }catch (err){
+            console.log(err);
+        }
     };
 
     const {values, errors, touched, handleSubmit, handleChange, handleBlur} =
         useFormik({
+            enableReinitialize:true,
+            validateOnChange:true,
             initialValues: {
-                location: "",
-                email: "",
-                phoneNumber: "",
-                desc: "",
-                day: "",
-                time: "",
+                location: footerInfo?.location,
+                email: footerInfo?.email,
+                phoneNumber: footerInfo?.phoneNumber,
+                desc: footerInfo?.desc,
+                day: footerInfo?.openingHours?.day,
+                time: footerInfo?.openingHours?.hour,
             },
             onSubmit,
             validationSchema: footerSchema,
@@ -51,7 +90,7 @@ const Footer = () => {
         }, {
             id: 3,
             name: "phoneNumber",
-            type: "number",
+            type: "text",
             placeholder: "Your Phone Number",
             value: values.phoneNumber,
             errorMessage: errors.phoneNumber,
@@ -82,8 +121,16 @@ const Footer = () => {
             touched: touched.time,
         },
     ];
+    const handleCreate = (e)=>{
+    setSocialMedia([...footerInfo?.socialMedia,{
+        icon:iconName,
+        link:linkAddress
+    }]);
+    setLinkAddress("https://");
+    setIconName("fa fa-");
+    }
     return (
-        <form className="lg:p-8 flex-1 lg:mt-0 mt-5">
+        <form className="lg:p-8 flex-1 lg:mt-0 mt-5" onSubmit={handleSubmit}>
             <Title addClass="text-[40px]">Footer Settings</Title>
             <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mt-4">
                 {inputs.map((input) => (
@@ -100,37 +147,30 @@ const Footer = () => {
                     <Input
                         placeholder="Link Address"
                         value={linkAddress}
-                        defaultValue="https://"
-                        onChange={handleChange}/>
-                    <Input
-                        placeholder="Icon Name"
-                        defaultValue="fa fa-"
-                        onChange={(e) => setIconName(e.target.value)}
-
-                        value={iconName}
-
+                        onChange={(e)=>setLinkAddress(e.target.value)}
                     />
 
+                    <Input
+                        placeholder="Icon Name"
+                        value={iconName}
+                        onChange={(e) => setIconName(e.target.value)}
+                    />
                     <button
                         className="btn-primary"
                         type="button"
-                        onClick={() => {
-                            setIcons([...icons, iconName]);
-                            setIconName("fa fa-");
-                            setLinkAddress("https://")
-                        }}
+                        onClick={handleCreate}
                     >
                         Add
                     </button>
                 </div>
                 <ul className="flex items-center gap-6">
-                    {icons.map((icon, index) => (
+                    {socialMedia?.map((item, index) => (
                         <li key={index} className="flex items-center">
-                            <i className={`${icon} text-2xl`}></i>
+                            <i className={`${item.icon} text-2xl`}></i>
                             <button
                                 className="text-danger"
                                 onClick={() => {
-                                    setIcons((prev) => prev.filter((item, i) => i !== index));
+                                    setSocialMedia((prev) => prev.filter((item, i) => i !== index));
                                 }}
                                 type="button"
                             >
@@ -140,7 +180,7 @@ const Footer = () => {
                     ))}
                 </ul>
             </div>
-            <button className="btn-primary mt-4">Update</button>
+            <button className="btn-primary mt-4" type="submit">Update</button>
         </form>
     );
 };
