@@ -21,7 +21,7 @@ const Order =()=>{
 
 
     const handleStatus = async (id)=>{
-        console.log("id",id)
+        //console.log("id",id)
         const item = orders.find((item)=>item._id === id);
         const currentStatus = item.status;
         try {

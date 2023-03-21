@@ -31,6 +31,9 @@ const OrderSchema = new mongoose.Schema(
         method:{
             type:Number,
         },
+        productOrder:{
+            type:[],
+        },
 
     },
     {timestamps:true}
