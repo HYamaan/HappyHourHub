@@ -23,7 +23,7 @@ const MenuItem = (props)=>{
         _id:props._id,
     }
     const handleClick=()=>{
-        dispatch(cartActions.addProduct({...createProduct}));
+        dispatch(cartActions.addProduct({...createProduct,productTotal:1}));
 
     }
 

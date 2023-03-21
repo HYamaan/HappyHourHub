@@ -96,10 +96,17 @@ const cartSlice = createSlice({
                     };
                     state.products[decreaseItemIndex] = tempProduct;
                     if (state.products[decreaseItemIndex].productTotal === 0) {
-                       if(confirm("Are you sure you want to delete the product?")){
-                           state.products.splice(decreaseItemIndex,1);
-                       }
-                       else{return;}
+                        if (confirm("Are you sure you want to delete the product?")) {
+                            state.products.splice(decreaseItemIndex, 1);
+                        } else {
+                            state.totalQuantity++;
+                            state.total += action.payload.price;
+                            const tempProduct = {
+                                ...action.payload,
+                                productTotal: state.products[decreaseItemIndex].productTotal + 1
+                            };
+                            state.products[decreaseItemIndex] = tempProduct;
+                        }
 
                     }
                 }
@@ -116,16 +123,19 @@ const cartSlice = createSlice({
             });
 
             if (removeItemIndex >= 0) {
-                if(state.totalQuantity >= 0){
+                if (state.totalQuantity >= 0) {
 
                     if (state.products[removeItemIndex].productTotal >= 0) {
-                        if(confirm("Are you sure you want to delete the product?") ){
+                        if (confirm("Are you sure you want to delete the product?")) {
 
-                        state.totalQuantity -= state.products[removeItemIndex].productTotal;
-                        state.total -= state.products[removeItemIndex].price * state.products[removeItemIndex].productTotal;
-                        state.products.splice(removeItemIndex,1);
-                        // state.products.filter((item) => item.addIndex !== action.payload.addIndex);
-                    }else{return;}}
+                            state.totalQuantity -= state.products[removeItemIndex].productTotal;
+                            state.total -= state.products[removeItemIndex].price * state.products[removeItemIndex].productTotal;
+                            state.products.splice(removeItemIndex, 1);
+                            // state.products.filter((item) => item.addIndex !== action.payload.addIndex);
+                        } else {
+                            return;
+                        }
+                    }
                 }
             }
 
