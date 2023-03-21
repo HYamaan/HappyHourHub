@@ -7,7 +7,8 @@ import Image from "next/image";
 import {FaShoppingCart} from "react-icons/fa"
 const MenuItem = (props)=>{
 
-    const cart = useSelector((state)=>state.cart)
+    const cart = useSelector((state)=>state.cart);
+    const findCart = cart.products.find((item)=>item._id === props._id);
     const dispatch= useDispatch();
     const createProduct = {
         category:props.category,
@@ -46,7 +47,7 @@ const MenuItem = (props)=>{
                 <div className="flex items-center justify-between mt-4">
                     <div>${props.prices[0]}</div>
                     <button className="btn-primary !w-10 !h-10 rounded-full !p-0 grid place-content-center"
-                    onClick={handleClick}>
+                    onClick={handleClick} disabled={findCart}>
                         <FaShoppingCart/>
                     </button>
                 </div>
