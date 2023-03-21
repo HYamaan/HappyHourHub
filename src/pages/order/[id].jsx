@@ -1,8 +1,14 @@
 import React from "react";
 import Image from "next/image";
 import axios from "axios";
+import * as PropTypes from "prop-types";
 
 
+function FontAwesomeIcon(props) {
+    return null;
+}
+
+FontAwesomeIcon.propTypes = {icon: PropTypes.string};
 const Order = ({order}) => {
     const status = order?.status;
     const statusClass = (index) => {
@@ -29,7 +35,8 @@ const Order = ({order}) => {
                     {
                         <tr className=" border-b border-gray-700 bg-secondary
                     hover:bg-primary hover:border-primary transition-all" key={order._id}>
-                            <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2">
+                            <td className="py-4 px-2 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2">
+                                <i className="fa-solid fa-arrow-down mr-6"></i>
                                 {order._id.substring(0, 5)}...
                             </td>
                             <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{order?.customer}
@@ -56,7 +63,7 @@ const Order = ({order}) => {
                     <div className={`relative flex flex-col items-center ${statusClass(2)}`}>
                         <Image src="/images/bike.png" alt="/images/bike.png"
                                className="w-auto h-auto" width={40} height={40}/>
-                        <span>On the way </span>
+                        <span>On the way</span>
                     </div>
                     <div className={`relative flex flex-col items-center ${statusClass(3)}`}>
                         <Image src="/images/delivered.png" alt="/images/delivered.png" className="w-auto h-auto" width={40} height={40}/>
@@ -65,6 +72,7 @@ const Order = ({order}) => {
                 </div>
             </div>
         </div>
+
     </div>
 }
 export const getServerSideProps = async ({params}) => {
