@@ -5,14 +5,15 @@ import Title from "../../components/UI/Title";
 import {useSelector, useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice"
 import axios from "axios";
+import {use} from "bcrypt/promises";
 
 
 
 const Id = ({food}) => {
-;
+    let x=0;
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart);
-
+    const [addToIndex,setAddToIndex]=useState(0) ;
     const [prices, setPrices] = useState(food.prices);
     const [price, setPrice] = useState(prices[0]);
     const [size, setSize] = useState(0);
@@ -45,7 +46,10 @@ const Id = ({food}) => {
     //console.log(extras);
 
     const handleClick=()=>{
-        dispatch(cartActions.addProduct({...food,extras,price}));
+
+        console.log("x",addToIndex);
+        dispatch(cartActions.addProduct({...food,extras,price,productTotal:1,addIndex:addToIndex}));
+        setAddToIndex((prev)=>prev + 1);
         console.log(cart)
     }
 
@@ -103,7 +107,7 @@ const Id = ({food}) => {
                     )}
 
                 </div>
-                <button className="btn-primary " onClick={handleClick}>Add to Cart</button>
+                <button className="btn-primary " onClick={()=>handleClick()}>Add to Cart</button>
             </div>
         </div>
     </React.Fragment>
