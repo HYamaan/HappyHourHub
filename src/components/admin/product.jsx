@@ -18,7 +18,7 @@ const Product = () => {
         }
         getProducts();
     }, [setProducts])
-    console.log("products", products);
+    //console.log("products", products);
 
     const onHandleDeleteProduct = async (id) => {
         try {
