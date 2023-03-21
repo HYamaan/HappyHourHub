@@ -1,53 +1,137 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 
-
 const cartSlice = createSlice({
     name: "cart",
     initialState: {
         products: [],
         totalQuantity: 0,
         total: 0,
+
+
     },
     reducers: {
         addProduct: (state, action) => {
 
-            state.totalQuantity ++;
-            state.products.push(action.payload);
-            state.total += action.payload.price;
+            let dependentSomeArray = false;
+            let allItemIndexArray = [];
+            let booleanProductVerification = [];
 
+            state.products.forEach((item, index) => {
+                if (item._id === action.payload._id) {
+                    dependentSomeArray = true;
+                    allItemIndexArray.push({item, index});
+                }
+            });
+
+            if (state.products.length === 0 || allItemIndexArray.length === 0) {
+                const tempProduct = {...action.payload};
+                state.totalQuantity++;
+                state.total += action.payload.price;
+                state.products.push(tempProduct);
+            }
+            allItemIndexArray.filter((productIndex) => productIndex.item.extras.length === action.payload.extras.length)
+                .map((productIndex) => {
+                    let productVerification = productIndex.item.extras.every((value, index) => value._id === action.payload.extras[index]._id);
+                    booleanProductVerification.push(productVerification);
+                    if (productVerification) {
+                        state.totalQuantity++;
+                        state.total += action.payload.price;
+                        state.products[productIndex.index].productTotal += 1;
+                        return;
+                    } else {
+                        return;
+                    }
+                });
+            if (dependentSomeArray == true) {
+                const booleanProductVerificationFilter = booleanProductVerification.some((currentValue) => currentValue === true);
+                if (booleanProductVerificationFilter == false) {
+                    const tempProduct = {...action.payload};
+                    state.totalQuantity++;
+                    state.total += action.payload.price;
+                    state.products.push(tempProduct);
+
+                }
+            }
 
         },
-        // addProduct1: (state, action) => {
-        // const existingItem = state.products.find((item)=>item.id === action.payload.id);
-        //  const existingStateProductsFilter = state.products.filter(item=>item.id === action.payload.id);
-        //   const existingStateProductsMap = existingStateProductsFilter.map(item=> item.extras)
-        //
-        //  const stateItem = JSON.parse(JSON.stringify(existingStateProductsMap));
-        // -------------------------------------------------------------------------------
-        //   console.log(stateItem)
-        //     const newItem = action.payload;
-        //     //console.log("Extras",newItem.extras.length)
-        //     //console.log(state.products.map(item=>item.extras.map(item=>console.log(item.id))))
-        //     const existingItem = state.products.find((item)=>item.id === newItem.id);
-        //     const existingProduct=
-        //
-        //     state.totalQuantity += 1;
-        //     const stateItem = JSON.parse(JSON.stringify(state.products));
-        //     console.log(stateItem);
-        //     if(existingItem){
-        //
-        //         existingItem.quantity++
-        //         existingItem.price +=newItem.price;
-        //         state.total= state.total + newItem.price;
-        //     }
-        //     else{
-        //         state.products.push(action.payload);
-        //         state.total += action.payload.price
-        //     }
-        //
-        //
-        // },
+        increaseProduct: (state, action) => {
+            // const itemIndex = state.products.findIndex((item)=>item._id === action.payload._id);
+
+            let addItemIndex = 0;
+            //const itemIndex = state.products.findIndex((item)=>item.addIndex === action.payload.item.addIndex);
+            state.products.forEach((item, index) => {
+                if (item.addIndex === action.payload.addIndex) {
+                    addItemIndex = index;
+                }
+            });
+
+            if (addItemIndex >= 0) {
+                state.totalQuantity++;
+                state.total += action.payload.price;
+                const tempProduct = {...action.payload, productTotal: state.products[addItemIndex].productTotal + 1};
+                state.products[addItemIndex] = tempProduct;
+
+            }
+        },
+
+        decreaseProduct: (state, action) => {
+            let decreaseItemIndex = 0;
+            //const itemIndex = state.products.findIndex((item)=>item.addIndex === action.payload.item.addIndex);
+
+            state.products.forEach((item, index) => {
+                if (item.addIndex === action.payload.addIndex) {
+                    decreaseItemIndex = index;
+
+                }
+            });
+
+            if (decreaseItemIndex >= 0) {
+                if (state.products[decreaseItemIndex].productTotal > 0) {
+                    state.totalQuantity--;
+                    state.total -= action.payload.price;
+                    const tempProduct = {
+                        ...action.payload,
+                        productTotal: state.products[decreaseItemIndex].productTotal - 1
+                    };
+                    state.products[decreaseItemIndex] = tempProduct;
+                    if (state.products[decreaseItemIndex].productTotal === 0) {
+                       if(confirm("Are you sure you want to delete the product?")){
+                           state.products.splice(decreaseItemIndex,1);
+                       }
+                       else{return;}
+
+                    }
+                }
+            }
+
+        },
+
+        removeProduct: (state, action) => {
+            let removeItemIndex = 0;
+            state.products.forEach((item, index) => {
+                if (item.addIndex === action.payload.addIndex) {
+                    removeItemIndex = index;
+                }
+            });
+
+            if (removeItemIndex >= 0) {
+                if(state.totalQuantity >= 0){
+
+                    if (state.products[removeItemIndex].productTotal >= 0) {
+                        if(confirm("Are you sure you want to delete the product?") ){
+
+                        state.totalQuantity -= state.products[removeItemIndex].productTotal;
+                        state.total -= state.products[removeItemIndex].price * state.products[removeItemIndex].productTotal;
+                        state.products.splice(removeItemIndex,1);
+                        // state.products.filter((item) => item.addIndex !== action.payload.addIndex);
+                    }else{return;}}
+                }
+            }
+
+        },
+
+
         reset: (state, action) => {
             state.products = [];
             state.total = 0;
