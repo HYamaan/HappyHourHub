@@ -4,6 +4,7 @@ import Input from "../form/Input";
 import {useFormik} from "formik";
 import {profileSchema} from "../../schema/profileSchema";
 import axios from "axios";
+import {toast} from "react-toastify";
 
 const Account = ({ user }) => {
     const onSubmit = async (values, actions) => {
@@ -12,10 +13,13 @@ const Account = ({ user }) => {
                 `${process.env.NEXT_PUBLIC_API_URL}/users/${user._id}`,
                 values
             );
+            if(res.status===200){
+                toast.success("Profile successfuly updated")
+            }
         } catch (err) {
             console.log(err);
         }
-        actions.resetForm();
+
     };
 
     const { values, errors, touched, handleSubmit, handleChange, handleBlur } =

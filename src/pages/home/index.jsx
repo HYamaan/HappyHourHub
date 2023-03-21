@@ -6,7 +6,6 @@ import MenuWrapper from "../../components/products/MenuWrapper";
 import About from "../../components/About";
 import Reservation from "../../components/Reservation";
 import Customers from "../../components/customers/Customers";
-import axios from "axios";
 
 const Home=({categoryList,productList})=>{
    // console.log(categoryList)

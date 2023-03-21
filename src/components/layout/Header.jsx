@@ -59,7 +59,6 @@ const Header = () => {
           <Link href="/auth/login" className={router.pathname == "/auth/login" ? "text-primary" : ""}>
              <FaUserAlt className="hover:text-primary transition-all cursor-pointer" />
 
-
           </Link>
           <Link href="/cart" className= {` ${router.pathname == "/cart" ? "text-primary" : ""}` }>
             <span className="relative">
