@@ -7,7 +7,7 @@ const MenuWrapper = ({categoryList ,productList})=>{
     //console.log("categoryList",categoryList,"\n",productList)
     const [isActive,setIsActive] =useState(0);
     const [filter,setFilter] =useState(0);
-
+    const [productLimit,setProductLimit] =useState(3);
     useEffect(()=>{
         setFilter(productList.filter((product)=>product.category === categoryList[isActive].title.toLowerCase()))
     },[productList,categoryList,isActive]);
@@ -18,11 +18,14 @@ const MenuWrapper = ({categoryList ,productList})=>{
             <div className="flex flex-col items-center ">
                 <Title className="text-[40px]"> Our Menu</Title>
                 <div className="mt-10">
-                    {categoryList && categoryList.map((categories,index)=>(
+                    {categoryList && categoryList?.map((categories,index)=>(
                         <button className={`px-6 py-2  rounded-3xl mx-1 
                         ${index === isActive && "bg-secondary text-white"}
                         `} key={categories._id}
-                        onClick={()=>setIsActive(index)}>
+                        onClick={()=> {
+                            setIsActive(index);
+                            setProductLimit( 3)
+                        }}>
                             {categories.title}
                         </button>
                         ))}
@@ -32,11 +35,15 @@ const MenuWrapper = ({categoryList ,productList})=>{
                 <div className="mt-8 mb-11 grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 ">
 
                     { filter.length>0 &&
-                        filter.map((product,index)=>(<MenuItem key={product._id} {...product}/>))}
+                        filter.slice(0,productLimit).map((product,index)=>(<MenuItem key={product._id} {...product}/>))}
 
                 </div>
+
                 <div className="flex justify-center">
-                    <Link href="/menu" className="btn-primary mb-24 !py-[10px] !px-[55px]">View More</Link>
+                    <button href="/menu" className="btn-primary mb-24 !py-[10px] !px-[55px]"
+                        onClick={()=>setProductLimit(productLimit + 3)}
+                    >View More
+                    </button>
                 </div>
             </div>
         </div>
