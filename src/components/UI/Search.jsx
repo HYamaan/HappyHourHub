@@ -15,6 +15,8 @@ function Search(props) {
     const [search,setSearch]=useState("");
     const [filtered,setFiltered]=useState([]);
 
+    const[iconsPackman,setIconsPackman]=useState(true);
+
 
     useEffect(() => {
         const getProducts = async () => {
@@ -28,13 +30,23 @@ function Search(props) {
         }
        setTimeout( ()=>{
            getProducts();
-       },1000)
+           setIconsPackman(true);
+       },1000);
     }, []);
     const handleSearch = (e)=>{
         setSearch(e.target.value);
         const searchFilter = products.filter((products)=>products.title.toLowerCase().includes(e.target.value.toLowerCase())).slice(0,5);
         setFiltered(searchFilter);
+
+        if(searchFilter.length ===0){
+            setIconsPackman(true);
+        }
     }
+    useEffect(()=>{
+       setTimeout( ()=>{
+            setIconsPackman(false);
+        },1000);
+    },[handleSearch])
 
     return (
         <div
@@ -76,8 +88,7 @@ function Search(props) {
                                     )}
 
                                 </ul>)
-                            : (
-                                <div className="flex justify-center items-center mt-3">
+                            : (iconsPackman ?(<div className="flex justify-center items-center mt-3">
                                     <PacmanLoader
                                         color="#fff200"
                                         cssOverride={{}}
@@ -86,9 +97,8 @@ function Search(props) {
                                         size={16}
                                         speedMultiplier={1}
                                     />
+                            </div>) : ( <div className="text-center text-primary"> No result found</div>  ))
 
-                                </div>
-                            )
                         }
                         <button className="absolute top-4 right-4"
                                 onClick={() => props.setIsSearchModal(false)}>
