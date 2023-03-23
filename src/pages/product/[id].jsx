@@ -78,7 +78,7 @@ let x=10;
 
     const handleClick=()=>{
         dispatch(cartActions.addProduct({...food,extras,price,productTotal:1,addIndex:cartIndex.addToIndex}));
-        dispatch(cartIndexActions.addToCartIndex(cartIndex.addToIndex));
+        dispatch(cartIndexActions.addToCartIndex());
 
     }
 
