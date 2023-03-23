@@ -1,6 +1,8 @@
 import React, {useEffect} from "react";
 import {useSelector, useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice";
+import {cartIndexActions} from "../../redux/cartIndex";
+
 
 import Link from "next/link";
 import Image from "next/image";
@@ -8,6 +10,7 @@ import {FaShoppingCart} from "react-icons/fa"
 const MenuItem = (props)=>{
 
     const cart = useSelector((state)=>state.cart);
+    const cartIndex =useSelector((state)=>state.cartIndex);
     const findCart = cart.products.find((item)=>item._id === props._id);
     const dispatch= useDispatch();
     const createProduct = {
@@ -22,9 +25,10 @@ const MenuItem = (props)=>{
         updatedAt:props.updatedAt,
         _id:props._id,
     }
-    const handleClick=()=>{
-        dispatch(cartActions.addProduct({...createProduct,productTotal:1}));
 
+    const handleClick=()=>{
+        dispatch(cartActions.addProduct({...createProduct,productTotal:1,addIndex:cartIndex.addToIndex}));
+        dispatch(cartIndexActions.addToCartIndex(cartIndex.addToIndex));
     }
 
     return <React.Fragment>

@@ -3,14 +3,17 @@ import Image from "next/image";
 import Title from "../../components/UI/Title";
 import {useSelector,useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice";
+import {ProductExtrasActions} from "../../redux/ProductExtras";
 import axios from "axios";
 import {useSession} from "next-auth/react";
 import {toast} from "react-toastify";
 import {useRouter} from "next/router";
+import Router from "next/router";
 
 const Cart = ({userList}) => {
 
     const {data:session}=useSession();
+    const productExtras=useSelector((state)=>state.productExtras);
     const dispatch=useDispatch();
     const router = useRouter();
     let cart = useSelector(state=>state.cart);
@@ -26,15 +29,16 @@ const Cart = ({userList}) => {
                 title:item.title,
                 extras:item.extras,
                 price:item.price,
-                productQuantity:item.productQuantity
+                quantity:item.productTotal,
+                orderId:item._id,
             };
+           console.log()
             setCartProduct((prev)=>[...prev,products]);
         });
 
 
     useEffect(()=>{
         cartProducts();
-        console.log("cartProduct",cartProduct);
     },[cart.products.length])
 
     const newOrder= {
@@ -67,6 +71,9 @@ const Cart = ({userList}) => {
             }
         }catch (err){
             toast.error("Please login first.",{autoClose:1000})
+            setTimeout(()=>{
+                router.push("/auth/login");
+            },700);
             console.log(err);
         }
     }
@@ -84,11 +91,18 @@ const Cart = ({userList}) => {
 
     }
 
-    const productPageHandler=(pathName)=>{
-        router.push("/product/"+pathName._id.toString());
+    const productPageHandler=(product)=>{
+
+        const name = "productPage";
+        dispatch(ProductExtrasActions.addToExtrasswithRedux(product));
+        Router.push({
+            pathname:"/product/"+product._id.toString(),
+            query: {name},
+        })
+        //router.push("/product/"+pathName._id.toString());
 
     }
-    console.log(cart.products.map(item=>console.log(item)));
+    //console.log(cart.products.map(item=>console.log(item)));
 
     return <div  className="min-h-[calc(100vh_-_433px)]">
         <div className="flex justify-between items-center md:flex-row flex-col">
@@ -118,13 +132,15 @@ const Cart = ({userList}) => {
                                       priority={true}
                                       className="w-auto h-auto"
                                   /> <span>{product.title}</span></td>
-                              <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">
+                              <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white "
+                                  onClick={()=>{productPageHandler(product)}}
+                              >
                                   {
-                                     product.extras?.length >0 ?  (product.extras.map(item=><span key={item._id}>{item.text}</span>)) : ("Empty")
+                                     product.extras?.length >0 ?  (product.extras.map(item=><span key={item._id} className="mx-1">{item.text}</span>)) : ("Empty")
                                   }</td>
-                              <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">${product.price}</td>
+                              <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white"
+                                  onClick={()=>{productPageHandler(product)}}>${product.price}</td>
                               <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">
-
                                <div className="flex items-center justify-center gap-2 flex-row">
                                    <button className="border w-4 h-4 rounded-full text-md flex items-center justify-center"
                                     onClick={()=>increaseItemHandler(product)}
