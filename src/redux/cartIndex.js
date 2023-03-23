@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 
-const cartIndex= createSlice({
+const indexCart= createSlice({
     name:"cartIndex",
     initialState:{
         addToIndex:0,
@@ -13,5 +13,5 @@ const cartIndex= createSlice({
         }
     }
 });
-export const cartIndexActions=cartIndex.actions;
-export default cartIndex.reducer;
+export const cartIndexActions=indexCart.actions;
+export default indexCart.reducer;
