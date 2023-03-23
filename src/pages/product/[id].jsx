@@ -3,8 +3,8 @@ import Image from "next/image";
 import Title from "../../components/UI/Title";
 
 import {useSelector, useDispatch} from "react-redux";
-import {cartActions} from "../../redux/cartSlice"
-import {cartIndexActions} from "../../redux/cartIndex"
+import {cartActions} from "../../redux/cartSlice";
+import {cartIndexActions} from "../../redux/cartIndex";
 import axios from "axios";
 import {useRouter} from "next/router";
 
