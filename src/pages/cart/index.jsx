@@ -13,7 +13,7 @@ import Router from "next/router";
 const Cart = ({userList}) => {
 
     const {data:session}=useSession();
-    const productExtras=useSelector((state)=>state.productExtras);
+    //const productExtras=useSelector((state)=>state.productExtras);
     const dispatch=useDispatch();
     const router = useRouter();
     let cart = useSelector(state=>state.cart);
@@ -59,7 +59,6 @@ const Cart = ({userList}) => {
                     const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`,newOrder);
                     if(res.status === 201){
                         dispatch(cartActions.reset())
-                        toast.success("Order created successfully",{autoClose:1000});
                         toast.success("Order created successfully",{autoClose:1000});
                         await router.push(`/order/${res.data._id}`);
 

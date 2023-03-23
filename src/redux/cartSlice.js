@@ -23,7 +23,7 @@ const cartSlice = createSlice({
             });
 
             if (state.products.length === 0 || allItemIndexArray.length === 0) {
-                const tempProduct = {...action.payload};
+                const tempProduct = {...action.payload,status:0};
                 state.totalQuantity++;
                 state.total += action.payload.price;
                 state.products.push(tempProduct);
@@ -44,7 +44,7 @@ const cartSlice = createSlice({
             if (dependentSomeArray == true) {
                 const booleanProductVerificationFilter = booleanProductVerification.some((currentValue) => currentValue === true);
                 if (booleanProductVerificationFilter == false) {
-                    const tempProduct = {...action.payload};
+                    const tempProduct = {...action.payload,status:0};
                     state.totalQuantity++;
                     state.total += action.payload.price;
                     state.products.push(tempProduct);
