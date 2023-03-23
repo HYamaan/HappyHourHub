@@ -3,7 +3,7 @@ import Image from "next/image";
 import Title from "../../components/UI/Title";
 import {useSelector,useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice";
-import {productExtrasActions} from "../../redux/productExtras";
+import {ProductExtrasActions} from "../../redux/ProductExtras";
 import axios from "axios";
 import {useSession} from "next-auth/react";
 import {toast} from "react-toastify";
@@ -94,7 +94,7 @@ const Cart = ({userList}) => {
     const productPageHandler=(product)=>{
 
         const name = "productPage";
-        dispatch(productExtrasActions.addToExtrasswithRedux(product));
+        dispatch(ProductExtrasActions.addToExtrasswithRedux(product));
         Router.push({
             pathname:"/product/"+product._id.toString(),
             query: {name},

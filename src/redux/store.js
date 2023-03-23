@@ -1,12 +1,12 @@
 import {configureStore} from "@reduxjs/toolkit";
 import cartSlice from "./cartSlice";
-import indexCart from "./cartIndex";
-import productExtras from "./productExtras";
+import cartIndex from "./cartIndex";
+import ProductExtras from "./ProductExtras";
 
 export default  configureStore({
     reducer:{
         cart:cartSlice,
-        cartIndex:indexCart,
-        productExtras:productExtras,
+        cartIndex:cartIndex,
+        productExtras:ProductExtras,
     }
 })
