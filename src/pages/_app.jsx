@@ -16,7 +16,7 @@ import "slick-carousel/slick/slick-theme.css";
 import '../styles/globals.css'
 Router.events.on("routeChangeStart",()=>NProgress.start());
 Router.events.on("routeChangeComplete",()=>NProgress.done());
-Router.events.on("routeChangeError",()=>NProgress.error());
+//Router.events.on("routeChangeError",()=>NProgress.error());
 
 
 export default function App({Component, pageProps: {session, ...pageProps}}) {
