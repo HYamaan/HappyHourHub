@@ -61,11 +61,11 @@ const Header = () => {
 
           </Link>
           <Link href="/cart" className= {` ${router.pathname == "/cart" ? "text-primary" : ""}` }>
-            <span className="relative">
+            <span className="relative z-0">
             <FaShoppingCart className="hover:text-primary transition-all cursor-pointer peer" />
-             <span className={`absolute text-xs -top-2 -right-2 rounded-full w-4 h-4  font-bold
+              {!isMenuModal && ( <span className={`absolute text-xs -top-2 -right-2 rounded-full w-4 h-4  font-bold z-0
              flex justify-center items-center ${router.pathname == "/cart" ? "text-secondary bg-tertiary" : "bg-primary text-black"} `}
-             >{cart.totalQuantity=== 0 ? "0" : cart.totalQuantity}</span>
+              >{cart.totalQuantity=== 0 ? "0" : cart.totalQuantity}</span>)}
            </span>
           </Link>
           <button onClick={() => setIsSearchModal(true)}>

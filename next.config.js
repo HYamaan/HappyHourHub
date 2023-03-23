@@ -3,7 +3,8 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  reactStrictMode: true,
+
+  reactStrictMode: false,
   images: {
     domains: ["res.cloudinary.com"],
   },

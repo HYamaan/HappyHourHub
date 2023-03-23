@@ -1,56 +1,85 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Image from "next/image";
 import Title from "../../components/UI/Title";
 
 import {useSelector, useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice"
+import {cartIndexActions} from "../../redux/cartIndex"
 import axios from "axios";
-import {use} from "bcrypt/promises";
+import {useRouter} from "next/router";
 
 
 
 const Id = ({food}) => {
-    let x=0;
-    const dispatch = useDispatch();
-    const cart = useSelector((state) => state.cart);
-    const [addToIndex,setAddToIndex]=useState(0) ;
-    const [prices, setPrices] = useState(food.prices);
-    const [price, setPrice] = useState(prices[0]);
-    const [size, setSize] = useState(0);
-    const [extraItems, setExtraItems] = useState(food.extraOptions);
-    const [extras, setExtras] = useState([])
 
+    const dispatch = useDispatch();
+    const router =useRouter();
+
+    const cartIndex = useSelector((state)=>state.cartIndex);
+    const productExtrass = useSelector((state)=>state.productExtras);
+    const [prices, setPrices] = useState(food.prices);
+    const [price, setPrice] = useState(food.prices[0]);
+    const [size, setSize] = useState(0);
+    const [extras, setExtras] = useState([]);
+    const {name} = router.query;
+    const [productExtrasID,setProductExtrasID]=useState([]);
+
+
+    useEffect(()=>{
+        if (name){
+            productExtrass.productExtras?.extras?.map((item,index)=>{
+                const variable = food.extraOptions.some((arr)=>arr._id.includes(item._id));
+                if(variable){
+                    //setProductExtrasID((prev)=>[...prev,item._id]);
+                    autoCheckboxClick(item);
+                }
+            })
+        }
+    },[]);
+
+
+let x=10;
     const handleSize = (sizeIndex) => {
         const difference = prices[sizeIndex] - prices[size];
         setSize(sizeIndex)
         changePrice(difference)
-
     }
+
     const changePrice = (number) => {
-        setPrice(price + number)
 
-        //console.log(price)
+        console.log(number + price)
+        setPrice((price) => number + price);
+
     }
+    const autoCheckboxClick=(item)=>{
+        setProductExtrasID((prev)=>[...prev,item._id]);
+        setExtras((prev)=>[...prev,item]);
+        changePrice(item.price);
+
+    }
+
     const handleChange = (e, item) => {
 
-        const checked = e.target.checked;
+
+        const checked= productExtrasID?.includes(item._id) ? false : e.target.checked;
+
         if (checked) {
-            changePrice(item.price);
-            setExtras([...extras, item])
+            autoCheckboxClick(item);
         } else {
+
             changePrice(-item.price)
             setExtras(extras.filter(el => el.id !== item.id));
+            setProductExtrasID(productExtrasID.filter(el => el !== item._id));
+
         }
 
     }
     //console.log(extras);
 
     const handleClick=()=>{
+        dispatch(cartActions.addProduct({...food,extras,price,productTotal:1,addIndex:cartIndex.addToIndex}));
+        dispatch(cartIndexActions.addToCartIndex(cartIndex.addToIndex));
 
-        console.log("x",addToIndex);
-        dispatch(cartActions.addProduct({...food,extras,price,productTotal:1,addIndex:addToIndex}));
-        setAddToIndex((prev)=>prev + 1);
-        console.log(cart)
     }
 
 
@@ -99,9 +128,16 @@ const Id = ({food}) => {
                 </div>}
                 <div className="flex gap-x-4 my-6 lg:justify-start justify-center">
                     {food.extraOptions.map((item)=>
-                        <label className="flex items-center gap-x-1" key={item._id}>
-                            <input type="checkbox" className="w-5 h-5 accent-primary "
-                                   onChange={(e) => handleChange(e, item)}/>
+                        <label className="flex items-center gap-x-2" key={item._id}>
+                            { (
+                                <input type="checkbox" className="w-5 h-5 accent-primary m "
+                                    checked={productExtrasID?.includes(item._id) ? true : false }
+                                    onChange={(e) => {
+                                        handleChange(e, item);
+                                    }}/>
+                            )
+
+                            }
                             <span className="text-sm font-semibold">{item.text}</span>
                         </label>
                     )}
