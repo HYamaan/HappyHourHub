@@ -13,7 +13,8 @@ const Register = () => {
     const router =useRouter();
     const onSubmit = async (values,actions) => {
       try {
-          const res =await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/register`,values)
+
+          const res =await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/register`,{...values,image:"https://res.cloudinary.com/dqotmpx6v/image/upload/v1679752797/admin_mitnsq.png"})
 
           if (res.status===200){
               toast.success("Success Notification !");
