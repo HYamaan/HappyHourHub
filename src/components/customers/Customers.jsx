@@ -1,11 +1,29 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Title from "../UI/Title";
 import CustomerItem from "./CustomerItem";
 import {IoIosArrowForward,IoIosArrowBack} from "react-icons/io"
 
 import Slider from "react-slick";
+import axios from "axios";
 
 const Customers = () => {
+    const [customerComment,setCustomerComments]=useState([]);
+
+    useEffect(()=>{
+        const getUserComments=async ()=>{
+            try {
+                const userComment=await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/adminComments`);
+                setCustomerComments(userComment.data);
+
+            }catch (err){
+                console.log(err);
+            }
+        }
+        getUserComments();
+    },[]);
+    console.log(customerComment);
+
+
     const NextBtn=({onClick})=>{
         return(
             <button className="absolute bg-primary text-2xl -bottom-12 left-1/2 flex items-center justify-center w-10 h-10 rounded-full text-white ml-1.5" onClick={onClick}>
@@ -48,10 +66,7 @@ const Customers = () => {
             </div>
 
                 <Slider {...settings}>
-                    <CustomerItem imgSrc="/images/client1.jpg"/>
-                    <CustomerItem imgSrc="/images/client2.jpg"/>
-                    <CustomerItem imgSrc="/images/client2.jpg"/>
-                    <CustomerItem imgSrc="/images/client1.jpg"/>
+                    {customerComment?.map((item)=>(<CustomerItem key={item._id} item={item}/>))}
 
                 </Slider>
 
