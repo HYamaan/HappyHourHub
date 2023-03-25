@@ -4,12 +4,27 @@ import {useFormik} from 'formik';
 import Input from "./form/Input";
 import Title from "./UI/Title";
 import {reservationSchema} from "../schema/reservationSchema";
+import axios from "axios";
+import {toast} from "react-toastify";
 
 
 
 const Reservation = () => {
     const onSubmit = async (values, actions) => {
-        await new Promise((resolve, _) => setTimeout(resolve, 2000));
+
+        try {
+            const reservation=await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/reservation`,values);
+            console.log(reservation.data);
+            if (reservation.status == 201){
+                    toast.success("Your reservation has been made.")
+            }else{
+                throw new Error();
+            }
+        }catch (err){
+            console.log(err);
+        }
+
+
         actions.resetForm();
     }
 
