@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 
 const AdminControlCommentSchema = new mongoose.Schema({
-    userId: {type: String}, image: {type: String}, comment: {type: String},
+    userId: {type: String},
+    fullName:{type:String},
+    image: {type: String},
+    comment: {type: String},
 }, {
     timestamps: true
 });

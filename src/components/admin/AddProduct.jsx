@@ -4,9 +4,7 @@ import OutsideClickHandler from "react-outside-click-handler";
 import Title from "../UI/Title";
 import {GiCancel} from "react-icons/gi";
 import axios from "axios";
-import localFont from "@next/font/local";
 import {toast} from "react-toastify";
-import {useFormik} from "formik";
 import PacmanLoader from "react-spinners/PacmanLoader";
 
 const AddProduct = ({setIsProductModal}) => {
@@ -69,7 +67,6 @@ const AddProduct = ({setIsProductModal}) => {
         formData.append("file", file);
         formData.append("upload_preset", "fast-food");
 
-
         try {
                 setLoading(true);
                 const uploadRes = await axios.post("https://api.cloudinary.com/v1_1/dqotmpx6v/image/upload", formData);
@@ -101,7 +98,6 @@ const AddProduct = ({setIsProductModal}) => {
             console.log(err);
         }
     }
-
 
 
 
