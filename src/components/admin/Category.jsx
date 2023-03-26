@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import Title from "../UI/Title";
 import Input from "../form/Input";
 import axios from "axios";
+import {set} from "mongoose";
 
 const Category = () => {
     const [inputText, setInputText] = useState("");
@@ -18,7 +19,7 @@ const Category = () => {
             }
         }
         getCategories();
-    }, [setInputText]);
+    }, [inputText,categories]);
     const handleCreate = async () => {
         try {
             const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/categories`,{title:inputText});
