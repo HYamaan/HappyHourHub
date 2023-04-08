@@ -16,7 +16,7 @@ const Login = () => {
     const router = useRouter();
     const[loading,setLoading]=useState(true);
     const onSubmit = async (values) => {
-        console.log("values",values);
+       // console.log("values",values);
         try {
             setLoading(false);
             const res = await axios.post(

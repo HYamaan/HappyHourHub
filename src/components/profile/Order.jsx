@@ -78,7 +78,7 @@ const Order = () => {
 
 const showProductMenu=  (productId)=>{
     router.push(`/product/${productId.toString()}`);
-    console.log("showProductMenu",productId)
+   // console.log("showProductMenu",productId)
 }
 
     return<>

@@ -21,7 +21,7 @@ const Customers = () => {
         }
         getUserComments();
     },[]);
-    console.log(customerComment);
+    //console.log(customerComment);
 
 
     const NextBtn=({onClick})=>{

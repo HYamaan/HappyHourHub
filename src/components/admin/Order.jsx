@@ -16,7 +16,6 @@ const Order = () => {
             try {
                 const order = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/orders`);
                 setOrders(order.data);
-                console.log("OrderPage", order.data)
             } catch (err) {
                 console.log(err);
             }
@@ -46,7 +45,6 @@ const Order = () => {
         if(findOrder){
             setCustomerOrderId(findOrder);
             setCustomerProduct(false);
-            console.log("customerOrderId",customerOrderId)
         }
 
     }
@@ -134,7 +132,7 @@ const Order = () => {
                                         customerOrderId?.productOrder.map((orderProduct)=>(
                                             <tr className=" border-b border-gray-700 bg-secondary
                     hover:bg-primary hover:border-primary transition-all group"
-                                                key={orderProduct._id}
+                                                key={orderProduct.orderId}
                                             >
                                                 <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2">
                                                     <Image

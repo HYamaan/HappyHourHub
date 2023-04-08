@@ -8,7 +8,7 @@ const cartIndex= createSlice({
     },
     reducers:{
         addToCartIndex:(state,action)=>{
-            console.log("addToIndex",action.payload);
+           // console.log("addToIndex",action.payload);
             state.addToIndex++;
         }
     }

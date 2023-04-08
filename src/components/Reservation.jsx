@@ -14,7 +14,7 @@ const Reservation = () => {
 
         try {
             const reservation=await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/reservation`,values);
-            console.log(reservation.data);
+           // console.log(reservation.data);
             if (reservation.status == 201){
                     toast.success("Your reservation has been made.")
             }else{

@@ -47,7 +47,7 @@ let x=10;
 
     const changePrice = (number) => {
 
-        console.log(number + price)
+        //console.log(number + price)
         setPrice((price) => number + price);
 
     }

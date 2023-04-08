@@ -11,7 +11,7 @@ const Footer = () => {
     const [iconName, setIconName] = useState("fa fa-");
     const [socialMedia, setSocialMedia] = useState([]);
     const [footerInfo,setFooterInfo]=useState([]);
-    console.log("AAA",socialMedia);
+    //console.log("AAA",socialMedia);
 
     const getFooterData = async ()=>{
         try {

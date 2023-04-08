@@ -47,7 +47,7 @@ const Login = () => {
                     res.data?.find((user) => user.email === session?.user?.email)
                 );
                 if(currentUser){
-                    console.log("Yönlendirme")
+                   //console.log("Yönlendirme")
                     session && await push("/profile/" + currentUser?._id);
                 }
 

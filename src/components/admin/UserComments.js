@@ -58,7 +58,7 @@ const Order = () => {
                 toast.success("User comment deleted.");
                 setComments((prev) => prev.filter((item) => item._id !== commentId));
             }
-            console.log(commentId);
+            //console.log(commentId);
         } catch (err) {
             console.log(err);
         }
@@ -70,7 +70,7 @@ const Order = () => {
                 toast.success("User comment removed from homepage.");
                 setHomePageComments((prev) => prev.filter((item) => item._id !== commentId));
             }
-            console.log(commentId);
+           // console.log(commentId);
         } catch (err) {
             console.log(err);
         }
