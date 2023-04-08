@@ -72,6 +72,7 @@ const Order = () => {
                                     <thead className="text-xs bg-gray-700 text-gray-400 uppercase">
                                     <tr>
                                         <th scope="col" className="py-3 px-6 uppercase">PRODUCT ID</th>
+                                        <th scope="col" className="py-3 px-6 uppercase">Time</th>
                                         <th scope="col" className="py-3 px-6 uppercase">CUSTOMER</th>
                                         <th scope="col" className="py-3 px-6 uppercase">TOTAL</th>
                                         <th scope="col" className="py-3 px-6 uppercase">PAYMENT</th>
@@ -88,6 +89,9 @@ const Order = () => {
                                             >
                                                 <i className="fa-solid fa-arrow-down mr-6"></i>
                                                 {order?._id.substring(0, 5)}...
+                                            </td>
+                                            <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">
+                                                {order?.createdAt.slice(0,10)}
                                             </td>
                                             <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">
                                                 {order?.customer}

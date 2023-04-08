@@ -12,7 +12,6 @@ const Category = () => {
         const getCategories = async () => {
             try {
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
-                console.log(res)
                 setCategories(res?.data);
             } catch (err) {
                 console.log(err);
