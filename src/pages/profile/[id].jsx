@@ -43,10 +43,11 @@ const Profile = ({ user }) => {
                 <div className="relative flex flex-col items-center px-10 py-5 border border-b-0">
                         <Image
                             src={uploadImageArr?.image ? uploadImageArr.image : "/images/client2.jpg"}
-
+                            width={100}
+                            height={100}
                             style={{objectFit:"cover"}}
                             priority={true}
-                            className="rounded-full cursor-pointer hover:opacity-50 "
+                            className="rounded-full cursor-pointer hover:opacity-50"
                             onClick={()=>setUploadImageShow(!uploadImageShow)}
                         />
                     <b className="text-2xl mt-1">{user?.fullName}</b>
