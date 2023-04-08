@@ -87,7 +87,7 @@ const Order = () => {
                                             <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white gap-x-1 "
                                             onClick={()=>showOrderProducts(order._id)}
                                             >
-                                                <i className="fa-solid fa-arrow-down mr-6"></i>
+                                                <i className="fa-solid fa-arrow-down mr-2"></i>
                                                 {order?._id.substring(0, 5)}...
                                             </td>
                                             <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">

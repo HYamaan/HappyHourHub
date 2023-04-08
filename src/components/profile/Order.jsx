@@ -7,6 +7,7 @@ import Image from "next/image";
 import {toast} from "react-toastify";
 import {useRouter} from "next/router";
 import PacmanLoader from "react-spinners/PacmanLoader";
+import {BiArrowBack} from "react-icons/bi";
 
 
 const Order = () => {
@@ -84,8 +85,18 @@ const showProductMenu=  (productId)=>{
     return<>
 
             <form className=" flex-1 lg:p-8 lg:mt-0 mt-5 ">
-            <Title className="text-[40px]">Account Settings</Title>
-            <div className="overflow-y-auto h-[575px]">
+                <div className="flex justify-between mb-1">
+                    <Title className="text-[40px]">Orders</Title>
+                    {
+                        showProducts &&
+                        <div className="flex items-center justify-center">
+                            <div className="btn-primary !px-3" onClick={()=>setShowProducts(!showProducts)}>
+                                <BiArrowBack />
+                            </div>
+                        </div>
+                    }
+                </div>
+            <div className="overflow-y-auto h-[475px]">
                 {
                     !isLoading ? (<div className="overflow-x-auto w-full h-max-[575px]">
                         {!showProducts ?
@@ -110,6 +121,7 @@ const showProductMenu=  (productId)=>{
                                         }}>
                                             <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2"
                                             >
+                                                <i className="fa-solid fa-arrow-down mr-2"></i>
                                                 <span>{order._id.substring(0, 5)}...</span></td>
                                             <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white ">
                                                 <span>{order?.address}</span></td>

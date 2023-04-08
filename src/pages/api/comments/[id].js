@@ -1,5 +1,6 @@
 import UserComments from "../../../models/UserComments";
 import dbConnect from "../../../utilities/dbConnect";
+import User from "../../../models/User";
 
 
 const handler = async (req,res)=>{
@@ -11,6 +12,16 @@ const handler = async (req,res)=>{
             const footer = await UserComments.findById(id);
             res.status(200).json(footer);
         }catch (err){
+            console.log(err);
+        }
+    }
+    if(method === "PUT") {
+        try {
+            const userControl = await User.findByIdAndUpdate(id, req.body, {
+                new: true,
+            });
+            res.status(200).json(userControl);
+        } catch (err) {
             console.log(err);
         }
     }

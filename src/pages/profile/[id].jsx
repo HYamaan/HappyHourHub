@@ -1,20 +1,33 @@
-import React, {useState} from "react";
-
+import React, {useEffect, useState} from "react";
 
 import Image from "next/image";
 import Account from "../../components/profile/Account";
 import Password from "../../components/profile/Password";
 import Order from "../../components/profile/Order";
+import UploadImage from "../../components/profile/UploadImage";
 import {getSession, signOut, useSession} from "next-auth/react";
 import {useRouter} from "next/router";
 import axios from "axios";
 import {toast} from "react-toastify";
 
+import styles from "./profile.module.css";
 
 
 const Profile = ({ user }) => {
+    const  [uploadImageShow,setUploadImageShow]=useState(false);
+    const  [uploadImageArr,setUploadImageArr]=useState(user);
+
     const [tabs, setTabs] = useState(0);
     const { push } = useRouter();
+    useEffect(()=> {
+        const getImage=async ()=>{
+            user = await axios.get(
+                `${process.env.NEXT_PUBLIC_API_URL}/users/${user._id}`,
+            );
+            setUploadImageArr(user.data);
+        }
+        getImage();
+    },[,uploadImageShow]);
     const handleSignOut =  async () => {
         if (confirm("Are you sure you want to sign out?")) {
             toast.success("You have successfully exited.")
@@ -24,17 +37,18 @@ const Profile = ({ user }) => {
     };
 
 
-    return (
-        <div className="flex px-10 min-h-[calc(100vh_-_433px)] lg:flex-row flex-col lg:mb-0 mb-10">
+    return (<>
+        <div className="flex px-10 min-h-[calc(100vh_-_233px)] lg:flex-row flex-col lg:mb-0 mb-10">
             <div className="lg:w-80 w-100 flex-shrink-0">
                 <div className="relative flex flex-col items-center px-10 py-5 border border-b-0">
-                    <Image
-                        src={user?.image ? user.image : "/images/client2.jpg"}
-                        alt=""
-                        width={100}
-                        height={100}
-                        className="rounded-full"
-                    />
+                        <Image
+                            src={uploadImageArr?.image ? uploadImageArr.image : "/images/client2.jpg"}
+                            alt=""
+                            width={100}
+                            height={100}
+                            className="rounded-full relative cursor-pointer hover:opacity-50"
+                            onClick={()=>setUploadImageShow(!uploadImageShow)}
+                        />
                     <b className="text-2xl mt-1">{user?.fullName}</b>
                 </div>
                 <ul className="text-center font-semibold">
@@ -82,6 +96,11 @@ const Profile = ({ user }) => {
             {tabs === 1 && <Password user={user} />}
             {tabs === 2 && <Order />}
         </div>
+            {
+                uploadImageShow &&
+                <UploadImage setUploadImageShow={setUploadImageShow} user={user}/>
+            }
+        </>
     );
 };
 

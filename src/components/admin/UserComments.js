@@ -39,13 +39,12 @@ const Order = () => {
         getAdminPageComments();
     });
 
-
     const addCommentToAdminComment = async (commentId) => {
         try {
             const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId.toString()}`);
             const {comment: comment, fullName: fullName, image: image, userId: userId} = res.data;
             const transferComments = {comment, fullName, image, userId};
-             await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/adminComments`, transferComments);
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/adminComments`, transferComments);
 
         } catch (err) {
             console.log(err);
