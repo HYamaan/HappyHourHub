@@ -5,8 +5,9 @@ import { ToastContainer } from 'react-toastify';
 import {SessionProvider} from "next-auth/react"
 import {Provider} from "react-redux";
 import store from "../redux/store"
+import {persistor} from "../redux/store";
 import {PersistGate} from "redux-persist/integration/react";
-import {persistStore} from "redux-persist";
+
 
 import Router from 'next/router'
 import NProgress from "nprogress";
@@ -21,20 +22,22 @@ Router.events.on("routeChangeComplete",()=>NProgress.done());
 //Router.events.on("routeChangeError",()=>NProgress.error());
 
 
-let persistor = persistStore(store);
+
 export default function App({Component, pageProps: {session, ...pageProps}}) {
 
     return(
-       <PersistGate persistor={persistor}>
+
            <SessionProvider session={session}>
                <Provider store={store}>
+                   <PersistGate persistor={persistor}>
                    <Layout>
                        <ToastContainer/>
                        <Component {...pageProps} />
                    </Layout>
+                   </PersistGate>
                </Provider>
            </SessionProvider>
-       </PersistGate>
+
     )
 
 }

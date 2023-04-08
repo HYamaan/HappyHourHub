@@ -6,7 +6,7 @@ import {
     PAUSE,
     PERSIST,
     PURGE,
-    REGISTER,
+    REGISTER, persistStore,
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import cartSlice from "./cartSlice";
@@ -34,5 +34,6 @@ const store=  configureStore({
             },
         }),
 });
+export const persistor = persistStore(store);
 export default store;
 

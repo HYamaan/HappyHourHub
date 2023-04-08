@@ -6,20 +6,18 @@ import AddOrderComment from "../../components/order/addOrderComment";
 import {useSession} from "next-auth/react";
 
 
-
-
 const Order = ({order}) => {
-    const {data:session}=useSession();
-    const[isProductModal,setIsProductModal]=useState(false);
+    const {data: session} = useSession();
+    const [isProductModal, setIsProductModal] = useState(false);
     const status = order?.status;
-    const statusProducts=["Payment","Preparing","On the way","Delivered"]
-    const router =useRouter();
-    const [userId,setUserId]=useState("");
-    const [showProducts,setShowProducts]=useState(false);
+    const statusProducts = ["Payment", "Preparing", "On the way", "Delivered"]
+    const router = useRouter();
+    const [userId, setUserId] = useState("");
+    const [showProducts, setShowProducts] = useState(false);
 
 
-    useEffect(()=>{
-        const getUserId=async ()=>{
+    useEffect(() => {
+        const getUserId = async () => {
             try {
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users`);
                 setUserId(
@@ -27,14 +25,12 @@ const Order = ({order}) => {
                 );
 
 
-            }catch (err){
+            } catch (err) {
                 console.log(err);
             }
         }
         getUserId();
-    },[setUserId]);
-
-
+    }, [setUserId]);
 
 
     const statusClass = (index) => {
@@ -43,15 +39,15 @@ const Order = ({order}) => {
         if (index - status > 0) return "";
     }
 
-    const showProductMenu=  (productId)=>{
+    const showProductMenu = (productId) => {
         router.push(`/product/${productId.toString()}`);
-        console.log("showProductMenu",productId)
+        //console.log("showProductMenu",productId)
     }
 
     return <div className="overflow-x-auto relative">
         <div className="w-full  my-2 mb-4"> <span className="absolute left-10">
-            <button className="btn-primary" onClick={()=>setIsProductModal(true)}>Comment</button>
-        </span> </div>
+            <button className="btn-primary" onClick={() => setIsProductModal(true)}>Comment</button>
+        </span></div>
 
         {isProductModal && <AddOrderComment setIsProductModal={setIsProductModal} userId={userId}/>}
 
@@ -70,7 +66,9 @@ const Order = ({order}) => {
 
                     {
                         <tr className=" border-b border-gray-700 bg-secondary
-                    hover:bg-primary hover:border-primary transition-all" key={order._id} onClick={()=>{setShowProducts(!showProducts)}}>
+                    hover:bg-primary hover:border-primary transition-all" key={order._id} onClick={() => {
+                            setShowProducts(!showProducts)
+                        }}>
                             <td className="py-4 px-2 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2">
                                 <i className="fa-solid fa-arrow-down mr-6"></i>
                                 {order._id.substring(0, 5)}...
@@ -83,7 +81,9 @@ const Order = ({order}) => {
                     }</tbody>
                 </table>
                 {
-                    ( showProducts && (
+                    (showProducts
+                        &&
+                        (
                             <div className="overflow-auto w-full h-[370px] lg:mx-0 mx">
                                 <table className="w-full text-sm text-center text-gray-500  cursor-pointer">
                                     <thead className="text-xs bg-gray-700 text-gray-400 uppercase">
@@ -95,14 +95,16 @@ const Order = ({order}) => {
                                         <th scope="col" className="py-3 px-6">STATUS</th>
                                     </tr>
                                     </thead>
-                                    <tbody >
+                                    <tbody>
                                     {
-                                        order?.productOrder?.length>0 &&
-                                        order?.productOrder.map((orderProduct)=>(
+                                        order?.productOrder?.length > 0 &&
+                                        order?.productOrder.map((orderProduct) => (
                                             <tr className=" border-b border-gray-700 bg-secondary
                     hover:bg-primary hover:border-primary transition-all group"
                                                 key={Math.random()}
-                                                onClick={()=>{showProductMenu(orderProduct.orderId)}}
+                                                onClick={() => {
+                                                    showProductMenu(orderProduct.orderId)
+                                                }}
                                             >
                                                 <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2">
                                                     <Image
@@ -117,9 +119,10 @@ const Order = ({order}) => {
                                                 <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">
                                     <span>
                                         {
-                                            orderProduct.extras?.length >0
+                                            orderProduct.extras?.length > 0
                                                 ?
-                                                (orderProduct.extras.map(item=><span key={item._id}>{item.text}</span>))
+                                                (orderProduct.extras.map(item => <span
+                                                    key={item._id}>{item.text}</span>))
                                                 :
                                                 ("Empty")
                                         }
@@ -128,7 +131,8 @@ const Order = ({order}) => {
                                                 <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{orderProduct.price}</td>
                                                 <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{orderProduct?.quantity}</td>
                                                 <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">
-                                                       <span className="border-2 border-primary px-4 py-2 rounded-xl group-hover:border-tertiary">
+                                                       <span
+                                                           className="border-2 border-primary px-4 py-2 rounded-xl group-hover:border-tertiary">
                                                            {statusProducts[order.status]}
                                                        </span>
                                                 </td>
@@ -146,7 +150,7 @@ const Order = ({order}) => {
                 }
 
                 <div className="flex justify-between w-full bg-primary p-5 w-full">
-                    <div className={`relative flex flex-col items-center ${statusClass(0)}`} >
+                    <div className={`relative flex flex-col items-center ${statusClass(0)}`}>
                         <Image src="/images/paid.png" alt="/images/paid.png"
                                className="w-auto h-auto" width={40} height={40}/>
                         <span>Payment</span>
@@ -162,7 +166,8 @@ const Order = ({order}) => {
                         <span>On the way</span>
                     </div>
                     <div className={`relative flex flex-col items-center ${statusClass(3)}`}>
-                        <Image src="/images/delivered.png" alt="/images/delivered.png" className="w-auto h-auto" width={40} height={40}/>
+                        <Image src="/images/delivered.png" alt="/images/delivered.png" className="w-auto h-auto"
+                               width={40} height={40}/>
                         <span>Delivered</span>
                     </div>
                 </div>
