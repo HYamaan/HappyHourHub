@@ -58,15 +58,15 @@ const UploadImage=({setUploadImageShow,user,setUploadImage})=>{
             {!isLoading ?
                 (  <OutsideClickHandler onOutsideClick={() => setUploadImageShow(false)}>
                     <div className="w-full h-full grid place-content-center relative">
-                        <div className="relative z-50 md:w-[600px] w-[570px]  bg-white border-2 p-10 rounded-3xl">
-                            <form className="flex items-center space-x-6">
+                        <div className="relative z-50 w-[300px] md:w-[600px] w-[570px]  bg-white border-2 p-10 rounded-3xl">
+                            <form className="flex flex-wrap justify-center items-center space-x-6 ">
                                 <div className="shrink-0">
-                                    <img className="h-16 w-16 object-cover rounded-full"
+                                    <img className="h-16 w-16 object-cover rounded-full mb-2 md:mb-0"
                                          src={user.image}
                                          alt="Current profile photo"/>
                                 </div>
-                                <label className="block">
-                                    <span className="sr-only">Choose profile photo</span>
+                                <label className="md:block flex flex-row">
+                                    <span className="sr-only ">Choose profile photo</span>
                                     <input type="file"
                                            onChange={(e)=>handleUpload(e)}
                                            className="block w-full text-sm text-slate-500
@@ -80,7 +80,7 @@ const UploadImage=({setUploadImageShow,user,setUploadImage})=>{
                                                 "
                                     />
                                 </label>
-                                <button className="btn-primary !bg-success "
+                                <button className="btn-primary !bg-success mt-2 md:mt-0 "
                                         onClick={handleChangeImage}>Create
                                 </button>
                             </form>
