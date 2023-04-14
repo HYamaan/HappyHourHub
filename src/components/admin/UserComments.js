@@ -13,19 +13,21 @@ const Order = () => {
 
     const [comments, setComments] = useState([]);
     const [homePageComments, setHomePageComments] = useState([]);
-    const [pageComments, setPageComments] = useState(false);
+    const [pageComments, setPageComments] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const [addButtonItHasClicked,setAddButtonItHasClicked]=useState(false);
     useEffect(() => {
         const getUseComments = async () => {
             try {
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/comments`);
                 setComments(res.data.reverse());
+                setAddButtonItHasClicked(false);
             } catch (err) {
                 console.log(err);
             }
         }
         getUseComments();
-    }, []);
+    }, [addButtonItHasClicked]);
 
     useEffect(() => {
         const getAdminPageComments = async () => {
@@ -37,14 +39,19 @@ const Order = () => {
             }
         }
         getAdminPageComments();
-    });
+    },[addButtonItHasClicked]);
 
-    const addCommentToAdminComment = async (commentId) => {
+    const addCommentToAdminComment = async (commentId,userId) => {
         try {
-            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId.toString()}`);
-            const {comment: comment, fullName: fullName, image: image, userId: userId} = res.data;
-            const transferComments = {comment, fullName, image, userId};
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/adminComments`, transferComments);
+            const newAdminComment={
+                userCommentsTable:commentId,
+                userId:userId
+            }
+           const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/adminComments`, newAdminComment);
+            if(res.status===201){
+                toast.success("The user comment has been successfully added to the homepage.");
+            }
+
 
         } catch (err) {
             console.log(err);
@@ -108,9 +115,12 @@ const Order = () => {
                                 >
                                     <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">
                                                     <span
-                                                        className="border-2 rounded-full px-[6px] py-[2px] mr-4 cursor-pointer"
+                                                        className={`border-2 rounded-full px-[6px] py-[2px] mr-4 
+                                                         ${homePageComments.every(item=>item._id === userComment._id) ? "cursor-pointer":"hidden"}`}
                                                         onClick={() => {
-                                                            addCommentToAdminComment(userComment._id)
+                                                            setAddButtonItHasClicked(true);
+                                                            addCommentToAdminComment(userComment._id,userComment.userId?._id);
+
                                                         }}
                                                     >
                                                         <i className="fa-solid fa-plus"></i>
@@ -123,16 +133,16 @@ const Order = () => {
                                                         <i className="fa-solid fa-trash text-lg"></i>
                                                     </span>
                                     </td>
-                                    <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{userComment.userId.slice(0, 10)}...</td>
+                                    <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{userComment.userId?._id.slice(0, 10)}...</td>
                                     <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2">
                                         <Image
-                                            src={userComment.image}
-                                            alt={userComment.image}
+                                            src={userComment.userId.image}
+                                            alt={userComment.userId.image}
                                             width={30}
                                             height={30}
                                             priority={true}
                                             className="w-auto h-auto"
-                                        /> <span className="ml-2">{userComment.fullName}</span>
+                                        /> <span className="ml-2">{userComment.userId.fullName}</span>
                                     </td>
                                     <td className="py-4 px-6 font-medium  hover:text-white text-left">{userComment.comment}</td>
                                 </tr>))}
@@ -182,14 +192,7 @@ const Order = () => {
                                             key={userComment._id}
                                         >
                                             <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">
-                                                    <span
-                                                        className="border-2 rounded-full px-[6px] py-[2px] mr-4 cursor-pointer"
-                                                        onClick={() => {
-                                                            addCommentToAdminComment(userComment._id)
-                                                        }}
-                                                    >
-                                                        <i className="fa-solid fa-plus"></i>
-                                                    </span>
+
                                                 <span className="cursor-pointer hover:text-danger"
                                                       onClick={() => {
                                                           removeToAdminComment(userComment._id)
@@ -198,18 +201,18 @@ const Order = () => {
                                                         <i className="fa-solid fa-trash text-lg"></i>
                                                     </span>
                                             </td>
-                                            <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{userComment._id.slice(0, 10)}...</td>
+                                            <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{userComment.userId._id.slice(0, 10)}...</td>
                                             <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2">
                                                 <Image
-                                                    src={userComment.image}
-                                                    alt={userComment.image}
+                                                    src={userComment.userId.image}
+                                                    alt={userComment.userId.image}
                                                     width={30}
                                                     height={30}
                                                     priority={true}
                                                     className="w-auto h-auto"
-                                                /> <span className="ml-2">{userComment.fullName}</span>
+                                                /> <span className="ml-2">{userComment.userId.fullName}</span>
                                             </td>
-                                            <td className="py-4 px-6 font-medium hover:text-white text-left ">{userComment.comment}</td>
+                                            <td className="py-4 px-6 font-medium hover:text-white text-left ">{userComment.userCommentsTable.comment}</td>
                                         </tr>))}
 
 

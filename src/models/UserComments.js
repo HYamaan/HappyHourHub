@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
+import User from "./User";
 
 const UserCommentSchema = new mongoose.Schema({
-    userId: {type: String},
-    fullName:{type:String},
-    image: {type: String},
+    userId: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref:User
+    },
     comment: {type: String, required: true, maxlength: 400},
 }, {
     timestamps: true

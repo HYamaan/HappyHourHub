@@ -1,10 +1,16 @@
 import mongoose from "mongoose";
+import UserComments from "./UserComments";
+import User from "./User";
 
 const AdminControlCommentSchema = new mongoose.Schema({
-    userId: {type: String},
-    fullName:{type:String},
-    image: {type: String},
-    comment: {type: String},
+    userCommentsTable: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref:UserComments
+    },
+    userId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:User
+    }
 }, {
     timestamps: true
 });

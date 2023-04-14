@@ -5,10 +5,12 @@ import {IoIosArrowForward,IoIosArrowBack} from "react-icons/io"
 
 import Slider from "react-slick";
 import axios from "axios";
+import {usePathname} from "next/navigation";
 
 const Customers = () => {
     const [customerComment,setCustomerComments]=useState([]);
-
+    const pathname = usePathname();
+    console.log("pathname",pathname);
     useEffect(()=>{
         const getUserComments=async ()=>{
             try {
@@ -20,7 +22,7 @@ const Customers = () => {
             }
         }
         getUserComments();
-    },[]);
+    },[pathname]);
     //console.log(customerComment);
 
 
