@@ -44,6 +44,25 @@ export const authOptions = {
         })
         // ...add more providers here
     ],
+    callbacks: {
+        async jwt({ token,user, account, profile }) {
+            // Persist the OAuth access_token and or the user id to the token right after signin
+            console.log("jwt",{token,user})
+            if(user && user._id){
+                token.id = user._id;
+            }
+            return token
+        },
+        async session({ session, token, user }) {
+            // Send properties to the client, like an access_token and user id from a provider.
+            console.log("session",{token,session})
+            if(token && token.id){
+                session.user.id = token.id;
+                session.user.image = undefined;
+            };
+            return session;
+        }
+    },
     pages:{
         signIn:"/auth/login",
     },

@@ -161,9 +161,9 @@ const Cart = ({userList}) => {
              justify-center text-white p-12 md:w-auto w-full   md:text-start !text-center">
                 <Title className="text-[40px] md:mt-0 mt-10 ">CART TOTAL</Title>
                 <div className="text-sm font-sans self-start text-left">
-                    <div><span className="font-bold">Subtotal:</span>${cart.total}</div>
+                    <div><span className="font-bold">Subtotal:</span>${(cart.total).toFixed(2)}</div>
                     <div><span className="font-bold">Discount:</span>$0.00</div>
-                    <div><span className="font-bold">Total:</span>${cart.total}</div>
+                    <div><span className="font-bold">Total:</span>${(cart.total).toFixed(2)}</div>
                 </div>
                 <button className="btn-primary mt-4 md:w-auto w-52 text-center self-center"
                         onClick={createOrder}>CHECKOUT NOW!</button>
