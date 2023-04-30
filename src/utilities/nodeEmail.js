@@ -19,7 +19,7 @@ const sendEmail = async (options)=>{
         to: options.email, // list of receivers
         subject: options.subject, // Subject line
         text: options.message, // plain text body
-        html: "<b>Hello world?</b>", // html body
+        html: options.message, // html body
     }
 
     // send mail with defined transport object
