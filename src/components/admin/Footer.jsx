@@ -11,27 +11,29 @@ const Footer = () => {
     const [iconName, setIconName] = useState("fa fa-");
     const [socialMedia, setSocialMedia] = useState([]);
     const [footerInfo,setFooterInfo]=useState([]);
-    //console.log("AAA",socialMedia);
+    const [resetData,setResetData]=useState(false);
 
     const getFooterData = async ()=>{
         try {
             const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/footer`);
-            setFooterInfo(res.data[0]);
-            setSocialMedia(res.data[0].socialMedia);
+            if(res.status === 200){
+                setFooterInfo(res.data[0]);
+                setSocialMedia(res.data[0].socialMedia);
+                setResetData(false);
+            }
+
         }catch (err){
             console.log(err);
         }
     }
 
-   useEffect(()=>{
-       getFooterData();
-   },[]);
+    useEffect(()=>{
+        getFooterData();
+    },[resetData]);
 
 
     const onSubmit = async (values, actions) => {
-        // await new Promise((resolve) => setTimeout(resolve, 4000));
-        // actions.resetForm();
-        //console.log("values",values);
+
         try {
             const res = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/footer/${footerInfo._id}`,{
                 location: values.location,
@@ -42,13 +44,13 @@ const Footer = () => {
                     day: values.day,
                     hour: values.time,
                 },
-                    socialMedia:socialMedia,
+                socialMedia:socialMedia,
 
             });
-           if(res.status === 201){
-               getFooterData();
-               toast.success("You have successfuly updates");
-           }
+            if(res.status === 201){
+                setResetData(true);
+                toast.success("You have successfuly updates");
+            }
         }catch (err){
             console.log(err);
         }
@@ -122,19 +124,19 @@ const Footer = () => {
         },
     ];
     const handleCreate = (e)=>{
-    setSocialMedia([...footerInfo?.socialMedia,{
-        icon:iconName,
-        link:linkAddress
-    }]);
-    setLinkAddress("https://");
-    setIconName("fa fa-");
+        setSocialMedia([...footerInfo?.socialMedia,{
+            icon:iconName,
+            link:linkAddress
+        }]);
+        setLinkAddress("https://");
+        setIconName("fa fa-");
     }
     return (
         <form className="lg:p-8 flex-1 lg:mt-0 mt-5" onSubmit={handleSubmit}>
             <Title className="text-[40px]">Footer Settings</Title>
             <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mt-4">
                 {inputs.map((input) => (
-                    <Input
+                  input.value &&  <Input
                         key={input.id}
                         {...input}
                         onBlur={handleBlur}
