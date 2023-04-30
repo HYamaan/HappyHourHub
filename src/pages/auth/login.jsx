@@ -16,7 +16,7 @@ import axios from "axios";
 
 
 const Login = () => {
-    //console.log("LoginUser", user);
+
     const {data: session} = useSession();
     //console.log("LoginSession",session);
     const [currentUser, setCurrentUser] = useState();
@@ -28,11 +28,11 @@ const Login = () => {
         let options = {redirect: false, email, password}
         try {
             const res = await signIn("credentials", options);
-           if(res.ok){
-               toast.success("Successfully sing in")
-           }else{
-               toast.error(res.error)
-           }
+            if (res.ok) {
+                toast.success("Successfully sing in")
+            } else {
+                toast.error(res.error)
+            }
             actions.resetForm();
         } catch (err) {
             console.log(err)
@@ -46,8 +46,8 @@ const Login = () => {
                 setCurrentUser(
                     res.data?.find((user) => user.email === session?.user?.email)
                 );
-                if(currentUser){
-                   //console.log("Yönlendirme")
+                if (currentUser) {
+                    //console.log("Yönlendirme")
                     session && await push("/profile/" + currentUser?._id);
                 }
 
@@ -113,11 +113,18 @@ const Login = () => {
                         onClick={() => signIn("google", {callbackUrl: "/profile"})}>
                     <BsGithub/> Google
                 </button>
-                <Link href="/auth/register">
+                <div className="flex justify-between px-5">
+                    <Link href="/auth/register">
             <span className="text-sm underline cursor-pointer text-secondary">
                   Do you no have a account?
                 </span>
-                </Link>
+                    </Link>
+                    <Link href="/auth/forgotPassword">
+            <span className="text-sm underline cursor-pointer text-secondary">
+                  Forgot password?
+                </span>
+                    </Link>
+                </div>
             </form>
         </div>
     </div>
@@ -128,7 +135,6 @@ export async function getServerSideProps({req}) {
 
     const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users`);
     const user = res.data?.find((user) => user.email === session?.user.email);
-    //console.log("user._id", user?._id)
     if (session && user) {
         return {
             redirect: {
