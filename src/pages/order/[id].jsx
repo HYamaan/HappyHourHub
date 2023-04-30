@@ -3,11 +3,10 @@ import Image from "next/image";
 import axios from "axios";
 import {useRouter} from "next/router";
 import AddOrderComment from "../../components/order/addOrderComment";
-import {useSession} from "next-auth/react";
 
 
 const Order = ({order}) => {
-    const {data: session} = useSession();
+
     const [isProductModal, setIsProductModal] = useState(false);
     const status = order?.status;
     const statusProducts = ["Payment", "Preparing", "On the way", "Delivered"]
@@ -76,7 +75,7 @@ const Order = ({order}) => {
                             <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{order?.customer}
                             </td>
                             <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{order?.address}</td>
-                            <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">${order?.total}</td>
+                            <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">${(order?.total).toFixed(2)}</td>
                         </tr>
                     }</tbody>
                 </table>
@@ -152,22 +151,22 @@ const Order = ({order}) => {
                 <div className="flex justify-between w-full bg-primary p-5 w-full">
                     <div className={`relative flex flex-col items-center ${statusClass(0)}`}>
                         <Image src="/images/paid.png" alt="/images/paid.png"
-                               className="w-auto h-auto" width={40} height={40}/>
+                               className="w-auto h-auto" width={40} height={40}  priority={true}/>
                         <span>Payment</span>
                     </div>
                     <div className={`relative flex flex-col items-center ${statusClass(1)}`}>
                         <Image src="/images/bake.png" alt="/images/bake.png"
-                               className="w-auto h-auto" width={40} height={40}/>
+                               className="w-auto h-auto" width={40} height={40}  priority={true}/>
                         <span>Preparing</span>
                     </div>
                     <div className={`relative flex flex-col items-center ${statusClass(2)}`}>
                         <Image src="/images/bike.png" alt="/images/bike.png"
-                               className="w-auto h-auto" width={40} height={40}/>
+                               className="w-auto h-auto" width={40} height={40}  priority={true}/>
                         <span>On the way</span>
                     </div>
                     <div className={`relative flex flex-col items-center ${statusClass(3)}`}>
                         <Image src="/images/delivered.png" alt="/images/delivered.png" className="w-auto h-auto"
-                               width={40} height={40}/>
+                               width={40} height={40}  priority={true}/>
                         <span>Delivered</span>
                     </div>
                 </div>

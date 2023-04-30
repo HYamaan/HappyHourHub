@@ -5,12 +5,12 @@ import Account from "../../components/profile/Account";
 import Password from "../../components/profile/Password";
 import Order from "../../components/profile/Order";
 import UploadImage from "../../components/profile/UploadImage";
-import {getSession, signOut, useSession} from "next-auth/react";
+import {getSession, signOut} from "next-auth/react";
 import {useRouter} from "next/router";
 import axios from "axios";
 import {toast} from "react-toastify";
 
-import styles from "./profile.module.css";
+
 
 
 const Profile = ({ user }) => {
@@ -21,13 +21,11 @@ const Profile = ({ user }) => {
     const { push } = useRouter();
     useEffect(()=> {
         const getImage=async ()=>{
-            user = await axios.get(
-                `${process.env.NEXT_PUBLIC_API_URL}/users/${user._id}`,
-            );
+            user = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/${user._id}`);
             setUploadImageArr(user.data);
         }
         getImage();
-    },[,uploadImageShow]);
+    },[uploadImageShow]);
     const handleSignOut =  async () => {
         if (confirm("Are you sure you want to sign out?")) {
             toast.success("You have successfully exited.")
@@ -43,6 +41,7 @@ const Profile = ({ user }) => {
                 <div className="relative flex flex-col items-center px-10 py-5 border border-b-0">
                         <Image
                             src={uploadImageArr?.image ? uploadImageArr.image : "/images/client2.jpg"}
+                            alt={uploadImageArr?.image ? uploadImageArr.image : "/images/client2.jpg"}
                             width={100}
                             height={100}
                             style={{objectFit:"cover"}}

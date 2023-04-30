@@ -10,7 +10,7 @@ import {usePathname} from "next/navigation";
 const Customers = () => {
     const [customerComment,setCustomerComments]=useState([]);
     const pathname = usePathname();
-    console.log("pathname",pathname);
+    //console.log("pathname",pathname);
     useEffect(()=>{
         const getUserComments=async ()=>{
             try {
