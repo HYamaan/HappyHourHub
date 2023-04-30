@@ -19,25 +19,37 @@ const Order = () => {
     useEffect(() => {
         const getUseComments = async () => {
             try {
+                setIsLoading(true);
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/comments`);
-                setComments(res.data.reverse());
-                setAddButtonItHasClicked(false);
+                if(res.status===200){
+                    setIsLoading(false);
+                    setComments(res.data.reverse());
+                    setAddButtonItHasClicked(false);
+                }
+
             } catch (err) {
+                setIsLoading(false);
                 console.log(err);
             }
         }
         getUseComments();
     }, [addButtonItHasClicked]);
 
-    useEffect(() => {
-        const getAdminPageComments = async () => {
-            try {
-                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/adminComments`);
-                setHomePageComments(res.data);
-            } catch (err) {
-                console.log(err);
+    const getAdminPageComments = async () => {
+        try {
+            setIsLoading(true);
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/adminComments`);
+            if(res.status===200){
+                setIsLoading(false);
+                setHomePageComments(res.data.reverse());
             }
+
+        } catch (err) {
+            setIsLoading(false);
+            console.log(err);
         }
+    }
+    useEffect(() => {
         getAdminPageComments();
     },[addButtonItHasClicked]);
 
@@ -63,6 +75,7 @@ const Order = () => {
             if (deleteComment.status === 200) {
                 toast.success("User comment deleted.");
                 setComments((prev) => prev.filter((item) => item._id !== commentId));
+                setAddButtonItHasClicked(true);
             }
             //console.log(commentId);
         } catch (err) {
@@ -73,6 +86,7 @@ const Order = () => {
         try {
             const deleteComment = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/adminComments/${commentId}`);
             if (deleteComment.status === 200) {
+                setAddButtonItHasClicked(true);
                 toast.success("User comment removed from homepage.");
                 setHomePageComments((prev) => prev.filter((item) => item._id !== commentId));
             }
@@ -136,15 +150,15 @@ const Order = () => {
                                     <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{userComment.userId?._id.slice(0, 10)}...</td>
                                     <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2">
                                         <Image
-                                            src={userComment.userId.image}
-                                            alt={userComment.userId.image}
+                                            src={userComment.userId?.image}
+                                            alt={userComment.userId?.image}
                                             width={30}
                                             height={30}
                                             priority={true}
                                             className="w-auto h-auto"
-                                        /> <span className="ml-2">{userComment.userId.fullName}</span>
+                                        /> <span className="ml-2">{userComment.userId?.fullName}</span>
                                     </td>
-                                    <td className="py-4 px-6 font-medium  hover:text-white text-left">{userComment.comment}</td>
+                                    <td className="py-4 px-6 font-medium  hover:text-white text-left">{userComment?.comment}</td>
                                 </tr>))}
 
 
@@ -184,35 +198,35 @@ const Order = () => {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {homePageComments?.length > 0 && homePageComments?.reverse()?.map((userComment) => (
+                                    {homePageComments?.length > 0 && homePageComments?.map((userComment) => (
 
 
                                         <tr className=" border-b border-gray-700 bg-secondary
                     hover:bg-primary hover:border-primary transition-all"
-                                            key={userComment._id}
+                                            key={userComment?._id}
                                         >
                                             <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">
 
                                                 <span className="cursor-pointer hover:text-danger"
                                                       onClick={() => {
-                                                          removeToAdminComment(userComment._id)
+                                                          removeToAdminComment(userComment?._id)
                                                       }}
                                                 >
                                                         <i className="fa-solid fa-trash text-lg"></i>
                                                     </span>
                                             </td>
-                                            <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{userComment.userId._id.slice(0, 10)}...</td>
+                                            <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white">{userComment.userId?._id.slice(0, 10)}...</td>
                                             <td className="py-4 px-6 font-medium whitespace-nowrap hover:text-white flex items-center justify-center gap-x-2">
                                                 <Image
-                                                    src={userComment.userId.image}
-                                                    alt={userComment.userId.image}
+                                                    src={userComment.userId?.image}
+                                                    alt={userComment.userId?.image}
                                                     width={30}
                                                     height={30}
                                                     priority={true}
                                                     className="w-auto h-auto"
                                                 /> <span className="ml-2">{userComment.userId.fullName}</span>
                                             </td>
-                                            <td className="py-4 px-6 font-medium hover:text-white text-left ">{userComment.userCommentsTable.comment}</td>
+                                            <td className="py-4 px-6 font-medium hover:text-white text-left ">{userComment.userCommentsTable?.comment}</td>
                                         </tr>))}
 
 

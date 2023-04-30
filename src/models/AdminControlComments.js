@@ -5,11 +5,13 @@ import User from "./User";
 const AdminControlCommentSchema = new mongoose.Schema({
     userCommentsTable: {
         type:mongoose.Schema.Types.ObjectId,
-        ref:UserComments
+        ref:UserComments,
+        on_delete: 'cascade'
     },
     userId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:User
+        ref:User,
+        on_delete: 'cascade'
     }
 }, {
     timestamps: true

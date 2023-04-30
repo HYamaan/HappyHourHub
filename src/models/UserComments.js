@@ -4,7 +4,8 @@ import User from "./User";
 const UserCommentSchema = new mongoose.Schema({
     userId: {
         type:mongoose.Schema.Types.ObjectId,
-        ref:User
+        ref:User,
+        on_delete: 'cascade'
     },
     comment: {type: String, required: true, maxlength: 400},
 }, {
