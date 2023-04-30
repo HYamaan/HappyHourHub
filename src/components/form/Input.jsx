@@ -2,7 +2,6 @@ import React from "react";
 
 const Input = (props) => {
     const {placeholder,errorMessage,touched, ...inputs} = props
-
     return <React.Fragment>
         <div className={`w-full ${props.className}`} >
             <label className="relative block cursor-text w-full">
