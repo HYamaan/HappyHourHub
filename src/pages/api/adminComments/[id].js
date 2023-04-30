@@ -1,7 +1,6 @@
 import AdminControlComments from "../../../models/AdminControlComments";
 import dbConnect from "../../../utilities/dbConnect";
-import bcrypt from "bcryptjs";
-import User from "../../../models/User";
+
 
 
 const handler = async (req,res)=>{
@@ -17,16 +16,6 @@ const handler = async (req,res)=>{
         }
     }
 
-    if (method === "PUT") {
-        try {
-            const users = await User.findByIdAndUpdate(id, req.body, {
-                new: true,
-            });
-            res.status(200).json(users);
-        } catch (err) {
-            console.log(err);
-        }
-    }
 
     if (method === "DELETE") {
         try {

@@ -1,6 +1,6 @@
 import UserComments from "../../../models/UserComments";
 import dbConnect from "../../../utilities/dbConnect";
-import User from "../../../models/User";
+import AdminControlComments from "../../../models/AdminControlComments";
 
 
 const handler = async (req,res)=>{
@@ -15,18 +15,16 @@ const handler = async (req,res)=>{
             console.log(err);
         }
     }
-    if(method === "PUT") {
-        try {
-            const userControl = await User.findByIdAndUpdate(id, req.body, {
-                new: true,
-            });
-            res.status(200).json(userControl);
-        } catch (err) {
-            console.log(err);
-        }
-    }
+
     if (method === "DELETE") {
         try {
+            const adminControlComment= await AdminControlComments.findOne({
+                userCommentsTable:id
+            });
+            if(adminControlComment){
+                await AdminControlComments.findByIdAndDelete(adminControlComment._id)
+            }
+
             const categoryDelete= await UserComments.findByIdAndDelete(id);
             res.status(200).json(categoryDelete);
 
