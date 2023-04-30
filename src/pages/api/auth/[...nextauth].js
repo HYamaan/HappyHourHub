@@ -8,6 +8,7 @@ import dbConnect from "../../../utilities/dbConnect";
 
 import bcrypt from "bcryptjs";
 
+
 export const authOptions = {
     //adapter: MongoDBAdapter(clientPromise),
     providers: [
@@ -31,9 +32,8 @@ export const authOptions = {
             },
             async authorize(credentials) {
                 dbConnect().catch(error=>{error:"Connection Failed!"});
-                const email = credentials.email;
-                const password = credentials.password;
-                const user = await User.findOne({email:email})   // Karşılaştırma yapmak için UserSchema'yı çağırdık. Daha sonra db ye bağlandık.
+                const {email,password} =credentials;
+                const user = await User.findOne({email:email}).select('+password')   // Karşılaştırma yapmak için UserSchema'yı çağırdık. Daha sonra db ye bağlandık.
                 if (!user) {
                     throw new Error("No user Found with email Please Sign Up..!");
                 } else {
@@ -47,7 +47,6 @@ export const authOptions = {
     callbacks: {
         async jwt({ token,user, account, profile }) {
             // Persist the OAuth access_token and or the user id to the token right after signin
-            console.log("jwt",{token,user})
             if(user && user._id){
                 token.id = user._id;
             }
@@ -55,7 +54,7 @@ export const authOptions = {
         },
         async session({ session, token, user }) {
             // Send properties to the client, like an access_token and user id from a provider.
-            console.log("session",{token,session})
+
             if(token && token.id){
                 session.user.id = token.id;
                 session.user.image = undefined;
@@ -67,10 +66,10 @@ export const authOptions = {
         signIn:"/auth/login",
     },
     database:process.env.MONGODB_URI,
-    secret:"secret121",
+    secret:"uO+rIYxgHfxt9LDxNOPSwTSRf/Yk4Qcfz/McZGj8w7I=",
 }
 const signInUser = async ({user,password,email})=>{
-    const isMatch = await bcrypt.compare(password,user.password);
+    const isMatch= await user.correctPassword(password,user.password);
     if(!isMatch || user.email !== email)throw new Error("Username or Password doesn't match");
 
     return user;
