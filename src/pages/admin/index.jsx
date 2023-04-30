@@ -8,28 +8,28 @@ import {adminSchema} from "../../schema/adminSchema";
 import axios from "axios";
 import {toast} from "react-toastify";
 import {useRouter} from "next/router";
-import PacmanLoader from "react-spinners/PacmanLoader";
-
+import LoadingPackman from "../../components/auth/loadingPackman";
 
 
 const Login = () => {
     const router = useRouter();
-    const[loading,setLoading]=useState(true);
+    const [loading, setLoading] = useState(true);
     const onSubmit = async (values) => {
-       // console.log("values",values);
+        // console.log("values",values);
         try {
-            setLoading(false);
+            clearTimeout(loading);
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_API_URL}/admin`, values
             );
-            setLoading(true);
+
             if (res.status === 200) {
-                toast.success("Success")
-                router.push("/admin/profile")
+                setLoading(true);
+                toast.success("Success");
+                router.push("/admin/profile");
+
+
                 //console.log(res.data);
-
             }
-
         } catch (err) {
             toast.error("err");
             console.error(err);
@@ -83,18 +83,13 @@ const Login = () => {
                 </Link>
             </form>
         </div>
-    </div>) : (<div className="container  ">
-                <div className="flex justify-center items-center h-[24.9475rem] w-screen bg-secondary">
-                    <PacmanLoader
-                        color="#fff200"
-                        cssOverride={{}}
-                        loading
-                        margin={2}
-                        size={36}
-                        speedMultiplier={1}
-                    />
-                </div>
-    </div>) )
+    </div>) : (
+        <div className="container  ">
+            <LoadingPackman height={'h-[24.9475rem]'}
+                            size={36}
+            />
+        </div>
+    ))
 }
 export const getServerSideProps = (context) => {
 
