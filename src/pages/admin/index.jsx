@@ -8,7 +8,7 @@ import {adminSchema} from "../../schema/adminSchema";
 import axios from "axios";
 import {toast} from "react-toastify";
 import {useRouter} from "next/router";
-import LoadingPackman from "../../components/auth/loadingPackman";
+import LoadingPacman from "../../components/auth/loadingPackman";
 
 
 const Login = () => {
@@ -85,7 +85,7 @@ const Login = () => {
         </div>
     </div>) : (
         <div className="container  ">
-            <LoadingPackman height={'h-[24.9475rem]'}
+            <LoadingPacman height={'h-[24.9475rem]'}
                             size={36}
             />
         </div>
