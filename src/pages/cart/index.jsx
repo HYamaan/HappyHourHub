@@ -56,6 +56,11 @@ const Cart = ({userList}) => {
         try {
             if(session){
                 if(confirm("Are you sure to order?")){
+                    if(newOrder.address=== 'No address'){
+                        await router.push(`/profile/${user._id}`)
+                        throw new Error('Define User address.');
+
+                    }
                     const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`,newOrder);
                     if(res.status === 201){
                         dispatch(cartActions.reset())
@@ -65,11 +70,11 @@ const Cart = ({userList}) => {
                     }
                 }
             }else{
-                throw new Error();
+                throw new Error('Please login first');
 
             }
         }catch (err){
-            toast.error("Please login first.",{autoClose:1000})
+            toast.error(`${err.message}`,{autoClose:1000})
             setTimeout(()=>{
                 router.push("/auth/login");
             },700);
@@ -98,10 +103,9 @@ const Cart = ({userList}) => {
             pathname:"/product/"+product._id.toString(),
             query: {name},
         })
-        //router.push("/product/"+pathName._id.toString());
 
     }
-    //console.log(cart.products.map(item=>console.log(item)));
+
 
     return <div  className="min-h-[calc(100vh_-_433px)]">
         <div className="flex justify-between items-center md:flex-row flex-col">
