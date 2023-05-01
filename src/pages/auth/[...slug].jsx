@@ -13,14 +13,14 @@ import LoadingPackman from "../../components/auth/loadingPackman";
 
 const Slug = () => {
     const router =useRouter();
-    const { id } = router.query;
+    const { hash } = router.query;
 const [isloading,setIsLoading]=useState(false);
     const onSubmit = async (values,actions) => {
 
         try {
 
             setIsLoading(true);
-            const res =await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/userPassword/${id}`, {...values})
+            const res =await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/userPassword/${hash}`, {...values})
 
             if (res.status===200){
                 toast.success("Success Notification !");

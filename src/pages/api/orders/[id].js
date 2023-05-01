@@ -4,12 +4,25 @@ import Orders from "../../../models/Order"
 
 const handler = async (req, res) => {
     await dbConnect();
-    const {method, query:{id}} = req;
+    const {method, query:{id,email}} = req;
 
     if (method === "GET") {
         try {
-            const orders = await Orders.findById(id);
+            let orders;
+
+                if(email){
+                    console.log("EMAİL")
+                     orders = await Orders.find({
+                        email:email
+                    });
+
+                }else{
+                    console.log("ORDERS")
+                     orders = await Orders.findById(id);
+
+                }
             res.status(200).json(orders);
+
         } catch (err) {
             console.log(err);
         }

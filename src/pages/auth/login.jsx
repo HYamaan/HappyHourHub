@@ -1,5 +1,6 @@
 import React, {useEffect, useState,} from "react";
 import {useSession, signIn, getSession} from "next-auth/react"
+
 import Link from "next/link";
 
 import {toast} from 'react-toastify';
@@ -42,6 +43,7 @@ const Login = () => {
         const getUser = async () => {
             try {
                 //console.log("Login UseEffect")
+
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users`);
                 setCurrentUser(
                     res.data?.find((user) => user.email === session?.user?.email)
@@ -82,6 +84,8 @@ const Login = () => {
         touched: formik.touched.password
 
     }]
+
+
 
     return <div className="container mx-auto">
         <Title className="text-4xl my-6 text-center">Login</Title>

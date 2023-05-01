@@ -12,5 +12,3 @@ const nextConfig = {
 }
 
 module.exports = nextConfig
-
-//DENME
