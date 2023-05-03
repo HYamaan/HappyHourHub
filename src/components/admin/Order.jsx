@@ -62,7 +62,7 @@ const Order = () => {
                     </div>
                 }
             </div>
-            <div className="overflow-x-auto w-full mt-5 max-h-[267px]">
+            <div className="overflow-x-auto w-full mt-5 max-h[60vh]">
                 {
                     customerProduct ?
                         (
@@ -119,7 +119,7 @@ const Order = () => {
                             </>
                         )
                         : (
-                            <div className="overflow-auto w-full h-[370px] lg:mx-0 mx">
+                            <div className="overflow-auto w-full max-h[60vh] lg:mx-0 mx">
                                 <table className="w-full text-sm text-center text-gray-500  cursor-pointer">
                                     <thead className="text-xs bg-gray-700 text-gray-400 uppercase">
                                     <tr>
