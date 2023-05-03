@@ -8,6 +8,7 @@ import Image from "next/image";
 import {useRouter} from "next/router";
 import PacmanLoader from "react-spinners/PacmanLoader";
 import {BiArrowBack} from "react-icons/bi";
+import {useGetOrdersData} from "../../hooks/useGetOrdersData";
 
 
 const Order = () => {
@@ -36,7 +37,7 @@ const Order = () => {
     const handleShowOrdersProducts = (userId) => {
         setOrderProductsID(userId);
     };
-    const {data:products,refetch} = useQuery({
+    const {data:products,refetch:getProduct} = useQuery({
         queryKey:['get-Product'],
         queryFn : () => {
             return  axios.get(`${process.env.NEXT_PUBLIC_API_URL}/orders/${orderProductsID}`);
@@ -44,20 +45,14 @@ const Order = () => {
     });
 
     useEffect(()=>{
-        refetch();
-    },[setOrderProducts,orderProductsID])
+        getProduct();
+    },[orderProductsID])
 
     const showProductMenu = (productId) => {
         router.push(`/product/${productId.toString()}`);
     }
 
-    const {isLoading:orderIsLoading,data:orders} = useQuery({
-        queryKey:['get-Orders'],
-        enabled:currentUser.email !==undefined,
-        queryFn : () => {
-          return axios.get(`${process.env.NEXT_PUBLIC_API_URL}/orders/""?email=${currentUser.email}`);
-        }
-    });
+    const {isLoading:orderIsLoading,data:orders} =useGetOrdersData(currentUser);
 
     const backOrders=()=>{
     setShowProducts(!showProducts);
