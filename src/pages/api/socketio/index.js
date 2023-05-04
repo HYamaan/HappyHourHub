@@ -1,5 +1,4 @@
 import { Server } from 'socket.io'
-
 const SocketHandler = (req, res) => {
     let users=[];
     const addUser = (userId,socketId)=>{
@@ -29,12 +28,12 @@ const SocketHandler = (req, res) => {
             });
 
             //send and get message
-            socket.on("sendMessage",({senderId,reciverId,text})=>{
-                const user= getUser(reciverId);
-                io.to(user.socket).emit("getMessage",{
-                    senderId,text
-                })
-            })
+            // socket.on("sendMessage",({senderId,reciverId,text})=>{
+            //     const user= getUser(senderId); //reciverId
+            //     io.to(user?.socket).emit("getMessage",{
+            //         senderId,text
+            //     })
+            // })
 
             //when disconnect
             socket.on("disconnect",()=>{
@@ -43,14 +42,12 @@ const SocketHandler = (req, res) => {
                 io.emit("getUsers",users);
             });
 
-            socket.on('input-change', msg => {
-                console.log("msf11",msg)
-                socket.emit('update-input', msg)
-            });
 
+            socket.on('input-change', msg => {
+                socket.broadcast.emit('update-input', msg)
+            })
         })
     }
     res.end()
 }
-
 export default SocketHandler

@@ -7,6 +7,7 @@ import {Provider} from "react-redux";
 import store from "../redux/store"
 import {persistor} from "../redux/store";
 import {PersistGate} from "redux-persist/integration/react";
+import {QueryClient,QueryClientProvider} from "@tanstack/react-query";
 
 
 import Router from 'next/router'
@@ -22,19 +23,21 @@ Router.events.on("routeChangeComplete",()=>NProgress.done());
 //Router.events.on("routeChangeError",()=>NProgress.error());
 
 
-
+const  queryClient =new QueryClient();
 export default function App({Component, pageProps: {session, ...pageProps}}) {
 
     return(
 
            <SessionProvider session={session}>
                <Provider store={store}>
-                   <PersistGate persistor={persistor}>
-                   <Layout>
-                       <ToastContainer/>
-                       <Component {...pageProps} />
-                   </Layout>
-                   </PersistGate>
+            <QueryClientProvider client={queryClient}>
+                <PersistGate persistor={persistor}>
+                    <Layout>
+                        <ToastContainer/>
+                        <Component {...pageProps} />
+                    </Layout>
+                </PersistGate>
+            </QueryClientProvider>
                </Provider>
            </SessionProvider>
 
