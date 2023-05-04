@@ -11,7 +11,7 @@ const StartConversation=({setChatUI,chatUI,userInfo,handleSubmit,setSelectedOpti
                     className="border border-2 rounded-full h-5 w-5 flex items-center justify-center text-3xl cursor-pointer"
                     onClick={() => setChatUI(!chatUI)}
                 >
-                    <span>-</span>
+                    <span className="mb-[5px] ml-[1px]">-</span>
                 </div>
             </div>
             <div className="text-xs mt-4 mr-5 flex flex-col gap-1  ">
