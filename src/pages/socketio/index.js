@@ -24,13 +24,13 @@ const SocketIo = () => {
                 setInput(msg);
             });
 
-            newSocket.on("getMessage",data=>{
-                setArrivalMessage({
-                    sender:data.senderId,
-                    text:data.text,
-                    createdAt:Date.now()
-                });
-            })
+            // newSocket.on("getMessage",data=>{
+            //     setArrivalMessage({
+            //         sender:data.senderId,
+            //         text:data.text,
+            //         createdAt:Date.now()
+            //     });
+            // })
         };
         socketInitializer();
 
@@ -58,7 +58,6 @@ const SocketIo = () => {
             text:"Hello"
         })
     };
-    console.log(messages)
 
     return <>
         <input
