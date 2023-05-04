@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Title from "./UI/Title";
 import Button from "./UI/Button";
+import ChatBox from "./layout/ChatBox";
 
 const About = () => {
   return (
@@ -34,6 +35,7 @@ const About = () => {
           </div>
         </div>
       </div>
+      <ChatBox/>
     </React.Fragment>
   );
 };

@@ -6,6 +6,7 @@ import MenuWrapper from "../../components/products/MenuWrapper";
 import About from "../../components/About";
 import Reservation from "../../components/Reservation";
 import Customers from "../../components/customers/Customers";
+import ChatBox from "../../components/layout/ChatBox";
 
 const Home=({categoryList,productList})=>{
    // console.log(categoryList)
@@ -18,7 +19,7 @@ const Home=({categoryList,productList})=>{
         <About/>
         <Reservation/>
         <Customers/>
-
+        <ChatBox />
     </div>
 }
 
