@@ -1,68 +1,111 @@
+import {GiExitDoor} from "react-icons/gi";
+import Messages from "../customerService/Messages";
 import {BsFillChatSquareDotsFill} from "react-icons/bs";
 
-const StartConversation=({setChatUI,chatUI,userInfo,handleSubmit,setSelectedOption,options,enableForm,setMessage,message})=>{
+import axios from "axios";
+import {useSession} from "next-auth/react";
+import {useQuery} from "@tanstack/react-query";
+import {useEffect, useRef, useState} from "react";
+
+
+const StartConversation = ({setIsHandleSubmit, currentChat})=>{
+    const {data:session}=useSession();
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState("");
+    const scrollRef=useRef()
+
+
+
+
+
+    const {data:currentChatMessage}=useQuery({
+        queryKey:["get-CurrentMessage"],
+        queryFn:()=>{
+            return axios.get(`${process.env.NEXT_PUBLIC_API_URL}/messages/${currentChat}`);
+        },
+        select:(data)=>{
+          return data.data
+        },
+        refetchOnMount:true,
+        refetchOnWindowFocus:true
+
+    })
+    useEffect(()=> {
+        if (currentChatMessage){
+            setMessages(currentChatMessage);
+        }
+    },[currentChatMessage])
+
+
+
+    const handleSubmit=async (e)=>{
+        e.preventDefault();
+        const message = {
+            senderId:session?.user?.id,
+            text:newMessage,
+            conversationId:currentChat
+        }
+        try {
+            const res= await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/messages`,message)
+            setNewMessage("")
+            setMessages((prev)=>[...prev,res.data])
+        }catch (err){
+            console.log(err);
+        }
+
+    }
+    const handleKeyDown = (event) => {
+            if (event.key === "Enter" && newMessage.trim() !=="") {
+                handleSubmit(event);
+            }
+
+    };
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [messages]);
+
+    const enableForm = () => {
+        return newMessage.length <= 1;
+    };
 
     return <>
-        <div className="flex flex-col">
-            <div className="flex flex-row py-4 px-6 justify-between items-center border-b-2 ">
-                <div className="flex items-center gap-3"><BsFillChatSquareDotsFill/> Canlı Destek
+        <div className="flex flex-col justify-between h-full">
+            <div className="px-10 py-3 bg-tertiary flex flex-row justify-between items-center rounded-tr-xl rounded-tl-xl">
+                <div className="flex flex-col">
+                    <div className="flex items-center gap-3 ml-[-1rem]"><BsFillChatSquareDotsFill/> Canlı Destek
+                    </div>
                 </div>
-                <div
-                    className="border border-2 rounded-full h-5 w-5 flex items-center justify-center text-3xl cursor-pointer"
-                    onClick={() => setChatUI(!chatUI)}
-                >
-                    <span className="mb-[5px] ml-[1px]">-</span>
+                <div className="btn-primary flex items-center justify-center gap-2 mr-[-1.5rem]"
+                onClick={()=>{setIsHandleSubmit(false)}}>
+                    Exit
+                    <span className="text-2xl"><GiExitDoor/></span>
                 </div>
             </div>
-            <div className="text-xs mt-4 mr-5 flex flex-col gap-1  ">
-                <span>HappyHourHup Canlı Destek'e hoş geldiniz! </span>
-                <span>Lütfen sohbete başlamadan önce aşağıdaki formu doldurunuz.</span>
+            <div className="max-h-[calc(100vh-16rem)] overflow-y-auto mt-4 pr-2 scroll-smooth" ref={scrollRef}>
+                {messages.map(m=>(
+                    <Messages message={m} own={m.sender === session?.user.id} key={m._id} className={"text-secondary"}/>
+
+                ))}
             </div>
 
-            <div className="flex flex-col mt-2 w-60 border-b-2 ">
-                <span className="text-sm">Ad Soyad</span>
-                <span> {userInfo.fullName}</span>
-            </div>
-            <div className="flex flex-col mt-2 w-60 border-b-2 ">
-                <span className="text-sm">E-Posta Adresi</span>
-                <span> {userInfo.email}</span>
-            </div>
-            <div className="mt-2">
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor="support-topic" className="text-sm font-light block mb-1">
-                            Hangi konuda destek almak istiyorsunuz?
-                        </label>
-                        <select
-                            id="support-topic"
-                            name="support-topic"
-                            className="block w-[97%] bg-gray border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 shadow-2xl shadow-indigo-500/50"
-                            onChange={(event)=>{ setSelectedOption(event.target.value);}}
+            <div className="flex items-center justify-center mb-3">
+                        <textarea id="message" name="message" className="w-[80%] h-12 border-2 border-primary mx-2
+                        focus:outline-none  resize-none" placeholder="write something..."
+                                  onChange={(e)=>setNewMessage(e.target.value)}
+                                  value={newMessage}
+                                  onKeyDown={(e)=>handleKeyDown(e)}
                         >
-                            {options.map((option, index) => {
-                                const optionKey = Object.keys(option)[0];
-                                const optionValue = option[optionKey];
-
-                                return <option key={index} value={optionKey}>{optionValue}</option>;
-                            })}
-                        </select>
-                    </div>
-                    <div className="mt-2">
-                        <label htmlFor="message" className="text-sm font-light block mb-1">Mesajınız:</label>
-                        <textarea id="message" name="message" className="block w-[97%] h-32 border-2 border-primary
-                                             focus:outline-none shadow-[0_10px_20px_-15px_rgba(0,0,0,0.3)] shadow-secondary resize-none" value={message} onChange={(event)=>{
-                            setMessage(event.target.value)}
-                        }></textarea>
-                    </div>
-                    <div className="flex items-center justify-center ">
-                        <button type="submit" disabled={enableForm()} className={`mt-2 btn-primary !w-9/12 ${enableForm() && 'opacity-50 cursor-not-allowed'}`}>
-                            Konuşmayı Başlat
-                        </button>
-                    </div>
-                </form>
+                        </textarea>
+                <button type="submit" disabled={enableForm()} className={`mt-2 mr-1 py-2 btn-primary w-[6rem] ${enableForm() && 'opacity-50 cursor-not-allowed'}`}
+                        onClick={handleSubmit}
+                        onKeyDown={(e)=>handleKeyDown(e)}>
+                    Send
+                </button>
             </div>
-        </div>
 
+        </div>
     </>
 }
 export default StartConversation;
