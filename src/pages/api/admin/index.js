@@ -37,7 +37,6 @@ const handler = async (req,res)=>{
 
             res.status(200).json({message:"Success"});
 
-
         }else{
             res.status(400).json({message:"Wrong Credentials"})
             //return NextResponse.json({success:false},{status:400})

@@ -11,6 +11,9 @@ import {useRouter} from "next/router";
 import {toast} from "react-toastify";
 import AddProduct from "../../components/admin/AddProduct";
 import UserComments from "../../components/admin/UserComments";
+import {RiCustomerService2Fill} from "react-icons/ri";
+
+
 
 
 const Profile = () => {
@@ -30,6 +33,9 @@ const Profile = () => {
         }catch (err){
             console.log(err);
         }
+    }
+    const customerService=()=>{
+        router.push('/customerService');
     }
 
     return <React.Fragment>
@@ -79,8 +85,16 @@ const Profile = () => {
                             <i className="fa-solid fa-comment"></i>
                             <button className="ml-1">Customer Comment</button>
                         </li>
-                        <li className={`border w-full p-3 hover:bg-primary
+                        <li className={`border w-full p-3 hover:bg-primary flex justify-center
                             cursor-pointer hover:text-white transition-all ${tabs === 5 ?"bg-primary text-tertiary" : ""}`}
+                            onClick={customerService}>
+
+                            <button className="ml-1 flex items-center justify-center gap-2">
+                                <span><RiCustomerService2Fill/></span>
+                                Customer Service</button>
+                        </li>
+                        <li className={`border w-full p-3 hover:bg-primary
+                            cursor-pointer hover:text-white transition-all ${tabs === 6 ?"bg-primary text-tertiary" : ""}`}
                         onClick={closeAdminAccount}>
                             <i className="fa fa-sign-out"></i>
                             <button className="ml-1" type="button" onClick={()=>signOut()}>Exit</button>
@@ -93,6 +107,8 @@ const Profile = () => {
             {tabs===2 && (<Category/>)}
             {tabs===3 && (<Footer/>)}
             {tabs===4 && (<UserComments/>)}
+
+
             {isProductModal && <AddProduct setIsProductModal={setIsProductModal}/>}
             <button className=" absolute btn-primary !w-12 !h-12 !p-0 bottom-14 right-14 text-4xl"
             onClick={()=>setIsProductModal(true)}>+</button>
