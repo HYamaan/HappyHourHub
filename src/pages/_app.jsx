@@ -23,23 +23,23 @@ Router.events.on("routeChangeComplete",()=>NProgress.done());
 //Router.events.on("routeChangeError",()=>NProgress.error());
 
 
-const  queryClient =new QueryClient();
+const queryClient=new QueryClient();
 export default function App({Component, pageProps: {session, ...pageProps}}) {
 
     return(
 
-           <SessionProvider session={session}>
-               <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-                <PersistGate persistor={persistor}>
-                    <Layout>
-                        <ToastContainer/>
-                        <Component {...pageProps} />
-                    </Layout>
-                </PersistGate>
-            </QueryClientProvider>
-               </Provider>
-           </SessionProvider>
+        <QueryClientProvider client={queryClient}>
+            <SessionProvider session={session}>
+                <Provider store={store}>
+                    <PersistGate persistor={persistor}>
+                        <Layout>
+                            <ToastContainer/>
+                            <Component {...pageProps} />
+                        </Layout>
+                    </PersistGate>
+                </Provider>
+            </SessionProvider>
+        </QueryClientProvider>
 
     )
 
