@@ -27,18 +27,16 @@ const InfoConversation=({userInfo,setChatUI,chatUI,setIsHandleSubmit,setCurrentC
             topic:selectedOption,
         }
 
-        //console.log("userInfo",userInfo)
-        //console.log("chatValue",chatValue)
         try {
             const res=await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/conversation`,chatValue)
-            console.log("RESS",res.data._id);
+
             const messages={
                 conversationId:res.data._id,
                 senderId:userInfo._id,
                 text:message
             }
             await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/messages`,messages)
-            setCurrentChat(res.data._id)
+            setCurrentChat(res.data)
             setIsHandleSubmit(true);
         }catch (err){
             console.log(err);

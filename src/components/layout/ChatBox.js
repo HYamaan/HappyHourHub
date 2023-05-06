@@ -41,6 +41,7 @@ const ChatBox = () => {
             setChatUI(false);
         }
     };
+    //console.log("currentChat",currentChat)
 
     return <>
         <div className=" fixed btn-primary !w-12 !h-12  !p-0 md:bottom-10 bottom-8 md:right-10 right-3 md:text-4xl text-5xl

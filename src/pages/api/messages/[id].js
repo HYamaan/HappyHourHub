@@ -17,7 +17,6 @@ const handler = async (req,res)=>{
     }
     if(method==="DELETE"){
         try {
-            console.log("id",id)
             const conversationIdDelete=await Message.deleteMany({ conversationId :id})
             res.status(200).json(conversationIdDelete);
         }catch (err){

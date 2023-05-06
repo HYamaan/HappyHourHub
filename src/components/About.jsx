@@ -12,11 +12,14 @@ const About = () => {
           <div className="sm:order-1 order-2">
             <div className="relative md:w-[445px] sm:w-[384px] w-[345px] md:h-[600px] sm:h-[525px] h-[472px]">
               <Image
+                  rel="preload"
                 src="/images/about-img.png"
                 alt="about-img.png"
                 priority={true}
                 fill
                 sizes="w-full h-full"
+                  imageSrcSet="/images/about-img.png 1200w, /images/about-img-2x.png 2400w"
+                as="image"
               />
             </div>
           </div>

@@ -26,7 +26,10 @@ module.exports = {
         secondary:"#222831",
         tertiary:"#f1f2f3",
         danger:"#ff0000",
-        success:"#00ff00"
+        success:"#00ff00",
+        stateGray:"#868E98",
+        cadetGray:"#9CA1AB"
+
       },
       fontFamily:{
         dancing:['Dancing Script', "cursive"],
