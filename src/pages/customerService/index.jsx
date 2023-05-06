@@ -25,7 +25,7 @@ const CustomerService = () => {
     useEffect(() => {
         const socketInitializer = async () => {
             await fetch(`${process.env.NEXT_PUBLIC_API_URL}/socketio`);
-            const newSocket = io("wss://happyhourhub.vercel.app//api/websocket'");
+            const newSocket = io();
 
 
             newSocket.on("connect", (data) => {
@@ -139,7 +139,7 @@ const CustomerService = () => {
         }
     }, [messages]);
     const handleSubmit = async (e) => {
-
+        e.preventDefault();
         const message = {
             senderId: adminID,
             text: newMessage,

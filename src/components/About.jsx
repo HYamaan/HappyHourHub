@@ -24,7 +24,7 @@ const About = () => {
             </div>
           </div>
           <div className="sm:order-2 order-1 md:w-[555px] md:p-0 px-3 ">
-            <Title className="text-[40px]"> We Are Feane</Title>
+            <Title className="text-[40px]"> We Are Happy Hour Hub</Title>
             <p className="mt-4 mb-6 ">
               There are many variations of passages of Lorem Ipsum available,
               but the majority have suffered alteration in some form, by

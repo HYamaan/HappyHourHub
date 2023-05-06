@@ -2,10 +2,8 @@ import React, {useEffect, useState} from "react";
 import Title from "../UI/Title";
 
 import {HiLocationMarker} from "react-icons/hi"
-import {FaPhoneAlt, FaFacebookF} from "react-icons/fa"
-import {GrLinkedinOption} from "react-icons/gr"
+import {FaPhoneAlt} from "react-icons/fa"
 import {MdLocalPostOffice} from "react-icons/md"
-import {BsTwitter, BsInstagram, BsPinterest} from "react-icons/bs"
 import axios from "axios";
 
 const Footer = () => {
@@ -48,7 +46,7 @@ const Footer = () => {
                         </div>
                     </div>
                     <div>
-                        <Title className="text-[38px] text-center mb-6 leading-8">Feane</Title>
+                        <Title className="text-[38px] text-center mb-6 leading-8">Happy Hour Hub</Title>
                         <div className="my-5">
                             {footerInfo?.desc}
                         </div>

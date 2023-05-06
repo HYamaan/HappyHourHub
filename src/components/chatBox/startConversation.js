@@ -24,7 +24,7 @@ const StartConversation = ({setIsHandleSubmit, currentChat})=>{
     useEffect(() => {
         const socketInitializer = async () => {
             await fetch(`${process.env.NEXT_PUBLIC_API_URL}/socketio`);
-            const newSocket = io("wss://happyhourhub.vercel.app//api/websocket'");
+            const newSocket = io();
 
             newSocket.on("connect", () => {
                 console.log("connected");
@@ -61,12 +61,12 @@ const StartConversation = ({setIsHandleSubmit, currentChat})=>{
             setMessages((prev)=>[...prev,arrivalMessage])
         }
     },[arrivalMessage,currentChat])
-    //console.log("CurrentChat",currentChat)
+
 
     useEffect(()=>{
         const isOnline = onlineUsers.some(obj => obj.userId === session?.user?.id);
         setUserOnline(isOnline)
-    },[onlineUsers])
+    },[session?.user?.id,onlineUsers])
     console.log(userOnline)
 
 
