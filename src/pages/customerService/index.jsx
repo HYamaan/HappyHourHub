@@ -25,7 +25,7 @@ const CustomerService = () => {
     useEffect(() => {
         const socketInitializer = async () => {
             await fetch(`${process.env.NEXT_PUBLIC_API_URL}/socketio`);
-            const newSocket = io();
+            const newSocket = io("wss://happyhourhub.vercel.app//api/websocket'");
 
 
             newSocket.on("connect", (data) => {
