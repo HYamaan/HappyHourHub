@@ -1,5 +1,5 @@
 
-import {useEffect, useRef, useState} from 'react';
+import {useState} from 'react';
 
 const CustomerMessages =({topicId,conversation,setCurrentChat,onlineUsers,adminID})=>{
     const [text, setText] = useState('');
@@ -11,8 +11,7 @@ const CustomerMessages =({topicId,conversation,setCurrentChat,onlineUsers,adminI
         ...item,
         online: onlineUsers.some(online => online.userId === item.members[0])
     }));
-    console.log(conversationOnline);
-    const filteredConversation = conversationOnline.filter((conversation) => {
+    const filteredConversation = conversationOnline?.filter((conversation) => {
         const conversationValue = conversation.fullName;
         return conversationValue.toLowerCase().includes(text.toLowerCase());
     });

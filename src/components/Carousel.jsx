@@ -2,9 +2,10 @@ import React from "react";
 import Image from "next/image"
 import Slider from "react-slick"
 import Title from "./UI/Title";
-import Button from "./UI/Button"
+import {useRouter} from "next/router";
 
 const Carousel = () => {
+    const router=useRouter()
     const settings = {
         dots: true,
         infinite: true,
@@ -12,7 +13,7 @@ const Carousel = () => {
         slidesToShow: 1,
         slidesToScroll: 1,
         arrows: false,
-        autoplay: true,
+        autoplay: false,
         autoplaySpeed: 2000,
         appendDots: dots => (
             <div
@@ -32,6 +33,13 @@ const Carousel = () => {
 
 
     };
+    const sendMenu =async ()=>{
+        try {
+            router.push('/menu')
+        }catch (err){
+            console.log(err);
+        }
+    }
 
     return (<div className="h-screen container mx-auto -mt-[88px]">
         <div className="absolute top-0 left-0 w-full h-full">
@@ -49,7 +57,7 @@ const Carousel = () => {
                         quisquam esse error unde. Tempora ex doloremque, labore, sunt repellat dolore, iste magni quos
                         nihil
                         ducimus libero ipsam.</p>
-                    <Button>Order Now</Button>
+                    <button className="z-20 btn-primary cursor-pointer  mb-10" onClick={()=>sendMenu()}>Order Now</button>
                 </div>
             </div>
             <div>
@@ -62,7 +70,7 @@ const Carousel = () => {
                     quisquam esse error unde. Tempora ex doloremque, labore, sunt repellat dolore, iste magni quos
                     nihil
                     ducimus libero ipsam.</p>
-                <button className="btn-primary mt-[10px] !py-[10px] !px-[45px] ">Order Now</button>
+                <button className="z-40 btn-primary cursor-pointer mb-10" onClick={()=>sendMenu()}>Order Now</button>
             </div>
         </div>
             <div>
@@ -75,7 +83,7 @@ const Carousel = () => {
                     quisquam esse error unde. Tempora ex doloremque, labore, sunt repellat dolore, iste magni quos
                     nihil
                     ducimus libero ipsam.</p>
-                <button className="btn-primary mt-[10px] !py-[10px] !px-[45px] ">Order Now</button>
+                <button className="z-20 btn-primary cursor-pointer  mb-10" onClick={()=>sendMenu()}>Order Now</button>
             </div>
         </div>
         </Slider>

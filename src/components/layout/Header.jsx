@@ -4,14 +4,15 @@ import Link from "next/link";
 
 import Logo from "./../UI/Logo";
 import Search from "./../UI/Search";
-import {useSelector} from "react-redux";
 
-import { FaUserAlt,FaShoppingCart } from "react-icons/fa";
+
+import { FaUserAlt } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import {GiCancel, GiHamburgerMenu} from "react-icons/gi"
+import ShoppingBasket from "./shoppingBasket";
 
 const Header = () => {
-  const cart = useSelector(state=>state.cart);
+
   const router = useRouter();
   const [isSearchModal, setIsSearchModal] = useState(false);
   const [isMenuModal, setIsMenuModal] = useState(false);
@@ -33,16 +34,16 @@ const Header = () => {
           ${isMenuModal !== false && "!grid place-content-center"}`}>
           <ul className="flex gap-x-2 sm:flex-row flex-col items-center ">
             <li className="px-[0.313rem] py-[1.25rem] uppercase font-size hover:text-primary cursor-pointer">
-              <Link href="/" className={router.pathname == "/" ? "text-primary" : ""}> Home</Link>
+              <Link href="/" className={router.pathname === "/" ? "text-primary" : ""}> Home</Link>
             </li>
             <li className="px-[0.313rem] py-[1.25rem] uppercase font-size hover:text-primary cursor-pointer">
-              <Link href="/menu" className={router.pathname == "/menu" ? "text-primary" : ""}> Menu</Link>
+              <Link href="/menu" className={router.pathname === "/menu" ? "text-primary" : ""}> Menu</Link>
             </li>
             <li className="px-[0.313rem] py-[1.25rem] uppercase font-size hover:text-primary cursor-pointer">
-              <Link href="/about" className={router.pathname == "/about" ? "text-primary" : ""}> About</Link>
+              <Link href="/about" className={router.pathname === "/about" ? "text-primary" : ""}> About</Link>
             </li>
             <li className="px-[0.313rem] py-[1.25rem] uppercase font-size hover:text-primary cursor-pointer">
-              <Link href="/reservation" className={router.pathname == "/reservation" ? "text-primary" : ""}> Book Table</Link>
+              <Link href="/reservation" className={router.pathname === "/reservation" ? "text-primary" : ""}> Book Table</Link>
             </li>
           </ul>
           {isMenuModal && (
@@ -55,22 +56,17 @@ const Header = () => {
               </button>
           )}
         </nav>
-        <div className="flex gap-x-4 items-center">
-          <Link href="/auth/login" className={router.pathname == "/auth/login" ? "text-primary" : ""}>
-             <FaUserAlt className="hover:text-primary transition-all cursor-pointer" />
-
-          </Link>
-          <Link href="/cart" className= {` ${router.pathname == "/cart" ? "text-primary" : ""}` }>
-            <span className="relative z-0">
-            <FaShoppingCart className="hover:text-primary transition-all cursor-pointer peer" />
-              {!isMenuModal && ( <span className={`absolute text-xs -top-2 -right-2 rounded-full w-4 h-4  font-bold z-0
-             flex justify-center items-center ${router.pathname == "/cart" ? "text-secondary bg-tertiary" : "bg-primary text-black"} `}
-              >{cart.totalQuantity=== 0 ? "0" : cart.totalQuantity}</span>)}
-           </span>
-          </Link>
+        <div className="flex gap-x-4 items-center relative">
           <button onClick={() => setIsSearchModal(true)}>
             <BsSearch className="hover:text-primary transition-all cursor-pointer" />
           </button>
+          <Link href="/auth/login" className={router.pathname === "/auth/login" ? "text-primary" : ""}>
+             <FaUserAlt className="hover:text-primary transition-all cursor-pointer" />
+
+          </Link>
+
+            <ShoppingBasket router={router} isMenuModal={isMenuModal}/>
+
           <Link href="" className="md:inline-block hidden">
             <button className="btn-primary"> Order Online</button>
           </Link>
