@@ -11,9 +11,8 @@ import {cartActions} from "../../redux/cartSlice";
 const ShoppingBasket = ({router,isMenuModal})=>{
     const cart = useSelector(state=>state.cart);
     const dispatch=useDispatch();
-    const [showBasket, setShowBasket] = useState(true);
+    const [showBasket, setShowBasket] = useState(false);
     const {push}=useRouter();
-    console.log(cart?.products);
     const handleProductClick=async (prodId)=>{
         try {
             await push(`/product/${prodId}`)
@@ -22,6 +21,7 @@ const ShoppingBasket = ({router,isMenuModal})=>{
             console.log(err);
         }
     }
+    console.log(cart.products)
     const moveToBasket =async ()=>{
         try {
             await push(`/cart`);
@@ -59,7 +59,7 @@ const ShoppingBasket = ({router,isMenuModal})=>{
                 <div  className="overflow-x-hidden overflow-y-auto max-h-[20.813rem] pt-4 px-2">
                     {cart.products.map((prod,index) => {
                         const isLastItem = index === cart.products.length - 1;
-                        return <div key={prod?._id}
+                        return <div key={index}
                                     className={`flex items-center flex-row w-[21.688rem] h-[6rem] hover:bg-[#D3D6D9] 
                            ${!isLastItem ? "border-b-2 border-secondary border-opacity-40 " :""}`}
 
@@ -77,8 +77,8 @@ const ShoppingBasket = ({router,isMenuModal})=>{
                             </div>
                             <div className="basis-8/12 text-xs text-cadetGray ml-2 top-2" >
                                 <p >{prod.title}</p>
-                                <p>{prod.extras.map(ext=>ext.text).join(', ')}</p>
-                                <p>{prod.price}$</p>
+                                <p>{`${prod.extras.length>0 ? "Options: " : ""}${prod.extras.map(ext=>ext.text).join(', ')}`}</p>
+                                <p>{new Intl.NumberFormat('tr-TR', {style: 'currency', currency: 'TRY', minimumFractionDigits: 2}).format((prod.price))}₺</p>
                                 <p>{`Adet: ${prod.productTotal}`}</p>
                             </div>
                             <div className="basis-1/12 h-full mt-2 place-self-start text-secondary hover:text-danger text-xl cursor-pointer "
@@ -90,7 +90,7 @@ const ShoppingBasket = ({router,isMenuModal})=>{
                 </div>
                 <div className="flex items-center justify-between h-14 w-full bg-[#D3D6D9] text-secondary">
                     <span className="ml-12">Ara Toplam</span>
-                    <span className="font-bold mr-4 ">{cart.total}$</span>
+                    <span className="font-bold mr-4 ">{new Intl.NumberFormat('tr-TR', {style: 'currency', currency: 'TRY', minimumFractionDigits: 2}).format((cart.total))}₺</span>
                     <button className="btn-primary mr-2" onClick={()=>moveToBasket()}>Sepete Git</button>
                 </div>
             </div>
