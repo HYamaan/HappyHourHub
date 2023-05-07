@@ -286,7 +286,11 @@ const Cart = ({userList}) => {
                             </span>
                             <span>Toplam</span>
                         </div>
-                        <div >{cart.total}.00TL</div>
+                        <div >{new Intl.NumberFormat('tr-TR', {
+                            style: 'currency',
+                            currency: 'TRY',
+                            minimumFractionDigits: 2
+                        }).format((cart.total))}₺</div>
                     </div>
                     {mobileShowBasketDetail && <>
                         <div className="  border-t-2  ">
