@@ -116,14 +116,14 @@ const Cart = ({userList}) => {
 
 
     return <div className={`min-h-[calc(100vh_-_433px)] font-workSans `}>
-        <div className="flex justify-between  md:flex-row flex-col m-auto  max-w-[70rem]">
+        <div className="flex justify-between  sm:flex-row flex-col m-auto  max-w-[70rem]">
                 <div className={`basis-[68%] py-4 px-4  ${mobileShowBasketDetail ? 
                     "after:content[''] after:absolute after:top-0 after:left-0 after:bg-[#212529] after:w-full after:h-full after:opacity-70 after:z-20" : ""} `}
                      onClick={()=>{mobileShowBasketDetail && setMobileShowBasketDetail(!mobileShowBasketDetail)}}
                      ref={scrollRef}>
                     <div className="flex items-end justify-between pt-1 pb-4 mb-4 border-b-2">
-                        <p className="text-[1.406rem] md:font-semibold font-base">Alışveriş Sepeti</p>
-                        <Link href="/menu" className="hover:underline text-[0.875rem] mr-4 md:block hidden">Alışverişe Devam
+                        <p className="text-[1.406rem] sm:font-semibold font-base">Alışveriş Sepeti <span>({cart.totalQuantity})</span></p>
+                        <Link href="/menu" className="hover:underline text-[0.875rem] mr-4 sm:block hidden">Alışverişe Devam
                             Et</Link>
                     </div>
                     {cart.products.map((product, index) => {
@@ -132,27 +132,26 @@ const Cart = ({userList}) => {
 
                             <Image src="/images/f1.png"
                                    alt="/images/f1.png"
-                                   className="w-auto h-auto md:pr-4 pr-1 md:basis-[23.49%]"
+                                   className="w-auto h-auto sm:pr-4 pr-1 sm:basis-[23.49%]"
                                    width={100}
                                    height={100}
                                    priority={true}
                             />
-                            <div className="flex md:flex-row flex-col w-full h-full md:static relative">
+                            <div className="flex sm:flex-row flex-col w-full h-full sm:static relative">
                                 <div
-                                    className="flex flex-col  items-start text-xs font-semibold font-workSans text-cadetGray ml-2 md:w-full w-[8.5rem]  top-2 md:basis-[43.635%]">
-                                    <p className="text-base font-semibold text-secondary md:mb-0 mb-1 md:w-full ">{product.title}</p>
-                                    <p className="text-cadetGray md:mb-0 mb-1">
+                                    className="flex flex-col  items-start text-xs font-semibold font-workSans text-cadetGray ml-2 sm:w-full w-[8.5rem]  top-2 sm:basis-[43.635%]">
+                                    <p className="text-base font-semibold text-secondary sm:mb-0 mb-1 sm:w-full ">{product.title}</p>
+                                    <p className="text-cadetGray sm:mb-0 mb-1">
                                     <span
-                                        className="text-stateGray font-workSans font-semibold md:w-full max-w-[8.5rem]">
+                                        className="text-stateGray font-workSans font-semibold sm:w-full max-w-[8.5rem]">
                                         {product.extras.length > 0 ? "Options:" : ""}</span>
                                         {product.extras.map(ext => ext.text).join(', ')}
                                     </p>
-                                    <p className="capitalize md:mb-0 mb-2">Category: {product.category}</p>
+                                    <p className="capitalize sm:mb-0 mb-2">Category: {product.category}</p>
                                 </div>
                                 <div
-                                    className="flex flex-col md:flex-row md:gap-0 gap-2 items-start md:h-full w-full justify-between md:basis-[56.365%] md:mr-2 md:mt-0 mt-2">
-                                    <div
-                                        className="flex flex-row  items-center justify-center gap-4 ml-0 md:ml-[5.125rem]">
+                                    className="flex flex-col sm:flex-row sm:gap-0 gap-2 items-start sm:h-full w-full justify-between sm:basis-[56.365%] sm:mr-2 sm:mt-0 mt-2">
+                                    <div className="sm:flex hidden flex-row  items-center justify-center gap-4 ml-0 sm:ml-[2.125rem]  ">
                                         <button
                                             className="border-[1px] border-secondary w-5 h-5 rounded-full text-md flex items-center justify-center"
                                             onClick={() => increaseItemHandler(product)}
@@ -164,33 +163,46 @@ const Cart = ({userList}) => {
                                             onClick={() => decreaseItemHandler(product)}
                                         >-
                                         </button>
-
                                     </div>
 
-                                    <div className="flex items-center justify-between md:h-full md:flex-col flex-row">
+                                    <div className="flex flex-row border-2 py-1 px-1 rounded-lg  items-center justify-center gap-4 ml-0  sm:hidden ">
+                                        <button
+                                            className="  w-5 h-5  text-md flex items-center justify-center text-xl font-semibold"
+                                            onClick={() => decreaseItemHandler(product)}
+                                        >-
+                                        </button>
+                                        <p>{product.productTotal} Adet</p>
+                                        <button
+                                            className=" w-5 h-5  text-md flex items-center justify-center text-xl font-semibold"
+                                            onClick={() => increaseItemHandler(product)}
+                                        >+
+                                        </button>
+                                    </div>
+
+                                    <div className="flex items-center justify-between sm:h-full sm:flex-col flex-row">
 
                                         <div
-                                            className="flex items-center justify-center w-full md:items-end md:flex-col flex-row md:gap-1 gap-4">
+                                            className="flex items-center justify-center w-full sm:items-end sm:flex-col flex-row sm:gap-1 gap-4">
 
                                     <span
-                                        className="line-through text-base md:text-sm text-cadetGray">{new Intl.NumberFormat('tr-TR', {
+                                        className="line-through text-base sm:text-sm text-cadetGray">{new Intl.NumberFormat('tr-TR', {
                                         style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                                     }).format((product.price * product.productTotal * 111.43 / 100))}₺
 </span>
                                             <span
-                                                className="font-semibold font-workSans text-base md:text-[1.2rem] text-primary">
+                                                className="font-semibold font-workSans text-base sm:text-[1.2rem] text-primary">
                                                 {new Intl.NumberFormat('tr-TR', {
                                                     style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                                                 }).format((product.price * product.productTotal))}₺
                                             </span>
                                         </div>
                                         <div
-                                            className=" flex w-full justify-end mr-2 mb-2  md:hover:text-danger   cursor-pointer
-                                                  md:static md:top-0 md:right-0 md:text-lg md:text-secondary  absolute top-2  text-2xl text-stateGray
+                                            className=" flex w-full justify-end mr-2 mb-2  sm:hover:text-danger   cursor-pointer
+                                                  sm:static sm:top-0 sm:right-0 sm:text-lg sm:text-secondary  absolute top-2  text-2xl text-stateGray
                                         "
                                             onClick={() => removeItemHandler(product)}>
                                             <i className="fa-solid fa-trash-can"></i>
-                                            <span className="md:hidden block text-lg ml-[1px]">Sil</span>
+                                            <span className="sm:hidden block text-lg ml-[1px]">Sil</span>
                                         </div>
                                     </div>
                                 </div>
@@ -202,10 +214,10 @@ const Cart = ({userList}) => {
                 </div>
 
 
-            <div className={` basis-[32%] flex items-center justify-center md:block hidden`}>
+            <div className={` basis-[32%] flex items-center justify-center sm:block hidden`}>
                 <div className={`h-[11.255rem] w-full border-[1.11px] font-medium  rounded-tr-lg rounded-tl-lg  `}>
                     <div className="p-[0.938rem]">
-                        <div className="text-[1.063rem] md:mt-0 mt-10 font-workSans mb-5">Sipariş Özeti</div>
+                        <div className="text-[1.063rem] sm:mt-0 mt-10 font-workSans mb-5">Sipariş Özeti</div>
                         <div className="text-sm font-sans self-start text-left pb-3 ">
                             <div
                                 className="w-full flex flex-row items-center justify-between text-[#212529] text-[0.95rem] mb-2">
@@ -260,12 +272,12 @@ const Cart = ({userList}) => {
                     >Siparişi Tamamla</button>
                 </div>
             </div>
-            <div className={`fixed bottom-0 bg-primary p-6 w-full md:hidden block ${mobileShowBasketDetail ? "z-50" : ""}
-                
+
+            <div className={`fixed bottom-0 bg-primary px-6 pb-6 pt-2 w-full sm:hidden block ${mobileShowBasketDetail ? "z-50 " : "border-t-[1px] border-tertiary"}
             `}>
                 <div>
-                    <div className="flex items-center justify-between flex-row  font-semibold">
-                        <div className={`flex item-center justify-center gap-2 ${mobileShowBasketDetail ? "mb-3" : "mb-[0.5rem]"} `}>
+                    <div className={`flex items-center justify-between flex-row mt-1  font-semibold ${mobileShowBasketDetail ? "mb-3" : "mb-[-0.2rem]"}` }>
+                        <div className={`flex item-center justify-center gap-2 `}>
                             <span className="place-self-start" onClick={()=>setMobileShowBasketDetail(!mobileShowBasketDetail)}>
                                 {mobileShowBasketDetail ? (<i className="fa-solid fa-chevron-down fa-xs"></i>): (
                                     <i className="fa-sharp fa-solid fa-angle-up fa-xs"></i>)}
