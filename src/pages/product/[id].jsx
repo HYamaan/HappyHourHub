@@ -38,7 +38,7 @@ const Id = ({food}) => {
     },[]);
 
 
-let x=10;
+
     const handleSize = (sizeIndex) => {
         const difference = prices[sizeIndex] - prices[size];
         setSize(sizeIndex)
@@ -143,7 +143,7 @@ let x=10;
                     )}
 
                 </div>
-                <button className="btn-primary " onClick={()=>handleClick()}>Add to Cart</button>
+                <button className="btn-primary sm:mb-0 mb-4" onClick={()=>handleClick()}>Add to Cart</button>
             </div>
         </div>
     </React.Fragment>

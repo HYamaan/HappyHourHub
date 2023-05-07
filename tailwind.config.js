@@ -33,7 +33,8 @@ module.exports = {
       },
       fontFamily:{
         dancing:['Dancing Script', "cursive"],
-        sans :['Open Sans', "sans-serif"]
+        sans :['Open Sans', "sans-serif"],
+        workSans:['Work Sans', "sans-serif"]
       },
       keyframes: {
         wave: {

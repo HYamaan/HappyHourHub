@@ -22,7 +22,7 @@ const Carousel = () => {
                     padding: "10px",
                 }}
             >
-                <ul style={{marginTop: "10px" }}> {dots} </ul>
+                <ul > {dots} </ul>
             </div>
         ),
         customPaging: i => (
@@ -57,7 +57,7 @@ const Carousel = () => {
                         quisquam esse error unde. Tempora ex doloremque, labore, sunt repellat dolore, iste magni quos
                         nihil
                         ducimus libero ipsam.</p>
-                    <button className="z-20 btn-primary cursor-pointer  mb-10" onClick={()=>sendMenu()}>Order Now</button>
+                    <button className="z-20 btn-primary cursor-pointer  md:mb-10 mb-0" onClick={()=>sendMenu()}>Order Now</button>
                 </div>
             </div>
             <div>
@@ -70,7 +70,7 @@ const Carousel = () => {
                     quisquam esse error unde. Tempora ex doloremque, labore, sunt repellat dolore, iste magni quos
                     nihil
                     ducimus libero ipsam.</p>
-                <button className="z-40 btn-primary cursor-pointer mb-10" onClick={()=>sendMenu()}>Order Now</button>
+                <button className="z-40 btn-primary cursor-pointermd:mb-10 mb-0" onClick={()=>sendMenu()}>Order Now</button>
             </div>
         </div>
             <div>
@@ -83,7 +83,7 @@ const Carousel = () => {
                     quisquam esse error unde. Tempora ex doloremque, labore, sunt repellat dolore, iste magni quos
                     nihil
                     ducimus libero ipsam.</p>
-                <button className="z-20 btn-primary cursor-pointer  mb-10" onClick={()=>sendMenu()}>Order Now</button>
+                <button className="z-20 btn-primary cursor-pointer  md:mb-10 mb-0" onClick={()=>sendMenu()}>Order Now</button>
             </div>
         </div>
         </Slider>
