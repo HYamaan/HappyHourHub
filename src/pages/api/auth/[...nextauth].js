@@ -69,8 +69,12 @@ export const authOptions = {
     secret:"uO+rIYxgHfxt9LDxNOPSwTSRf/Yk4Qcfz/McZGj8w7I=",
 }
 const signInUser = async ({user,password,email})=>{
-    const isMatch= await user.correctPassword(password,user.password);
+
+    const isMatch= await bcrypt.compare(password,user.password)
     if(!isMatch || user.email !== email)throw new Error("Username or Password doesn't match");
+    if(user.emailVerified==="false") {
+        throw new Error("Please check your email activation.")
+    }
 
     return user;
 }

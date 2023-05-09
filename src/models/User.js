@@ -22,14 +22,44 @@ const UserSchema = new mongoose.Schema(
             type: String,
             maxlength:11
         },
-        address: {
-            type: String,
-        },
+        address: [
+            {
+                addressType:{
+                    type: String,
+                    default:"ev"
+                },
+                country: {
+                    type: String,
+                    default:"Turkey"
+                },
+                city:{
+                    type: String,
+                    default:"İstanbul"
+                },
+                district:{
+                    type:String,
+                   default: "Şişli"
+                },
+                address1:{
+                    type: String,
+                    default:"Merhaba"
+                },
+                address2:{
+                    type: String,
+                    default:"Merhaba2"
+                },
+
+            }
+        ],
         job: {
             type: String,
         },
         bio: {
             type: String,
+        },
+        role:{
+            type:String,
+            default:"user"
         },
         password: {
             type: String,
@@ -59,7 +89,15 @@ const UserSchema = new mongoose.Schema(
         },
         emailVerified: {
             type: String,
-            default: null,
+            default: false,
+        },
+        emailVerifiedToken:{
+            type:String,
+            select: false
+        },
+        emailVerifiedExpires: {
+            type: Date,
+            select: false
         },
         image:{
             type:String
@@ -83,7 +121,10 @@ UserSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
     this.password = await bcrypt.hash(this.password, 15);
     //Gereksiz yer kaplamasına engel oldum
-    this.confirmPassword = undefined;
+    if(this.confirmPassword ){
+        console.log("_____________________________________________________---------------------------------------____________________________________________________")
+        this.confirmPassword = undefined;
+    }
     next();
 });
 
@@ -98,10 +139,10 @@ UserSchema.methods.createPasswordResetToken = function(){
         .update(resetToken)
         .digest('hex');
 
-
     this.passwordResetExpires = Date.now() + 10*60*1000;
     return this.passwordResetToken;
-}
+};
+
 
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);
