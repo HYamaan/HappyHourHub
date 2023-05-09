@@ -48,7 +48,6 @@ const handler = async (req, res) => {
         }
 
         if (isMatch) {
-
             return res.status(400).json({success: false, message: 'same password as before'});
         }
         user.password2 = user.password1;

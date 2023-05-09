@@ -29,7 +29,7 @@ const Login = () => {
         try {
             const res = await signIn("credentials", options);
             if (res.ok) {
-                toast.success("Successfully sing in")
+                toast.success("Successfully Sign in")
             } else {
                 toast.error(res.error)
             }
@@ -41,13 +41,11 @@ const Login = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                //console.log("Login UseEffect")
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users`);
                 setCurrentUser(
                     res.data?.find((user) => user.email === session?.user?.email)
                 );
                 if (currentUser) {
-                    //console.log("Yönlendirme")
                     session && await push("/profile/" + currentUser?._id);
                 }
 
