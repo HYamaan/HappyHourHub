@@ -3,12 +3,12 @@
 import User from "../../../models/User";
 import dbConnect from "../../../utilities/dbConnect";
 import crypto from "crypto";
+import userVerifyCodeEmail from "../../../hooks/userVerifyCodeEmail";
 const handler = async (req, res) => {
     await dbConnect();
     const {method, query: { id:verifyCode }} = req;
 
     if(method==="PATCH"){
-        console.log("PATCH",req.query)
         if (!req.body.verifyCode ) {
             return res.status(400).json({
                 success: false,
@@ -21,13 +21,11 @@ const handler = async (req, res) => {
                 emailVerifiedExpires: {$gt: Date.now()}})
             .select('+emailVerifiedToken')
             .select('+emailVerifiedExpires');
-        console.log("user",user)
-        console.log(user)
         if (user && user.emailVerifiedToken) {
             const hashedInput = crypto.createHash("sha256").update(req.body.verifyCode).digest("hex");
             const isMatch = (hashedInput === user.emailVerifiedToken);
             if (isMatch) {
-                console.log("___________-----____",isMatch)
+
                 try {
                     await User.findByIdAndUpdate(user._id,{
                         emailVerified: true,
@@ -53,6 +51,23 @@ const handler = async (req, res) => {
         }
 
 
+    }
+    if(method==="POST"){
+        try {
+            const user = await User.findOne({
+                emailVerifiedToken:verifyCode
+            }).select("+emailVerifiedToken")
+                .select('+emailVerifiedExpires');
+            if(!user){
+                throw new Error('You have applied an activation code!')
+
+            }else{
+                await userVerifyCodeEmail(req,res,user);
+            }
+
+        }catch (err){
+            res.status(400).json(err.message)
+        }
     }
 };
 

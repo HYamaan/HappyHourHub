@@ -18,7 +18,7 @@ import axios from "axios";
 const Login = () => {
 
     const {data: session} = useSession();
-    //console.log("LoginSession",session);
+
     const [currentUser, setCurrentUser] = useState();
     const {push} = useRouter();
 
@@ -33,7 +33,6 @@ const Login = () => {
             } else {
                 toast.error(res.error)
             }
-            actions.resetForm();
         } catch (err) {
             console.log(err)
         }
@@ -42,19 +41,21 @@ const Login = () => {
         const getUser = async () => {
             try {
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users`);
-                setCurrentUser(
-                    res.data?.find((user) => user.email === session?.user?.email)
-                );
-                if (currentUser) {
-                    session && await push("/profile/" + currentUser?._id);
-                }
-
+                const currentUser = res.data?.find((user) => user.email === session?.user?.email);
+                setCurrentUser(currentUser);
             } catch (err) {
                 console.log(err);
             }
         };
+
         getUser();
-    }, [session, push, currentUser]);
+    }, [session, setCurrentUser]);
+
+    useEffect(() => {
+        if (currentUser && session) {
+            push(`/profile/${currentUser._id}`);
+        }
+    }, [currentUser, session, push]);
 
 
     const formik = useFormik({

@@ -14,6 +14,24 @@ const RegisterVerify=({verifyCode})=>{
 
     const router =useRouter();
     const [isloading,setIsLoading]=useState(false);
+
+
+    const ResetVerifyCode= async ()=>{
+        try {
+            setIsLoading(true);
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/userEmailVerify/${verifyCode}`);
+
+            if (res.status===200){
+                toast.success("Email Verification Resent !");
+                await router.push(`/auth/login`);
+                setIsLoading(false);
+            }
+        }catch (err){
+            setIsLoading(false);
+            toast.error(err.message);
+        }
+
+    }
     const onSubmit = async (values,actions) => {
         try {
             setIsLoading(true);
@@ -28,7 +46,6 @@ const RegisterVerify=({verifyCode})=>{
             toast.error(err.response.data.message);
             setIsLoading(false);
         }
-        actions.resetForm();
 
     }
     const formik = useFormik({
@@ -69,11 +86,14 @@ const RegisterVerify=({verifyCode})=>{
                         <AiFillUnlock/><span> Continue</span><span></span>
                     </button>
 
-                    <Link href="/auth/login">
+                    <div className="flex mx-4 items-center justify-between">
+                        <Link href="/auth/login">
             <span className="text-sm underline cursor-pointer text-secondary">
                   Do you  have a account?
                 </span>
-                    </Link>
+                        </Link>
+                        <div className="text-sm hover:underline cursor-pointer" onClick={(reset)=>ResetVerifyCode()}>Reset Verify Code</div>
+                    </div>
                 </form>
             </div>
         </div>) : (        <LoadingPackman height={'h-[24.9475rem]'}

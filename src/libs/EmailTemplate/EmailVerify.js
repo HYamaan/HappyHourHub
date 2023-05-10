@@ -10,12 +10,9 @@ import {
     Text,
 } from '@react-email/components';
 import * as React from 'react';
+import happyHourHub from "./../../../public/images/HappyHourHub.png"
 
 
-
-const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : '';
 
 export const EmailVerify = ({validationCode,loginUrl}) => (
     <Html>
@@ -23,7 +20,7 @@ export const EmailVerify = ({validationCode,loginUrl}) => (
         <Body style={main}>
             <Container style={container}>
                 <Img
-                    src={`${baseUrl}/static/plaid-logo.png`}
+                    src={happyHourHub}
                     width="212"
                     height="88"
                     alt="Plaid"

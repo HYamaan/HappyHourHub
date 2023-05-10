@@ -8,17 +8,17 @@ import Input from "../form/Input";
 import {AiFillUnlock} from "react-icons/ai";
 import Link from "next/link";
 import LoadingPackman from "./loadingPackman";
+import {useRouter} from "next/router";
 
 
 const ResetPasswordId=({id})=>{
     const [isloading,setIsLoading]=useState(false);
+    const router = useRouter();
     const onSubmit = async (values,actions) => {
 
         try {
                 setIsLoading(true);
                 const res =await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/userPassword/${id}`, {...values})
-
-
 
             if (res.status===200){
                 toast.success("Success Notification !");
