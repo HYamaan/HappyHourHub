@@ -24,7 +24,7 @@ const Addresses = ({ user }) => {
             }
         }
         getUser();
-    },[isLoading,user,setUserAddresses,setAddNewAddress,setUpdateAddress]);
+    },[isLoading,user,updateAddress,setUserAddresses]);
 
     const handleEditingClick=async (addressId)=>{
 
@@ -44,7 +44,7 @@ const Addresses = ({ user }) => {
 
         try {
             setIsLoading(!isLoading)
-            const res = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/userAddress/userId=${user._id}/addressId=${addressId}`);
+             await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/userAddress/userId=${user._id}/addressId=${addressId}`);
             setUpdateAddress("");
 
         }catch (err){
@@ -57,8 +57,8 @@ const Addresses = ({ user }) => {
     return<>
         {
             !addNewAddress && (
-                <div className="w-full ml-5 font-workSans">
-                    <Title className="text-[40px] border-b-2 w-full">Addresses</Title>
+                <div className="w-full ml-5 mt-1  font-workSans">
+                    <Title className="text-[40px] mt-4 border-b-2 w-full">Addresses</Title>
                     {userAddresses.length >0 ? (
                         userAddresses.map((address,index)=>(
                             <div key={address._id ? address._id : index} className="flex lg:flex-row flex-col items-center justify-center mt-4 border-b-[1px] border-secondary pb-4 border-opacity-30 ">

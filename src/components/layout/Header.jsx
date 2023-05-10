@@ -24,9 +24,9 @@ const Header = () => {
     ${router.pathname === "/" ? "bg-transparent" : "bg-secondary"}`} >
       <div
         className="container mx-auto text-white flex justify-between
-    items-center h-full"
+    items-center h-full "
       >
-        <div className="flex-1">
+        <div className="flex-1 lg:ml-0 ml-2">
           <Logo />
         </div>
         <nav className={`sm:static absolute top-0 left-0  w-full h-screen  
@@ -71,7 +71,7 @@ const Header = () => {
             <button className="btn-primary"> Order Online</button>
           </Link>
           <button
-              className="sm:hidden inline-block"
+              className="sm:hidden lg:mr-0 mr-2 inline-block"
               onClick={()=>setIsMenuModal(true)}
           >
             <GiHamburgerMenu className="text-xl hover:text-primary transition-all"/>

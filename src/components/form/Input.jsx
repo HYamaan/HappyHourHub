@@ -1,7 +1,22 @@
-import React from "react";
+import React, {useState} from "react";
 import InputMask from "react-input-mask";
+import {BsEye} from "react-icons/bs";
 
 const Input = (props) => {
+
+
+    const [showPasswordType,setShowPasswordType]=useState("");
+    const [showPassword,setShowPassword]=useState(false);
+    const ShowPassword = (id) => {
+        if(showPassword){
+            setShowPasswordType("")
+            setShowPassword(false)
+        }else{
+            setShowPasswordType(id)
+            setShowPassword(true)
+        }
+    }
+
     const {placeholder, errorMessage, touched, ...inputs} = props
     return <React.Fragment>
         <div className={`w-full ${props.className}`}>
@@ -20,14 +35,22 @@ const Input = (props) => {
                         />
                     ) :
                     (
-                    <input {...inputs}
-                        className={`h-14 w-full border border outline-none px-4  peer
-                       ${inputs.type !== "datetime-local" && "pt-2"}
-                       ${errorMessage ? "border-red-600" : "border-primary"}`}
-                           value={inputs?.value || ''}
-                        required
+                        <>
+                            <input {...inputs}
+                                   {...(inputs.type === "password" && showPasswordType === inputs.id && { type: "text" })}
+                                   className={`h-14 w-full border border outline-none px-4  peer
+                                 ${inputs.type !== "datetime-local" && "pt-2"}
+                                     ${errorMessage ? "border-red-600" : "border-primary"}`}
+                                   value={inputs?.value || ''}
+                                   required
 
-                    />)
+                            />
+                            {inputs.type === "password" && <BsEye className=" outline-none absolute bg-transparent top-4 right-4 z-20 text-stateGray text-2xl cursor-pointer"
+                                                                  onClick={()=>ShowPassword(inputs.id)}
+                            />}
+                        </>
+
+                    )
 
                 }
                 {inputs.type !== "datetime-local" && <span className={`

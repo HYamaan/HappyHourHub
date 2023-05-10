@@ -15,14 +15,12 @@ import {BiRightArrowAlt} from "react-icons/bi";
 const Cart = ({userList}) => {
 
     const {data: session} = useSession();
-    //const productExtras=useSelector((state)=>state.productExtras);
     const dispatch = useDispatch();
     const router = useRouter();
     let cart = useSelector(state => state.cart);
     const user = userList?.find((user) => user.email === session?.user?.email);
     const [cartProduct, setCartProduct] = useState([]);
     const [mobileShowBasketDetail,setMobileShowBasketDetail] =useState(false)
-    const [shippingCost, setShippingCost] = ("");
     const [showCouponCode, setShowCouponCode] = useState(false);
     const [textCouponCode, setTextCouponCode] = useState("");
     const scrollRef=useRef(null);
@@ -43,7 +41,7 @@ const Cart = ({userList}) => {
 
     useEffect(() => {
         cartProducts();
-    }, [cart.products.length])
+    }, [cart?.products.length])
 
     const newOrder = {
         email: user?.email,
@@ -62,7 +60,7 @@ const Cart = ({userList}) => {
                 if (confirm("Are you sure to order?")) {
                     if (newOrder.address === 'No address') {
                         await router.push(`/profile/${user._id}`)
-                        throw new Error('Define User address.');
+                          Error('Define User address.'); //throw new
 
                     }
                     const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, newOrder);
@@ -74,7 +72,7 @@ const Cart = ({userList}) => {
                     }
                 }
             } else {
-                throw new Error('Please login first');
+                  Error('Please login first'); // throw new
 
             }
         } catch (err) {
@@ -153,32 +151,32 @@ const Cart = ({userList}) => {
                                 <div
                                     className="flex flex-col md:flex-row md:gap-0 gap-2 items-start md:h-full w-full justify-between md:basis-[56.365%] md:mr-2 md:mt-0 mt-2">
                                     <div className="md:flex hidden flex-row  items-center justify-center gap-4 ml-0 md:ml-[2.125rem]  ">
-                                        <button
-                                            className="border-[1px] border-secondary w-5 h-5 rounded-full text-md flex items-center justify-center"
+                                        <div
+                                            className="border-[1px] border-secondary w-5 h-5 rounded-full text-md flex items-center justify-center outline-none"
                                             onClick={() => decreaseItemHandler(product)}
                                         >-
-                                        </button>
+                                        </div>
                                         <p>{product.productTotal}</p>
-                                        <button
-                                            className="border-[1px] border-secondary w-5 h-5 rounded-full text-md flex items-center justify-center"
+                                        <div
+                                            className="border-[1px] border-secondary w-5 h-5 rounded-full text-md flex items-center justify-center outline-none"
                                             onClick={() => increaseItemHandler(product)}
                                         >+
-                                        </button>
+                                        </div>
 
                                     </div>
 
-                                    <div className="flex flex-row border-2 py-1 px-1 rounded-lg  items-center justify-center gap-4 ml-0  md:hidden ">
-                                        <button
-                                            className="  w-5 h-5  text-md flex items-center justify-center text-xl font-semibold"
+                                    <div className="flex flex-row border-2 py-1 px-1 rounded-lg  items-center justify-center gap-4 ml-0  md:hidden outline-none">
+                                        <div
+                                            className="  w-5 h-5  text-md flex items-center justify-center text-xl font-semibold "
                                             onClick={() => decreaseItemHandler(product)}
                                         >-
-                                        </button>
+                                        </div>
                                         <p>{product.productTotal} Adet</p>
-                                        <button
-                                            className=" w-5 h-5  text-md flex items-center justify-center text-xl font-semibold"
+                                        <div
+                                            className=" w-5 h-5  text-md flex items-center justify-center text-xl font-semibold outline-none"
                                             onClick={() => increaseItemHandler(product)}
                                         >+
-                                        </button>
+                                        </div>
                                     </div>
 
                                     <div className="flex items-center justify-between md:h-full md:flex-col flex-row">
@@ -199,7 +197,7 @@ const Cart = ({userList}) => {
                                             </span>
                                         </div>
                                         <div
-                                            className=" flex md:w-full  justify-end mr-2 mb-2  md:hover:text-danger   cursor-pointer
+                                            className=" flex md:w-full  justify-end mr-2 mb-2  md:hover:text-danger   cursor-pointer outline-none
                                                   md:static md:top-0 md:right-0 md:text-lg md:text-secondary  absolute top-2 right-[-1rem] text-2xl text-stateGray
                                         "
                                             onClick={() => removeItemHandler(product)}>

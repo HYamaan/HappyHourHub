@@ -23,11 +23,11 @@ const Profile = ({ user }) => {
     const { push } = useRouter();
     useEffect(()=> {
         const getImage=async ()=>{
-            user = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/${user._id}`);
-            setUploadImageArr(user.data);
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/${user?._id}`);
+            setUploadImageArr(res.data);
         }
         getImage();
-    },[uploadImageShow]);
+    },[uploadImageShow,user]);
     const handleSignOut =  async () => {
         if (confirm("Are you sure you want to sign out?")) {
             toast.success("You have successfully exited.")
@@ -38,7 +38,7 @@ const Profile = ({ user }) => {
 
 
     return (<>
-        <div className="flex lg:w-[72.188rem] lg:mx-auto w-full px-10 min-h-[calc(100vh_-_233px)] lg:flex-row flex-col lg:mb-0 mb-10">
+        <div className="flex lg:w-[72.188rem] lg:mx-auto w-full lg:px-10 px-4 min-h-[calc(100vh_-_233px)] lg:flex-row flex-col lg:mb-0 mb-10">
             <div className="lg:w-80 w-100 flex-shrink-0">
                 <div className="relative flex flex-col items-center px-10 py-5 border border-b-0">
                         <Image
