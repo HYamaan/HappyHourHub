@@ -22,33 +22,27 @@ const UserSchema = new mongoose.Schema(
             type: String,
             maxlength:11
         },
-        address: [
+        address:[
             {
                 addressType:{
                     type: String,
-                    default:"ev"
                 },
                 country: {
                     type: String,
-                    default:"Turkey"
                 },
                 city:{
                     type: String,
-                    default:"İstanbul"
                 },
                 district:{
                     type:String,
-                   default: "Şişli"
+                },
+                phoneNumber:{
+                    type:String,
                 },
                 address1:{
                     type: String,
-                    default:"Merhaba"
-                },
-                address2:{
-                    type: String,
-                    default:"Merhaba2"
-                },
 
+                },
             }
         ],
         job: {
@@ -122,7 +116,6 @@ UserSchema.pre('save', async function(next) {
     this.password = await bcrypt.hash(this.password, 15);
     //Gereksiz yer kaplamasına engel oldum
     if(this.confirmPassword ){
-        console.log("_____________________________________________________---------------------------------------____________________________________________________")
         this.confirmPassword = undefined;
     }
     next();
@@ -146,3 +139,5 @@ UserSchema.methods.createPasswordResetToken = function(){
 
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);
+
+

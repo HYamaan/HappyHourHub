@@ -26,9 +26,7 @@ const handler = async (req, res) => {
                         10
                     );
                 }
-                const users = await User.findByIdAndUpdate(id, req.body, {
-                    new: true,
-                });
+                const users = await User.findByIdAndUpdate(id, req.body, {new: true,});
                 res.status(200).json(users);
             }
 

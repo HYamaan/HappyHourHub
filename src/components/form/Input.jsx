@@ -1,26 +1,44 @@
 import React from "react";
+import InputMask from "react-input-mask";
 
 const Input = (props) => {
-    const {placeholder,errorMessage,touched, ...inputs} = props
+    const {placeholder, errorMessage, touched, ...inputs} = props
     return <React.Fragment>
-        <div className={`w-full ${props.className}`} >
+        <div className={`w-full ${props.className}`}>
             <label className="relative block cursor-text w-full">
-                <input {...inputs}
-                       className={`h-14 w-full border border outline-none px-4  peer
+                {inputs.type === "tel" ? (
+                        <InputMask
+                            {...inputs}
+                            mask="(999) 999-9999"
+                            maskplaceholder=" "
+                            className={`h-14 w-full border border outline-none px-4 pt-2 peer ${
+                                errorMessage ? "border-red-600" : "border-primary"
+                            }`}
+                            value={inputs?.value || ''}
+                            required
+
+                        />
+                    ) :
+                    (
+                    <input {...inputs}
+                        className={`h-14 w-full border border outline-none px-4  peer
                        ${inputs.type !== "datetime-local" && "pt-2"}
                        ${errorMessage ? "border-red-600" : "border-primary"}`}
-                       required
+                           value={inputs?.value || ''}
+                        required
 
-                />
+                    />)
+
+                }
                 {inputs.type !== "datetime-local" && <span className={`
                     absolute top-0 left-0 px-4 text-sm 
                     flex items-center h-full
                     peer-focus:h-7 peer-focus:text-xs peer-focus:transition-all peer:focus:bg-tertiary
-                    peer-valid:h-7 peer-valid:text-xs ${inputs?.value?.length>0 &&  "peer-invalid:h-7"}`} >
+                    peer-valid:h-7 peer-valid:text-xs ${inputs?.value?.length > 0 && "peer-invalid:h-7"}`}>
                     {placeholder}
                 </span>}
             </label>
-                {touched && <span className="text-xs text-red-600">{errorMessage}</span>}
+            {touched && <span className="text-xs text-red-600">{errorMessage}</span>}
 
         </div>
     </React.Fragment>

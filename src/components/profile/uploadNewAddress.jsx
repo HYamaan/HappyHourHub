@@ -1,0 +1,244 @@
+import React, {useEffect, useState} from "react";
+import dataCity from "../../libs/countryData/CityAndDistrictData.json";
+import axios from "axios";
+import {toast} from "react-toastify";
+import {useFormik} from "formik";
+import {addAddresses} from "../../schema/addAddresses";
+import Title from "../UI/Title";
+import Input from "../form/Input";
+
+
+const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLoading})=>{
+    const [country,setCountry]=useState([{id:1,name:"Türkiye"}]);
+    const [countryText,setCountryText]=useState(updateAddress?.country|| "");
+    const [city,setCity]=useState([]);
+    const [cityText,setCityText]=useState(updateAddress?.city || "");
+    const [district,setDistrict]=useState([]);
+    const [districtText,setDistrictText]=useState(updateAddress?.district || "");
+
+
+    useEffect(()=>{
+        const getCityAndDistrict=async ()=>{
+            if(countryText==="Türkiye"){
+                setCity([]);
+                setDistrict([]);
+                dataCity.data.map(item=>{
+                    setCity((prev)=>[...prev,{alan_kodu:item.alan_kodu,city:item.il_adi}])
+                })
+
+
+                if(cityText && cityText !== "city"){
+                    const districtCity =dataCity.data.find(item=>item.il_adi === cityText)
+                    JSON.stringify(districtCity);
+
+                    districtCity &&  districtCity.ilceler.map(item=>
+                        setDistrict((prev=>[...prev,{ilce_kodu:item.ilce_kodu,ilce_adi:item.ilce_adi}])));
+                }else{
+                    setDistrict([]);
+                }
+            }else{
+                setCity(()=>[]);
+                setDistrict([]);
+            }
+        };
+        getCityAndDistrict();
+    },[countryText,cityText,districtText]);
+
+    const onSubmit = async (values, actions) => {
+        try { if (!countryText || countryText === "Ülke Seçiniz") {
+            actions.setFieldError("country", "Please select a country");
+            return;
+        }
+            if (!cityText || cityText === "city") {
+                actions.setFieldError("city", "Please select a city");
+                return;
+            }
+            if (!districtText || districtText === "districtCity") {
+                actions.setFieldError("district", "Please select a district");
+                return;
+            }
+            values.phoneNumber= values.phoneNumber.replace(/[^\d]/g, '');
+            const newValues = {
+                addressType:values.caption,
+                country: countryText,
+                city: cityText,
+                district: districtText,
+                phoneNumber:values.phoneNumber,
+                address1:values.address
+            };
+
+            const res = await axios.patch(
+                `${process.env.NEXT_PUBLIC_API_URL}/userAddress/userId=${user._id}${updateAddress && `/addressId=${updateAddress?._id}`}`,
+                {
+                   newValues
+                }
+            );
+            if(res.status===200){
+                setIsLoading(!isLoading)
+                toast.success("Profile successfuly updated")
+                setAddNewAddress(false)
+
+            }
+
+        } catch (err) {
+            console.log(err);
+        }
+
+    };
+
+    const { values, errors, touched, handleSubmit, handleChange, handleBlur } =
+        useFormik({
+            enableReinitialize: true,
+            initialValues: {
+                caption: updateAddress?.addressType || "",
+                fullName: user?.fullName || "",
+                phoneNumber: updateAddress?.phoneNumber || "",
+                email:updateAddress?.email || "",
+                address:updateAddress?.address1 || ""
+
+            },
+            onSubmit,
+            validationSchema: addAddresses,
+        });
+
+
+
+
+
+    return (
+        <div className="w-full mx-auto">
+            <form className="lg:p-4 flex-1 lg:mt-0 mt-5" onSubmit={handleSubmit}>
+                <Title className="text-[40px]">Addresses</Title>
+                <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mt-4">
+
+                    <Input id={1}
+                           name="caption"
+                           type="text"
+                           placeholder="Caption"
+                           value={values.caption}
+                           onChange={handleChange}
+                           onBlur={handleBlur}
+                           errorMessage={errors.caption}
+                           touched={touched.caption}
+                           className="col-span-2"
+                    />
+                    <Input
+                        id={2}
+                        name="fullName"
+                        type="text"
+                        placeholder="Your Full Name"
+                        value={values.fullName}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        errorMessage={errors.fullName}
+                        touched={touched.fullName}
+                        className="col-span-2"
+                    />
+                    <Input
+                        id={3}
+                        name="email"
+                        type="text"
+                        placeholder="Your E-mail"
+                        value={values.email}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        errorMessage={errors.email}
+                        touched={touched.email}
+                        className="lg:col-span-1 col-span-2"
+                    />
+                    <Input
+                        id={4}
+                        name="phoneNumber"
+                        type="tel"
+                        mask="(999) 999 9999"
+                        placeholder="Your Phone Number"
+                        value={values.phoneNumber}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        errorMessage={errors.phoneNumber}
+                        touched={touched.phoneNumber}
+                        className="lg:col-span-1 col-span-2"
+                    />
+
+                    <div className="flex items-centre justify-between lg:flex-row flex-col  w-full col-span-2 gap-4">
+
+                        <div className="w-full">
+                            <select id="select"
+                                    value={countryText}
+                                    onChange={(e)=>setCountryText(e.target.value)}
+                                    className="block w-full p-2 bg-gray border-gray-300 rounded-md shadow-sm focus:outline-none
+                                  focus:ring-opacity-50 shadow-2xl shadow-primary"
+
+                            >
+                                <option key={1} value="Ülke Seçiniz">Ülke Seçiniz</option>
+                                {country.map((option) => (
+                                    <option key={option.id} value={option.name}>
+                                        {option.name}
+                                    </option>
+                                ))}
+
+                            </select>
+                            {countryText === "Ülke Seçiniz" && <p className="text-danger text-sm">Please select a country</p>}
+
+                        </div>
+
+                        <div className="w-full">
+                            <select id="select" value={cityText} onChange={(e)=>setCityText(e.target.value)}
+                                    className="block w-full p-2 bg-gray border-gray-300 rounded-md shadow-sm focus:outline-none
+                                  focus:ring-opacity-50 shadow-2xl shadow-primary"
+                            >
+                                <option key={0} value="city">
+                                    Şehir Seçiniz
+                                </option>
+                                {  city.length>0 && (city.map((option) => (
+                                    <option key={option.alan_kodu} value={option.city}>
+                                        {option.city}
+                                    </option>
+                                )))
+                                }
+                            </select>
+                            {cityText === "city" && <p className="text-danger text-sm">Please select a city</p>}
+                        </div>
+
+                        <div className="w-full">
+                            <select id="select" value={districtText} onChange={(e)=>setDistrictText(e.target.value)}
+                                    className="block w-full p-2 bg-gray border-gray-300 rounded-md shadow-sm focus:outline-none
+                                  focus:ring-opacity-50 shadow-2xl shadow-primary"
+                            >
+                                <option key={0} value="districtCity">
+                                    İlçe Seçiniz
+                                </option>
+                                {  district.length>0 && (district.map((option) => (
+                                    <option key={option.ilce_kodu} value={option.ilce_adi}>
+                                        {option.ilce_adi}
+                                    </option>
+                                )))
+                                }
+                            </select>
+                            {districtText === "districtCity" && <p className="text-danger text-sm">Please select a district</p>}
+                        </div>
+                    </div>
+                    <Input id={5}
+                           name="address"
+                           type="text"
+                           placeholder="Address"
+                           value={values.address}
+                           onChange={handleChange}
+                           onBlur={handleBlur}
+                           errorMessage={errors.address}
+                           touched={touched.address}
+                           className="col-span-2"
+                    />
+
+
+                </div>
+                <button className="  bg-primary hover:bg-primaryBold hover:ease-in w-[18.438rem]
+                 h-[2.688rem] px-[1rem] py-[0.65rem] mt-2 rounded-lg text-tertiary font-semibold text-sm" type="submit">
+                    KAYDET
+                </button>
+            </form>
+        </div>
+    );
+
+}
+export default UploadNewAddresses

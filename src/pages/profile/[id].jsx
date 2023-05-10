@@ -9,6 +9,8 @@ import {getSession, signOut} from "next-auth/react";
 import {useRouter} from "next/router";
 import axios from "axios";
 import {toast} from "react-toastify";
+import MyAddresses from "../../components/profile/Adreslerim";
+
 
 
 
@@ -36,7 +38,7 @@ const Profile = ({ user }) => {
 
 
     return (<>
-        <div className="flex px-10 min-h-[calc(100vh_-_233px)] lg:flex-row flex-col lg:mb-0 mb-10">
+        <div className="flex lg:w-[72.188rem] lg:mx-auto w-full px-10 min-h-[calc(100vh_-_233px)] lg:flex-row flex-col lg:mb-0 mb-10">
             <div className="lg:w-80 w-100 flex-shrink-0">
                 <div className="relative flex flex-col items-center px-10 py-5 border border-b-0">
                         <Image
@@ -50,6 +52,7 @@ const Profile = ({ user }) => {
                             onClick={()=>setUploadImageShow(!uploadImageShow)}
                         />
                     <b className="text-2xl mt-1">{user?.fullName}</b>
+                    {user?.emailVerified &&    <b className="font-normal mt-1">Email Aktivasyonu: <span className="text-danger">{user?.emailVerified}</span></b>}
                 </div>
                 <ul className="text-center font-semibold">
                     <li
@@ -79,6 +82,16 @@ const Profile = ({ user }) => {
                         }`}
                         onClick={() => setTabs(2)}
                     >
+                        <i className="fa-solid fa-address-book"></i>
+                        <button className="ml-1">MyAddresses</button>
+                    </li>
+                    <li
+                        className={`border border-t-0 w-full p-3 cursor-pointer
+                         hover:bg-primary hover:text-white transition-all ${
+                            tabs === 3 && "bg-primary text-white"
+                        }`}
+                        onClick={() => setTabs(3)}
+                    >
                         <i className="fa fa-motorcycle"></i>
                         <button className="ml-1">Orders</button>
                     </li>
@@ -94,7 +107,8 @@ const Profile = ({ user }) => {
             </div>
             {tabs === 0 && <Account user={user} />}
             {tabs === 1 && <Password user={user} />}
-            {tabs === 2 && <Order />}
+            {tabs === 2 && <MyAddresses user={user} />}
+            {tabs === 3 && <Order />}
         </div>
             {
                 uploadImageShow &&
@@ -106,23 +120,24 @@ const Profile = ({ user }) => {
 
 export async function getServerSideProps({ req,query:{id}}) {
     const session = await getSession({ req })
-    if(session){
-        const user = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/users/${id}`
-        );
 
+        if(session && id ){
+            const user = await axios.get(
+                `${process.env.NEXT_PUBLIC_API_URL}/users/${id}`
+            );
+            return {
+                props: {
+                    user: user?.data ? user.data : null,
+                },
+            };
+        }
         return {
-            props: {
-                user: user?.data ? user.data : null,
+            redirect: {
+                destination: "/auth/login",
+                permanent: false,
             },
         };
-    }
-    return {
-        redirect: {
-            destination: "/auth/login",
-            permanent: false,
-        },
-    };
+
 }
 
 export default Profile;

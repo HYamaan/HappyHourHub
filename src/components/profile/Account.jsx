@@ -9,10 +9,13 @@ import {toast} from "react-toastify";
 const Account = ({ user }) => {
     const onSubmit = async (values, actions) => {
         try {
+
+            values.phoneNumber= values.phoneNumber.replace(/[^\d]/g, '');
             const res = await axios.put(
                 `${process.env.NEXT_PUBLIC_API_URL}/users/${user._id}`,
                 values
             );
+            console.log("valuesAccont",values)
             if(res.status===200){
                 toast.success("Profile successfuly updated")
             }
@@ -29,7 +32,6 @@ const Account = ({ user }) => {
                 fullName: user?.fullName,
                 phoneNumber: user?.phoneNumber,
                 email: user?.email,
-                address: user?.address,
                 job: user?.job,
                 bio: user?.bio,
             },
@@ -48,15 +50,6 @@ const Account = ({ user }) => {
         },
         {
             id: 2,
-            name: "phoneNumber",
-            type: "number",
-            placeholder: "Your Phone Number",
-            value: values.phoneNumber,
-            errorMessage: errors.phoneNumber,
-            touched: touched.phoneNumber,
-        },
-        {
-            id: 3,
             name: "email",
             type: "email",
             placeholder: "Your Email Address",
@@ -65,14 +58,16 @@ const Account = ({ user }) => {
             touched: touched.email,
         },
         {
-            id: 4,
-            name: "address",
-            type: "text",
-            placeholder: "Your Address",
-            value: values.address,
-            errorMessage: errors.address,
-            touched: touched.address,
+            id: 3,
+            name: "phoneNumber",
+            mask: "(999) 999 9999",
+            type: "tel",
+            placeholder: "Your Phone Number",
+            value: values.phoneNumber,
+            errorMessage: errors.phoneNumber,
+            touched: touched.phoneNumber,
         },
+
         {
             id: 5,
             name: "job",
@@ -93,22 +88,26 @@ const Account = ({ user }) => {
         },
     ];
     return (
-        <form className="lg:p-8 flex-1 lg:mt-0 mt-5" onSubmit={handleSubmit}>
-            <Title className="text-[40px]">Account Settings</Title>
-            <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mt-4">
-                {inputs.map((input) => (
-                    <Input
-                        key={input.id}
-                        {...input}
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                    />
-                ))}
-            </div>
-            <button className="btn-primary mt-4" type="submit">
-                Update
-            </button>
-        </form>
+        <div className="w-full mx-auto">
+            <form className="lg:p-8 flex-1 lg:mt-0 mt-5" onSubmit={handleSubmit}>
+                <Title className="text-[40px]">Account Settings</Title>
+                <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mt-4">
+                    {inputs.map((input) => (
+                        <div key={input.id}>
+                            <Input
+                                key={input.id}
+                                {...input}
+                                onBlur={handleBlur}
+                                onChange={handleChange}/>
+
+                        </div>
+                    ))}
+                </div>
+                <button className="btn-primary mt-4" type="submit">
+                    Update
+                </button>
+            </form>
+        </div>
     );
 };
 
