@@ -91,7 +91,7 @@ const ShoppingBasket = ({router,isMenuModal})=>{
                 <div className="flex items-center justify-between h-14 w-full bg-[#D3D6D9] text-secondary">
                     <span className="ml-12">Ara Toplam</span>
                     <span className="font-bold mr-4 ">{new Intl.NumberFormat('tr-TR', {style: 'currency', currency: 'TRY', minimumFractionDigits: 2}).format((cart.total))}₺</span>
-                    <button className="btn-primary mr-2" onClick={()=>moveToBasket()}>Sepete Git</button>
+                    <div className="bg-primary rounded-2xl py-2 px-4 mr-2 text-tertiary hover:bg-primaryBold cursor-pointer" onClick={()=>moveToBasket()}>Sepete Git</div>
                 </div>
             </div>
   }

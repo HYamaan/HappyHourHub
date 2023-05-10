@@ -189,12 +189,12 @@ const Cart = ({userList}) => {
                                         style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                                     }).format((product.price * product.productTotal * 111.43 / 100))}₺
                                     </span>
-                                            <span
+                                      <span
                                                 className="font-semibold font-workSans text-base md:text-[1.2rem] text-primary">
                                                 {new Intl.NumberFormat('tr-TR', {
                                                     style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                                                 }).format((product.price * product.productTotal))}₺
-                                            </span>
+                                        </span>
                                         </div>
                                         <div
                                             className=" flex md:w-full  justify-end mr-2 mb-2  md:hover:text-danger   cursor-pointer outline-none

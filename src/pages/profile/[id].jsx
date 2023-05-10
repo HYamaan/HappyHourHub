@@ -10,6 +10,7 @@ import {useRouter} from "next/router";
 import axios from "axios";
 import {toast} from "react-toastify";
 import MyAddresses from "../../components/profile/Adreslerim";
+import FavoriteList from "../../components/profile/FavoriteList";
 
 
 
@@ -65,15 +66,16 @@ const Profile = ({ user }) => {
                         <i className="fa fa-home"></i>
                         <button className="ml-1 ">Account</button>
                     </li>
+
                     <li
-                        className={`border border-t-0 w-full p-3 cursor-pointer 
-                        hover:bg-primary hover:text-white transition-all ${
+                        className={`border border-t-0 w-full p-3 cursor-pointer
+                         hover:bg-primary hover:text-white transition-all ${
                             tabs === 1 && "bg-primary text-white"
                         }`}
                         onClick={() => setTabs(1)}
                     >
-                        <i className="fa fa-key"></i>
-                        <button className="ml-1">Password</button>
+                        <i className="fa-solid fa-address-book"></i>
+                        <button className="ml-1">MyAddresses</button>
                     </li>
                     <li
                         className={`border border-t-0 w-full p-3 cursor-pointer
@@ -82,18 +84,28 @@ const Profile = ({ user }) => {
                         }`}
                         onClick={() => setTabs(2)}
                     >
-                        <i className="fa-solid fa-address-book"></i>
-                        <button className="ml-1">MyAddresses</button>
+                        <i className="fa fa-motorcycle"></i>
+                        <button className="ml-1">Orders</button>
                     </li>
                     <li
-                        className={`border border-t-0 w-full p-3 cursor-pointer
-                         hover:bg-primary hover:text-white transition-all ${
+                        className={`border border-t-0 w-full p-3 cursor-pointer 
+                        hover:bg-primary hover:text-white transition-all ${
                             tabs === 3 && "bg-primary text-white"
                         }`}
                         onClick={() => setTabs(3)}
                     >
-                        <i className="fa fa-motorcycle"></i>
-                        <button className="ml-1">Orders</button>
+                        <i className="fa-sharp fa-solid fa-heart"></i>
+                        <button className="ml-1">Favorite List</button>
+                    </li>
+                    <li
+                        className={`border border-t-0 w-full p-3 cursor-pointer 
+                        hover:bg-primary hover:text-white transition-all ${
+                            tabs === 4 && "bg-primary text-white"
+                        }`}
+                        onClick={() => setTabs(4)}
+                    >
+                        <i className="fa fa-key"></i>
+                        <button className="ml-1">Password</button>
                     </li>
                     <li
                         className={`border border-t-0 w-full p-3 cursor-pointer
@@ -106,9 +118,11 @@ const Profile = ({ user }) => {
                 </ul>
             </div>
             {tabs === 0 && <Account user={user} />}
-            {tabs === 1 && <Password user={user} />}
-            {tabs === 2 && <MyAddresses user={user} />}
-            {tabs === 3 && <Order />}
+
+            {tabs === 1 && <MyAddresses user={user} />}
+            {tabs === 2 && <Order />}
+            {tabs === 3 && <FavoriteList user={user} />}
+            {tabs === 4 && <Password user={user} />}
         </div>
             {
                 uploadImageShow &&
