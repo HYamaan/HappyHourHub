@@ -1,14 +1,12 @@
 import User from "../../../models/User";
 import dbConnect from "../../../utilities/dbConnect";
-import bcrypt from "bcryptjs";
 
 const handler = async (req, res) => {
     await dbConnect();
     const {method} = req;
     const userId = req.query.slug[0].split('=')[1]
     const addressId = req.query.slug[1]?.split('=')[1]
-    console.log("userId",userId)
-    console.log("adressID",addressId)
+
     if (method === "GET") {
         try {
 

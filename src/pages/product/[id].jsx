@@ -86,7 +86,7 @@ const Id = ({food}) => {
 
     return <React.Fragment>
 
-        <div className="h-[calc(100vh_-_88px)] flex flex-wrap  items-center md:gap-14 md:p-20 ">
+        <div className="h-[calc(100vh_-_88px)] flex flex-wrap  items-center md:gap-14 md:p-20 mb-20 ">
             <div className="relative lg:flex-1 w-[80%] lg:h-full md:h-[50%] h-[40%] lg:mx-0 mx-20">
                 <Image src={food.image} alt="f1" fill style={{objectFit: "contain"}} sizes="w-full h-full"/>
             </div>
