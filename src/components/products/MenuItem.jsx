@@ -35,7 +35,6 @@ const MenuItem = (prop) => {
         _id: props._id,
     }
     const [like, setUnLike] = useState(false);
-    const router = useRouter();
     useEffect(()=>{
         setUnLike(()=>likeProd.includes(props._id))
     },[props._id])
@@ -58,8 +57,7 @@ const MenuItem = (prop) => {
                 }
             }
             else {
-                await router.push('/auth/login');
-                toast.success('Please first Login')
+                toast.warn('Please first Login')
             }
         } catch (err) {
             console.log(err);

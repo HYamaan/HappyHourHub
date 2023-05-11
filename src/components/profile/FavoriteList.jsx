@@ -46,8 +46,8 @@ const FavoriteList = ({user}) => {
     }
 
     return <>
-        <div className="h-full w-full pl-4 font-medium">
-        <Title className="text-[40px] mt-4 border-b-2 w-full">Favorite List</Title>
+        <div className="h-full w-full pl-4 mb-6 font-workSans">
+        <Title className="text-[40px] mt-4  border-b-2 w-full">Favorite List</Title>
         {likes.length > 0 ?
             (
                 likes.map(product=>{

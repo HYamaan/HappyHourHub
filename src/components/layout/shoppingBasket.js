@@ -1,6 +1,6 @@
 import {useDispatch, useSelector} from "react-redux";
 import {FaShoppingCart} from "react-icons/fa";
-import React, {useState} from "react";
+import React  from "react";
 import Image from "next/image";
 import {useRouter} from "next/router";
 import Link from "next/link";
@@ -8,20 +8,12 @@ import {cartActions} from "../../redux/cartSlice";
 
 
 
-const ShoppingBasket = ({router,isMenuModal})=>{
+const ShoppingBasket = ({router,isMenuModal,showBasket,setShowBasket})=>{
     const cart = useSelector(state=>state.cart);
     const dispatch=useDispatch();
-    const [showBasket, setShowBasket] = useState(false);
+
     const {push}=useRouter();
-    const handleProductClick=async (prodId)=>{
-        try {
-            await push(`/product/${prodId}`)
-            setShowBasket(false);
-        }catch (err){
-            console.log(err);
-        }
-    }
-    console.log(cart.products)
+
     const moveToBasket =async ()=>{
         try {
             await push(`/cart`);
@@ -35,7 +27,11 @@ const ShoppingBasket = ({router,isMenuModal})=>{
     }
     return<>
         <Link href="/cart" className= {`relative ${router.pathname === "/cart" ? "text-primary" : ""}`}>
-            <span className="relative z-0" onClick={()=>setShowBasket(false)}>
+            <span className="relative z-0" onClick={()=>setShowBasket(false)}
+                  onMouseLeave={() => {
+                      setShowBasket(true);
+                  }}
+            >
         <FaShoppingCart
             className="relative hover:text-primary transition-all cursor-pointer peer"
             onMouseEnter={() => {
@@ -65,15 +61,18 @@ const ShoppingBasket = ({router,isMenuModal})=>{
 
                         >
                             <div className="basis-3/12 cursor-pointer" >
-                                <Image
-                                    src={prod?.image}
-                                    alt={prod?.image}
-                                    width={90}
-                                    height={90}
-                                    priority={true}
-                                    className="rounded-full"
-                                    onClick={()=>handleProductClick(prod?._id)}
-                                />
+                                <Link href={`/product/${prod._id}`}>
+                                        <Image
+                                            src={prod?.image}
+                                            alt={prod?.image}
+                                            width={90}
+                                            height={90}
+                                            priority={true}
+                                            className="rounded-full"
+                                            onClick={() =>  setShowBasket(false)}
+                                        />
+
+                                </Link>
                             </div>
                             <div className="basis-8/12 text-xs text-cadetGray ml-2 top-2" >
                                 <p >{prod.title}</p>
