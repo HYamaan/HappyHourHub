@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from "react";
+import shortid from 'shortid';
 import {useSelector, useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice";
 import {cartIndexActions} from "../../redux/cartIndex";
+import {FavoriteProductsActions} from "../../redux/FavoriteProducts";
 
 import styles from "./MenuItem.module.css";
 import Link from "next/link";
@@ -12,17 +14,25 @@ import {AiOutlineHeart} from "react-icons/ai";
 import axios from "axios";
 
 import {useSession} from "next-auth/react";
-import {useRouter} from "next/router";
+
 import {toast} from "react-toastify";
 
+
 const MenuItem = (prop) => {
+
     const {likeProd,setLikes,...props}=prop;
     const {data: session} = useSession()
     const cart = useSelector((state) => state.cart);
+
     const cartIndex = useSelector((state) => state.cartIndex);
     const findCart = cart.products.find((item) => item._id === props._id);
     const dispatch = useDispatch();
+    const sku = shortid.generate();
+
+
+
     const createProduct = {
+        sku,
         category: props.category,
         createdAt: props.createdAt,
         desc: props.desc,
@@ -39,10 +49,12 @@ const MenuItem = (prop) => {
         setUnLike(()=>likeProd.includes(props._id))
     },[props._id])
     const addFavoriteList = async () => {
+        dispatch(FavoriteProductsActions.addFavoriteProduct(props));
+
         try {
             if (session && props) {
                 const queryParams = `userId=${session?.user.id}/productId=${props?._id}`;
-                const url = `${process.env.NEXT_PUBLIC_API_URL}/userFavoriteListapi/${queryParams}`;
+                const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-favorite-list/${queryParams}`;
 
                 if (!like) {
                     setUnLike(true);
@@ -64,10 +76,24 @@ const MenuItem = (prop) => {
         }
     }
 
-const handleClick = () => {
+const handleClick = async () => {
     dispatch(cartActions.addProduct({...createProduct, productTotal: 1, addIndex: cartIndex.addToIndex}));
     dispatch(cartIndexActions.addToCartIndex(cartIndex.addToIndex));
+   await DBtoReduxCart();
 }
+
+    const DBtoReduxCart=async ()=>{
+        try {
+            const queryParams = `userId=${session?.user?.id}`;
+            const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
+            if (session?.user) {
+                await axios.post(url,cart);
+            }
+
+        }catch (err){
+            console.log(err.message)
+        }
+    }
 
 return <React.Fragment>
     <div className="rounded-3xl bg-secondary">

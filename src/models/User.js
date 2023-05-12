@@ -45,7 +45,7 @@ const UserSchema = new mongoose.Schema(
                 },
             }
         ],
-        job: {
+        zipCode: {
             type: String,
         },
         bio: {

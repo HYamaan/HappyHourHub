@@ -10,9 +10,9 @@ export const profileSchema = Yup.object({
     address: Yup.string()
         .min(10, 'Address must be at least 10 characters ')
         .required('Address is required'),
-    job: Yup.string()
-        .min(4, 'job must be at least 4 characters ')
-        .required('job is required'),
+    zipCode: Yup.string()
+        .min(4, 'zip Code must be at least 4 characters ')
+        .required('zipCode is required'),
     bio: Yup.string()
         .min(4, 'Bio must be at least 4 characters ')
         .required('Bio is required'),

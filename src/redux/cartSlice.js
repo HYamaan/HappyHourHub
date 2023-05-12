@@ -25,7 +25,7 @@ const cartSlice = createSlice({
             if (state.products.length === 0 || allItemIndexArray.length === 0) {
                 const tempProduct = {...action.payload,status:0};
                 state.totalQuantity++;
-                state.total += action.payload.price;
+                state.total += +action.payload.price;
                 state.products.push(tempProduct);
             }
             allItemIndexArray.filter((productIndex) => productIndex.item.extras.length === action.payload.extras.length)
@@ -46,7 +46,7 @@ const cartSlice = createSlice({
                 if (booleanProductVerificationFilter == false) {
                     const tempProduct = {...action.payload,status:0};
                     state.totalQuantity++;
-                    state.total += action.payload.price;
+                    state.total += +action.payload.price;
                     state.products.push(tempProduct);
 
                 }
@@ -73,7 +73,6 @@ const cartSlice = createSlice({
 
             }
         },
-
         decreaseProduct: (state, action) => {
             let decreaseItemIndex = 0;
             //const itemIndex = state.products.findIndex((item)=>item.addIndex === action.payload.item.addIndex);
@@ -112,7 +111,6 @@ const cartSlice = createSlice({
             }
 
         },
-
         removeProduct: (state, action) => {
             let removeItemIndex = 0;
             state.products.forEach((item, index) => {
@@ -145,7 +143,7 @@ const cartSlice = createSlice({
             state.products = [];
             state.total = 0;
             state.totalQuantity = 0;
-        }
+        },
     }
 });
 

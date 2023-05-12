@@ -32,7 +32,7 @@ const Account = ({ user }) => {
                 fullName: user?.fullName,
                 phoneNumber: user?.phoneNumber,
                 email: user?.email,
-                job: user?.job,
+                zipCode: user?.zipCode,
                 bio: user?.bio,
             },
             onSubmit,
@@ -70,12 +70,12 @@ const Account = ({ user }) => {
 
         {
             id: 5,
-            name: "job",
+            name: "zipCode",
             type: "text",
-            placeholder: "Your Job",
-            value: values.job,
-            errorMessage: errors.job,
-            touched: touched.job,
+            placeholder: "zip Code",
+            value: values.zipCode,
+            errorMessage: errors.zipCode,
+            touched: touched.zipCode,
         },
         {
             id: 6,

@@ -4,6 +4,7 @@ import Title from "../UI/Title"
 import MenuItem from "./MenuItem";
 import {useSession} from "next-auth/react";
 import axios from "axios";
+import {useSelector} from "react-redux";
 
 const MenuWrapper = ({categoryList ,productList})=>{
     const {data:session}=useSession();
@@ -18,7 +19,7 @@ const MenuWrapper = ({categoryList ,productList})=>{
         const getFavoriteProducts= async ()=>{
             try {
                 const queryParams = `userId=${session?.user.id}`;
-                const url = `${process.env.NEXT_PUBLIC_API_URL}/userFavoriteListapi/${queryParams}`;
+                const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-favorite-list/${queryParams}`;
                 if(session){
                     const res = await axios.get(url);
                     setLikes(res.data.products.map(item=>item._id))
@@ -40,7 +41,8 @@ const MenuWrapper = ({categoryList ,productList})=>{
     },[productList,categoryList,isActive]);
 
 
-
+    const favoriteProduct = useSelector((state)=>state.favoriteProducts)
+    console.log("favoriteProduct",favoriteProduct)
 
     return<React.Fragment>
         <div className="container mx-auto ">

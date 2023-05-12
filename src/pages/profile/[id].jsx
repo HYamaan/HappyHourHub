@@ -5,21 +5,27 @@ import Account from "../../components/profile/Account";
 import Password from "../../components/profile/Password";
 import Order from "../../components/profile/Order";
 import UploadImage from "../../components/profile/UploadImage";
-import {getSession, signOut} from "next-auth/react";
+import {getSession, signOut, useSession} from "next-auth/react";
 import {useRouter} from "next/router";
 import axios from "axios";
 import {toast} from "react-toastify";
 import MyAddresses from "../../components/profile/Adreslerim";
 import FavoriteList from "../../components/profile/FavoriteList";
+import {useDispatch, useSelector} from "react-redux";
+import {cartActions} from "../../redux/cartSlice";
+import {cartIndexActions} from "../../redux/cartIndex";
+import {ProductExtrasActions} from "../../redux/ProductExtras";
+import {userInfoActions} from "../../redux/userInfo";
 
 
 
 
 
 const Profile = ({ user }) => {
+    const dispatch =useDispatch();
+    const cart = useSelector(state => state.cart)
     const  [uploadImageShow,setUploadImageShow]=useState(false);
     const  [uploadImageArr,setUploadImageArr]=useState(user);
-
     const [tabs, setTabs] = useState(0);
     const { push } = useRouter();
     useEffect(()=> {
@@ -29,8 +35,29 @@ const Profile = ({ user }) => {
         }
         getImage();
     },[uploadImageShow,user]);
+
+    console.log("cart",cart)
+    const DBtoReduxCart=async ()=>{
+        try {
+            const queryParams = `userId=${user._id}`;
+            const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
+            if (user) {
+                await axios.post(url,cart);
+            }
+
+        }catch (err){
+            console.log(err.message)
+        }
+    }
+
     const handleSignOut =  async () => {
         if (confirm("Are you sure you want to sign out?")) {
+            await DBtoReduxCart();
+
+            dispatch(cartActions.reset());
+            dispatch(cartIndexActions.reset());
+            dispatch(ProductExtrasActions.reset());
+            dispatch(userInfoActions.userInfoReset());
             toast.success("You have successfully exited.")
              await signOut({ redirect: false });
              await push("/auth/login");

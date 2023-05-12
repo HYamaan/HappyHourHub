@@ -7,6 +7,7 @@ import {cartActions} from "../../redux/cartSlice";
 import {cartIndexActions} from "../../redux/cartIndex";
 import axios from "axios";
 import {useRouter} from "next/router";
+import shortid from "shortid";
 
 
 
@@ -14,7 +15,7 @@ const Id = ({food}) => {
 
     const dispatch = useDispatch();
     const router =useRouter();
-
+    const sku = shortid.generate();
     const cartIndex = useSelector((state)=>state.cartIndex);
     const productExtrass = useSelector((state)=>state.productExtras);
     const [prices, setPrices] = useState(food.prices);
@@ -61,6 +62,7 @@ const Id = ({food}) => {
     const handleChange = (e, item) => {
 
 
+
         const checked= productExtrasID?.includes(item._id) ? false : e.target.checked;
 
         if (checked) {
@@ -74,10 +76,9 @@ const Id = ({food}) => {
         }
 
     }
-    //console.log(extras);
 
     const handleClick=()=>{
-        dispatch(cartActions.addProduct({...food,extras,price,productTotal:1,addIndex:cartIndex.addToIndex}));
+        dispatch(cartActions.addProduct({...food,extras,price,productTotal:1,addIndex:cartIndex.addToIndex,sku}));
         dispatch(cartIndexActions.addToCartIndex(cartIndex.addToIndex));
 
     }

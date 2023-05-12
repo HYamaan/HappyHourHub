@@ -152,20 +152,23 @@ const Cart = ({userList}) => {
                                     className="flex flex-col md:flex-row md:gap-0 gap-2 items-start md:h-full w-full justify-between md:basis-[56.365%] md:mr-2 md:mt-0 mt-2">
                                     <div className="md:flex hidden flex-row  items-center justify-center gap-4 ml-0 md:ml-[2.125rem]  ">
                                         <div
-                                            className="border-[1px] border-secondary w-5 h-5 rounded-full text-md flex items-center justify-center outline-none"
+                                            className="border-[1px] border-secondary w-5 h-5 rounded-full
+                                            text-md flex items-center justify-center outline-none cursor-pointer"
                                             onClick={() => decreaseItemHandler(product)}
                                         >-
                                         </div>
                                         <p>{product.productTotal}</p>
                                         <div
-                                            className="border-[1px] border-secondary w-5 h-5 rounded-full text-md flex items-center justify-center outline-none"
+                                            className="border-[1px] border-secondary w-5 h-5 rounded-full text-md
+                                            flex items-center justify-center outline-none cursor-pointer"
                                             onClick={() => increaseItemHandler(product)}
                                         >+
                                         </div>
 
                                     </div>
 
-                                    <div className="flex flex-row border-2 py-1 px-1 rounded-lg  items-center justify-center gap-4 ml-0  md:hidden outline-none">
+                                    <div className="flex flex-row border-2 py-1 px-1 rounded-lg
+                                      items-center justify-center gap-4 ml-0  md:hidden outline-none cursor-pointer">
                                         <div
                                             className="  w-5 h-5  text-md flex items-center justify-center text-xl font-semibold "
                                             onClick={() => decreaseItemHandler(product)}
@@ -173,7 +176,8 @@ const Cart = ({userList}) => {
                                         </div>
                                         <p>{product.productTotal} Adet</p>
                                         <div
-                                            className=" w-5 h-5  text-md flex items-center justify-center text-xl font-semibold outline-none"
+                                            className=" w-5 h-5  text-md flex items-center justify-center
+                                            text-xl font-semibold outline-none cursor-pointer"
                                             onClick={() => increaseItemHandler(product)}
                                         >+
                                         </div>

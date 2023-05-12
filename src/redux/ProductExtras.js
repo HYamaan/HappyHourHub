@@ -10,7 +10,11 @@ const ProductExtras= createSlice({
         addToExtrasswithRedux:(state,action)=>{
             state.productExtras=[];
             state.productExtras=action.payload;
+        },
+        reset:(state,action)=>{
+            state.productExtras=[];
         }
+
     }
 });
 export const ProductExtrasActions=ProductExtras.actions;

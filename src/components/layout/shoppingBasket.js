@@ -11,9 +11,9 @@ import {cartActions} from "../../redux/cartSlice";
 const ShoppingBasket = ({router,isMenuModal,showBasket,setShowBasket})=>{
     const cart = useSelector(state=>state.cart);
     const dispatch=useDispatch();
-
     const {push}=useRouter();
 
+    console.log("SHOPPİNG KART",JSON.parse(JSON.parse(localStorage.getItem("persist:root")).cart))
     const moveToBasket =async ()=>{
         try {
             await push(`/cart`);
@@ -60,23 +60,24 @@ const ShoppingBasket = ({router,isMenuModal,showBasket,setShowBasket})=>{
                            ${!isLastItem ? "border-b-2 border-secondary border-opacity-40 " :""}`}
 
                         >
-                            <div className="basis-3/12 cursor-pointer" >
+                            <div className="basis-3/12 self-center cursor-pointer w-full" >
                                 <Link href={`/product/${prod._id}`}>
                                         <Image
                                             src={prod?.image}
                                             alt={prod?.image}
-                                            width={90}
-                                            height={90}
+                                            width={70}
+                                            height={70}
                                             priority={true}
-                                            className="rounded-full"
+                                            style={{objectFit: "cover"}}
+                                            className="rounded-full object-contain"
                                             onClick={() =>  setShowBasket(false)}
                                         />
 
                                 </Link>
                             </div>
-                            <div className="basis-8/12 text-xs text-cadetGray ml-2 top-2" >
+                            <div className="basis-8/12 self-start text-xs text-cadetGray ml-2 mt-2" >
                                 <p >{prod.title}</p>
-                                <p>{`${prod.extras.length>0 ? "Options: " : ""}${prod.extras.map(ext=>ext.text).join(', ')}`}</p>
+                                <p>{`${prod.extras?.length>0 ? "Options: " : ""}${prod?.extras?.map(ext=>ext.text).join(', ')}`}</p>
                                 <p>{new Intl.NumberFormat('tr-TR', {style: 'currency', currency: 'TRY', minimumFractionDigits: 2}).format((prod.price))}₺</p>
                                 <p>{`Adet: ${prod.productTotal}`}</p>
                             </div>
