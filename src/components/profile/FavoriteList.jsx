@@ -14,7 +14,7 @@ const FavoriteList = ({user}) => {
         const getFavoriteProducts = async () => {
             try {
                 const queryParams = `userId=${user._id}`;
-                const url = `${process.env.NEXT_PUBLIC_API_URL}/userFavoriteListapi/${queryParams}`;
+                const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-favorite-list/${queryParams}`;
                 if (user) {
                     const res = await axios.get(url);
                     setLikes(res.data.products)
@@ -26,13 +26,12 @@ const FavoriteList = ({user}) => {
         getFavoriteProducts();
     }, [user, setLikes,isLoading])
 
-    console.log("PROD", likes)
     const productPageHandler = async (productId) => {
        await router.push(`/product/${productId}`)
     }
     const deleteProductLike= async (productId)=>{
         const queryParams = `userId=${user._id}/productId=${productId}`;
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/userFavoriteListapi/${queryParams}`;
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-favorite-list/${queryParams}`;
         try {
             setIsLoading(true);
             const res=await axios.delete(url);

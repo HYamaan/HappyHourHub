@@ -31,7 +31,6 @@ const Id = ({food}) => {
             productExtrass.productExtras?.extras?.map((item,index)=>{
                 const variable = food.extraOptions.some((arr)=>arr._id.includes(item._id));
                 if(variable){
-                    //setProductExtrasID((prev)=>[...prev,item._id]);
                     autoCheckboxClick(item);
                 }
             })

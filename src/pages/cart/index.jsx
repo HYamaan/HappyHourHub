@@ -11,6 +11,8 @@ import {useRouter} from "next/router";
 import Router from "next/router";
 import Link from "next/link";
 import {BiRightArrowAlt} from "react-icons/bi";
+import {BsShieldFillCheck} from "react-icons/bs";
+import {HiOutlineXMark} from "react-icons/hi2";
 
 const Cart = ({userList}) => {
 
@@ -19,11 +21,13 @@ const Cart = ({userList}) => {
     const router = useRouter();
     let cart = useSelector(state => state.cart);
     const user = userList?.find((user) => user.email === session?.user?.email);
+    const [checkoutPage,setCheckOutPage]=useState(false);
     const [cartProduct, setCartProduct] = useState([]);
     const [mobileShowBasketDetail,setMobileShowBasketDetail] =useState(false)
     const [showCouponCode, setShowCouponCode] = useState(false);
-    const [textCouponCode, setTextCouponCode] = useState("");
-    const scrollRef=useRef(null);
+    const [textCouponCode, setTextCouponCode] = useState();
+    const [isCouponCode,setIsCouponCode]=useState(false);
+    const textCouponCodeRef = useRef(null);
 
     const cartProducts = () => cart.products.forEach((item) => {
         const products = {
@@ -107,8 +111,12 @@ const Cart = ({userList}) => {
 
     }
     const ApplyCouponCode = () => {
+        setTextCouponCode(textCouponCodeRef.current.value);
         console.log(textCouponCode)
+        setIsCouponCode(true)
     }
+
+
 
 
 
@@ -118,7 +126,7 @@ const Cart = ({userList}) => {
                 <div className={`lg:basis-[68%] py-4 px-4  ${mobileShowBasketDetail ? 
                     "after:content[''] after:absolute after:top-0 after:left-0 after:bg-[#212529] after:w-full after:h-full after:opacity-70 after:z-20" : ""} `}
                      onClick={()=>{mobileShowBasketDetail && setMobileShowBasketDetail(!mobileShowBasketDetail)}}
-                     ref={scrollRef}>
+                 >
                     <div className="flex items-end justify-between pt-1 pb-4 mb-4 border-b-2">
                         <p className="text-[1.406rem] md:font-semibold font-base">Alışveriş Sepeti <span>({cart.totalQuantity})</span></p>
                         <Link href="/menu" className="hover:underline text-[0.875rem] mr-4 md:block hidden">Alışverişe Devam
@@ -126,6 +134,7 @@ const Cart = ({userList}) => {
                     </div>
                     {cart.products.map((product, index) => {
                         return <div key={index}
+
                                     className="flex items-start h-[11.375rem] mt-4 border-secondary border-b-[1px] border-opacity-40">
 
                             <Image src={product.image}
@@ -218,7 +227,7 @@ const Cart = ({userList}) => {
                 </div>
 
 
-            <div className={` lg:basis-[32%] w-full flex items-center justify-center md:block hidden  lg:mb-0  mb-[6.6rem]`}>
+            <div className={` lg:basis-[32%] w-full flex items-center justify-center md:block hidden h-full sticky top-10 mt-16 lg:mb-0  mb-[6.6rem]`}>
                 <div className={`h-[11.255rem] w-full  border-[1.1px] font-medium  rounded-tr-lg rounded-tl-lg `}>
                     <div className="p-[0.948rem]">
                         <div className="text-[1.063rem] md:mt-0 mt-10 font-workSans mb-5">Sipariş Özeti</div>
@@ -250,25 +259,42 @@ const Cart = ({userList}) => {
                     </div>
                     <div className="border-l-[1.11px]  border-r-[1.11px] border-b-[1.11px] rounded-br-lg rounded-bl-lg  w-full">
                         <div className="flex items-center justify-center flex-col w-full ">
+                        <div className="flex flex-col items-center justify-center">
                             <div className="text-xs underline p-[0.938rem] font-bold "
                                  onClick={() => setShowCouponCode(!showCouponCode)}>Kupon Kodu Kullan
                             </div>
-                            {showCouponCode && <div className="pb-4">
-                                <input
-                                    type="text"
-                                    placeholder="Kupon Kodu"
-                                    className="p-3 rounded-tl-xl rounded-bl-xl border-[1px] outline-none"
-                                    onChange={(e) => setTextCouponCode(e.target.value)}
-                                />
-                                <button
-                                    className=" h-full text-primary px-5 py-3.5 border-[1.11px] border-primary rounded-tr-xl rounded-br-xl "
-                                    onClick={ApplyCouponCode}
-                                >
+                            {showCouponCode &&
+                                <>
+                                    <div className=" pb-4">
+                                        <input
+                                            type="text"
+                                            placeholder="Kupon Kodu"
+                                            className="p-3 rounded-tl-xl rounded-bl-xl border-[1px] outline-none"
+                                           ref={textCouponCodeRef}
+                                        />
+                                        <button
+                                            className=" h-full text-primary px-5 py-3.5 border-[1.11px] border-primary rounded-tr-xl rounded-br-xl outline-none "
+                                            onClick={ApplyCouponCode}
+                                        >
                                     <span
                                         className="flex items-center justify-center gap-1 uppercase text-sm">Kullan <BiRightArrowAlt/></span>
-                                </button>
+                                        </button>
 
-                            </div>}
+
+                                    </div>
+                                    <div className="flex items-center justify-center gap-2 mb-2">
+                                        { isCouponCode && textCouponCode.length>0 &&
+                                            <>
+                                                { isCouponCode ?
+                                                    <BsShieldFillCheck className="text-green-600 text-xl"/> :
+                                                    <HiOutlineXMark className="text-danger text-xl"/>}
+                                                <p className="text-lg">{textCouponCode}</p>
+                                            </>
+                                        }
+                                    </div>
+                                </>
+                            }
+                        </div>
                         </div>
                     </div>
                     <button className="w-full p-2 bg-primary text-tertiary rounded-lg mt-2 "
