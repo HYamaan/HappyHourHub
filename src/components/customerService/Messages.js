@@ -7,7 +7,7 @@ const Messages =({message,own,className})=>{
         <div className={`flex flex-col ${own ?"items-end" : "items-start"} mx-2`}>
             <div className="max-w-[80%]">
                 <p className={`p-[10px] rounded-[20px] bg-primary text-tertiary inline-block 
-                ${own ? "bg-tertiary text-black border-[1px] border-primary" : "border-[1px] border-tertiary"}`}>
+                ${own ? "bg-tertiary !text-secondary border-[1px] border-primary" : "border-[1px] border-tertiary"}`}>
                     {message?.text}
                 </p>
             </div>
