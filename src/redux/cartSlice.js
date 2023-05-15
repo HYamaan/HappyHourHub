@@ -10,48 +10,32 @@ const cartSlice = createSlice({
     },
     reducers: {
         addProduct: (state, action) => {
+            console.log(action.payload)
+            const extras = action.payload.extras;
 
-            let dependentSomeArray = false;
-            let allItemIndexArray = [];
-            let booleanProductVerification = [];
-
-            state.products.forEach((item, index) => {
-                if (item._id === action.payload._id) {
-                    dependentSomeArray = true;
-                    allItemIndexArray.push({item, index});
-                }
+            const existingProductIndex = state.products.findIndex((item) => {
+                return (
+                    item._id === action.payload._id &&
+                    item.extras.length === extras.length &&
+                    item.extras.every((value, index) => {
+                        console.log("index",value._id, extras[index]._id); return value._id === extras[index]._id})
+                );
             });
 
-            if (state.products.length === 0 || allItemIndexArray.length === 0) {
-                const tempProduct = {...action.payload,status:0};
-                state.totalQuantity++;
-                state.total += +action.payload.price;
-                state.products.push(tempProduct);
-            }
-            allItemIndexArray.filter((productIndex) => productIndex.item.extras.length === action.payload.extras.length)
-                .map((productIndex) => {
-                    let productVerification = productIndex.item.extras.every((value, index) => value._id === action.payload.extras[index]._id);
-                    booleanProductVerification.push(productVerification);
-                    if (productVerification) {
-                        state.totalQuantity++;
-                        state.total += action.payload.price;
-                        state.products[productIndex.index].productTotal += 1;
-                        return;
-                    } else {
-                        return;
-                    }
-                });
-            if (dependentSomeArray == true) {
-                const booleanProductVerificationFilter = booleanProductVerification.some((currentValue) => currentValue === true);
-                if (booleanProductVerificationFilter == false) {
-                    const tempProduct = {...action.payload,status:0};
-                    state.totalQuantity++;
-                    state.total += +action.payload.price;
-                    state.products.push(tempProduct);
+            if (existingProductIndex !== -1) {
+                state.products[existingProductIndex].productTotal += 1;
 
-                }
+            } else {
+
+                const newProduct = {
+                    ...action.payload,
+                };
+                state.products.push(newProduct);
+
             }
 
+            state.totalQuantity++;
+            state.total += action.payload.price;
         },
         increaseProduct: (state, action) => {
 
@@ -150,3 +134,45 @@ const cartSlice = createSlice({
 
 export const cartActions = cartSlice.actions;
 export default cartSlice.reducer;
+
+
+//          let dependentSomeArray = false;
+//             let allItemIndexArray = [];
+//             let booleanProductVerification = [];
+//
+//             state.products.forEach((item, index) => {
+//                 if (item._id === action.payload._id) {
+//                     dependentSomeArray = true;
+//                     allItemIndexArray.push({item, index});
+//                 }
+//             });
+//
+//             if (state.products.length === 0 || allItemIndexArray.length === 0) {
+//                 const tempProduct = {...action.payload,status:0};
+//                 state.totalQuantity++;
+//                 state.total += +action.payload.price;
+//                 state.products.push(tempProduct);
+//             }
+//             allItemIndexArray.filter((productIndex) => productIndex.item.extras.length === action.payload.extras.length)
+//                 .map((productIndex) => {
+//                     let productVerification = productIndex.item.extras.every((value, index) => value._id === action.payload.extras[index]._id);
+//                     booleanProductVerification.push(productVerification);
+//                     if (productVerification) {
+//                         state.totalQuantity++;
+//                         state.total += action.payload.price;
+//                         state.products[productIndex.index].productTotal += 1;
+//                         return;
+//                     } else {
+//                         return;
+//                     }
+//                 });
+//             if (dependentSomeArray == true) {
+//                 const booleanProductVerificationFilter = booleanProductVerification.some((currentValue) => currentValue === true);
+//                 if (booleanProductVerificationFilter == false) {
+//                     const tempProduct = {...action.payload,status:0};
+//                     state.totalQuantity++;
+//                     state.total += +action.payload.price;
+//                     state.products.push(tempProduct);
+//
+//                 }
+//             }
