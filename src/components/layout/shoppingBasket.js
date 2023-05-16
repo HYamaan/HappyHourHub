@@ -1,10 +1,12 @@
 import {useDispatch, useSelector} from "react-redux";
 import {FaShoppingCart} from "react-icons/fa";
-import React  from "react";
+import React, {useEffect, useState} from "react";
 import Image from "next/image";
 import {useRouter} from "next/router";
 import Link from "next/link";
 import {cartActions} from "../../redux/cartSlice";
+import {useSession} from "next-auth/react";
+import axios from "axios";
 
 
 
@@ -12,8 +14,11 @@ const ShoppingBasket = ({router,isMenuModal,showBasket,setShowBasket})=>{
     const cart = useSelector(state=>state.cart);
     const dispatch=useDispatch();
     const {push}=useRouter();
+    const {data:session}=useSession();
+    const [isHandleClick,setIsHandleClick]=useState(false);
+    const [product,setProduct]=useState(null);
 
-    console.log("SHOPPİNG KART",JSON.parse(JSON.parse(localStorage.getItem("persist:root")).cart))
+    //console.log("SHOPPİNG KART",JSON.parse(JSON.parse(localStorage.getItem("persist:root")).cart))
     const moveToBasket =async ()=>{
         try {
             await push(`/cart`);
@@ -22,9 +27,35 @@ const ShoppingBasket = ({router,isMenuModal,showBasket,setShowBasket})=>{
             console.log(err);
         }
     }
-    const deleteProduct=(prod)=>{
+    const deleteProduct=(prod)=> {
+        setIsHandleClick(true)
+        setProduct(prod);
         dispatch(cartActions.removeProduct(prod));
     }
+    useEffect(()=>{
+        const DBtoReduxCart=async ()=>{
+             setTimeout(async ()=>{
+                if(isHandleClick && product){
+                    setIsHandleClick(false);
+                    try {
+                        console.log("product",product._id)
+                        const queryParams = `userId=${session?.user?.id}`;
+                        const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
+                        if (session?.user) {
+
+                            await axios.delete(url, { data: { sku: product.sku } });
+
+                        }
+
+                    }catch (err){
+                        console.log(err.message)
+                    }
+                }},5);
+        };
+
+        DBtoReduxCart();
+    },[isHandleClick,product])
+
     return<>
         <Link href="/cart" className= {`relative ${router.pathname === "/cart" ? "text-primary" : ""}`}>
             <span className="relative z-0" onClick={()=>setShowBasket(false)}
@@ -82,7 +113,10 @@ const ShoppingBasket = ({router,isMenuModal,showBasket,setShowBasket})=>{
                                 <p>{`Adet: ${prod.productTotal}`}</p>
                             </div>
                             <div className="basis-1/12 h-full mt-2 place-self-start text-secondary hover:text-danger text-xl cursor-pointer "
-                                 onClick={()=>deleteProduct(prod)}
+                                 onClick={()=> {
+                                     setProduct(prod)
+                                     deleteProduct(prod)
+                                 }}
                             >
                                 <i className="fa-solid fa-trash-can"></i></div>
                         </div>

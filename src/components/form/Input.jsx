@@ -26,7 +26,7 @@ const Input = (props) => {
                             {...inputs}
                             mask="(999) 999-9999"
                             maskplaceholder=" "
-                            className={`h-14 w-full border border outline-none px-4 pt-2 peer ${
+                            className={`h-14 w-full border outline-none px-4 pt-2 peer rounded-lg ${
                                 errorMessage ? "border-red-600" : "border-primary"
                             }`}
                             value={inputs?.value || ''}
@@ -38,7 +38,7 @@ const Input = (props) => {
                         <>
                             <input {...inputs}
                                    {...(inputs.type === "password" && showPasswordType === inputs.id && { type: "text" })}
-                                   className={`h-14 w-full border border outline-none px-4  peer
+                                   className={`h-14 w-full border outline-none px-4  peer rounded-lg
                                  ${inputs.type !== "datetime-local" && "pt-2"}
                                      ${errorMessage ? "border-red-600" : "border-primary"}`}
                                    value={inputs?.value || ''}

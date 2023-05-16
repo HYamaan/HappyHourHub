@@ -14,6 +14,7 @@ import cartIndex from "./cartIndex";
 import ProductExtras from "./ProductExtras";
 import FavoriteProducts from "./FavoriteProducts"
 import userInfo from "./userInfo"
+import ShoppingOrder from "./shoppingOrder";
 const persistConfig = {
     key: 'root',
     version:1,
@@ -24,7 +25,8 @@ const reducer = combineReducers({
     cartIndex:cartIndex,
     productExtras:ProductExtras,
     favoriteProducts:FavoriteProducts,
-    userInfo:userInfo
+    userInfo:userInfo,
+    shoppingOrder:ShoppingOrder
 })
 
 const persistedReducer = persistReducer(persistConfig, reducer)
