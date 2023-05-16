@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
 import Image from "next/image";
-
 import {useSelector, useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice";
 import {ProductExtrasActions} from "../../redux/ProductExtras";
@@ -21,7 +20,6 @@ const Cart = ({userList}) => {
     const router = useRouter();
     let cart = useSelector(state => state.cart);
     const user = userList?.find((user) => user.email === session?.user?.email);
-    const [checkoutPage,setCheckOutPage]=useState(false);
     const [cartProduct, setCartProduct] = useState([]);
     const [mobileShowBasketDetail,setMobileShowBasketDetail] =useState(false)
     const [showCouponCode, setShowCouponCode] = useState(false);
@@ -29,6 +27,8 @@ const Cart = ({userList}) => {
     const [isCouponCode,setIsCouponCode]=useState(false);
     const textCouponCodeRef = useRef(null);
 
+    const [isHandleClick,setIsHandleClick]=useState(false);
+    const [product,setProduct]=useState(null);
     const cartProducts = () => cart.products.forEach((item) => {
         const products = {
             image: item.image,
@@ -97,6 +97,8 @@ const Cart = ({userList}) => {
 
     }
     const removeItemHandler = (item) => {
+        setIsHandleClick(true)
+        setProduct(item);
         dispatch(cartActions.removeProduct(item));
 
     }
@@ -115,9 +117,34 @@ const Cart = ({userList}) => {
         console.log(textCouponCode)
         setIsCouponCode(true)
     }
+    const routeCheckoutPage=async ()=>{
+        await router.push('/checkout/opc');
+    }
 
 
+    useEffect(()=>{
+        const DBtoReduxCart=async ()=>{
+            setTimeout(async ()=>{
+                if(isHandleClick && product){
+                    setIsHandleClick(false);
+                    try {
+                        console.log("product",product._id)
+                        const queryParams = `userId=${session?.user?.id}`;
+                        const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
+                        if (session?.user) {
 
+                            await axios.delete(url, { data: { sku: product.sku } });
+
+                        }
+
+                    }catch (err){
+                        console.log(err.message)
+                    }
+                }},5);
+        };
+
+        DBtoReduxCart();
+    },[isHandleClick,product,session?.user])
 
 
 
@@ -298,12 +325,13 @@ const Cart = ({userList}) => {
                         </div>
                     </div>
                     <button className="w-full p-2 bg-primary text-tertiary rounded-lg mt-2 "
-                            onClick={createOrder}
+                            onClick={()=>routeCheckoutPage()}
                     >Siparişi Tamamla</button>
                 </div>
             </div>
 
-            <div className={`fixed bottom-0 bg-primary px-6 pb-6 pt-2 w-full md:hidden block ${mobileShowBasketDetail ? "z-50 " : "border-t-[1px] border-tertiary"}
+            <div className={`fixed bottom-0 bg-primary px-6 pb-6 pt-2 w-full md:hidden block 
+            ${mobileShowBasketDetail ? "z-50 " : "border-t-[1px] border-tertiary"}
             `}>
                 <div>
                     <div className={`flex items-center justify-between flex-row mt-1  font-semibold ${mobileShowBasketDetail ? "mb-3" : "mb-[-0.2rem]"}` }>
@@ -336,7 +364,7 @@ const Cart = ({userList}) => {
                             <span>Ücretsiz Kargo</span>
                         </div></>}
                         <button className="w-full p-2 bg-tertiary text-secondary  mt-3 uppercase text-sm font-semibold"
-                                onClick={createOrder}
+                                onClick={()=>routeCheckoutPage()}
                         >
                           Sepeti onayla
                         </button>
