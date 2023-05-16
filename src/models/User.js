@@ -27,6 +27,13 @@ const UserSchema = new mongoose.Schema(
                 addressType:{
                     type: String,
                 },
+                customerFullName:{
+                    type:String,
+                },
+                addressEmail: {
+                    type: String,
+
+                },
                 country: {
                     type: String,
                 },

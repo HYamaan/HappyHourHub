@@ -28,7 +28,9 @@ module.exports = {
         danger:"#ff0000",
         success:"#00ff00",
         stateGray:"#868E98",
-        cadetGray:"#9CA1AB"
+        cadetGray:"#9CA1AB",
+        payneGray:"#676F79",
+        frenchGray:"#BFC0C4",
 
       },
       fontFamily:{
