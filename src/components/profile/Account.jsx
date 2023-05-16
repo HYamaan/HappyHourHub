@@ -7,16 +7,17 @@ import axios from "axios";
 import {toast} from "react-toastify";
 
 const Account = ({ user }) => {
+
     const onSubmit = async (values, actions) => {
         try {
-
+            console.log("Burada")
             values.phoneNumber= values.phoneNumber.replace(/[^\d]/g, '');
             const res = await axios.put(
                 `${process.env.NEXT_PUBLIC_API_URL}/users/${user._id}`,
                 values
             );
-            console.log("valuesAccont",values)
-            if(res.status===200){
+            console.log("valuesAccont",res)
+            if(res.status===201){
                 toast.success("Profile successfuly updated")
             }
         } catch (err) {
@@ -29,11 +30,11 @@ const Account = ({ user }) => {
         useFormik({
             enableReinitialize: true,
             initialValues: {
-                fullName: user?.fullName,
-                phoneNumber: user?.phoneNumber,
-                email: user?.email,
-                zipCode: user?.zipCode,
-                bio: user?.bio,
+                fullName: user?.fullName || "",
+                phoneNumber: user?.phoneNumber || "",
+                email: user?.email || "",
+                zipCode: user?.zipCode || "",
+                bio: user?.bio || "",
             },
             onSubmit,
             validationSchema: profileSchema,
@@ -103,9 +104,12 @@ const Account = ({ user }) => {
                         </div>
                     ))}
                 </div>
-                <button className="btn-primary mt-4" type="submit">
-                    Update
+                <button className="w-[16.188rem] h-[2.688rem] mt-5 bg-primary hover:bg-primaryBold hover:out-expo uppercase flex items-center
+            justify-center rounded-lg cursor-pointer text-xs text-tertiary font-semibold"
+                        type="submit"
+                >Update
                 </button>
+
             </form>
         </div>
     );
