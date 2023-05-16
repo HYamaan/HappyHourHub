@@ -126,10 +126,10 @@ const handler = async (req, res) => {
                 let userShoppingCart = await ShoppingCartUser.findOne({userId});
 
                 if (!userShoppingCart) {
-                    userShoppingCart = await ShoppingCartUser({userId});
+                    userShoppingCart = await new ShoppingCartUser({userId});
                 }
-                req.body.products.map(async (item) => {
-                    const isThereAny = userShoppingCart.products.some(prod => prod.sku === item.sku)
+                    let item=req.body;
+                    const isThereAny = userShoppingCart.products.some(prod => prod.sku === req.body.sku)
                     if (!isThereAny) {
                         userShoppingCart.products.push({
                             product: item._id,
@@ -145,8 +145,6 @@ const handler = async (req, res) => {
                         });
                     }
 
-                });
-
                 await userShoppingCart.save();
                 return res.status(201).json({message: "Product added to Redux list successfully"});
             } catch (error) {
@@ -154,6 +152,32 @@ const handler = async (req, res) => {
                 return res.status(500).json({message: "Internal Server Error"});
             }
         }
+        if (method === "DELETE") {
+            try {
+                if (!userId) {
+                    return res.status(400).json({ success: false, message: 'Kullanıcı bulunamadı.' });
+                }
+
+                const sku = req.body.sku;
+
+                const result = await ShoppingCartUser.findOneAndUpdate(
+                    { userId },
+                    { $pull: { products: { sku } } },
+                    { new: true }
+                );
+
+                if (!result) {
+                    return res.status(400).json({ message: "Kullanıcı sepeti bulunamadı" });
+                }
+
+                return res.status(200).json({ message: "Ürün başarıyla silindi" });
+            } catch (error) {
+                console.log(error);
+                return res.status(500).json({ message: "Internal Server Error" });
+            }
+        }
+
+
     }
 }
 
