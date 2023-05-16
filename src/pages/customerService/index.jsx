@@ -41,7 +41,6 @@ const CustomerService = () => {
                     createdAt: Date.now(),
                 })
             })
-
         };
         socketInitializer();
     }, []);
@@ -97,6 +96,7 @@ const CustomerService = () => {
         }
         getAdminId();
     }, []);
+    //GET CONVERSATION FOR ADMIN
     const {data: conversation, refetch} = useQuery({
         queryKey: ["get-Conversation"],
         queryFn: () => {
@@ -107,6 +107,7 @@ const CustomerService = () => {
             return data.data;
         }
     });
+    //GET CONVERSATION ADMIN FOR 20 seconds
     useEffect(() => {
         const interval = setInterval(() => {
             refetch();
@@ -114,6 +115,8 @@ const CustomerService = () => {
 
         return () => clearInterval(interval);
     }, [refetch]);
+
+    //GET CUSTOMER MESSAGES
     const {data: currentChatMessage, refetch: currentChatRefetch} = useQuery({
         queryKey: ["get-CurrentMessage"],
         enabled: currentChat?._id.length > 4,
@@ -133,6 +136,7 @@ const CustomerService = () => {
             setMessages(currentChatMessage);
         }
     }, [currentChatMessage,currentChat])
+    //SCROLL REF
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -183,6 +187,8 @@ const CustomerService = () => {
             console.log(err);
         }
     }
+    
+
 
     return <>
         <div className="flex flex-row h-[calc(100vh_-_5.5rem)]">
