@@ -16,7 +16,7 @@ const handler = async (req, res) => {
             }
             if (addressId) {
                 const address = user.address.id(addressId);
-                res.status(200).json(address);
+               return  res.status(200).json(address);
             }
             res.status(200).json(user);
 
@@ -27,17 +27,18 @@ const handler = async (req, res) => {
 
     if (method === "PATCH") {
         try {
-            const {addressType, country, city, district, phoneNumber, address1} = req.body.newValues;
-            if (!addressType || !country || !city || !phoneNumber || !address1 || !district) {
+            const {addressType, country, city, district, phoneNumber, address1,customerFullName,email} = req.body.newValues;
+            if (!addressType || !country || !city || !phoneNumber || !address1 || !district || !customerFullName || !email) {
                 return res.status(400).send({message: 'Please provide all the required fields.'});
             }
-
             if (addressId) {
                 const updatedUser = await User.findOneAndUpdate(
                     {_id: userId, 'address._id': addressId},
                     {
                         $set: {
                             'address.$.addressType': addressType,
+                            'address.$.customerFullName': customerFullName,
+                            'address.$.addressEmail': email,
                             'address.$.country': country,
                             'address.$.city': city,
                             'address.$.district': district,
@@ -47,12 +48,12 @@ const handler = async (req, res) => {
                     },
                     {new: true}
                 );
-
+                console.log("updateUser",updatedUser)
                 res.status(200).json(updatedUser);
             } else {
                 const updatedUser = await User.findByIdAndUpdate(
                     userId,
-                    {$push: {address: {addressType, country, city, district, phoneNumber, address1}}},
+                    {$push: {address: {addressType,customerFullName, country, city, district, phoneNumber, address1,email}}},
                     {new: true}
                 );
                 res.status(200).json(updatedUser);
