@@ -8,11 +8,12 @@ import {cartIndexActions} from "../../redux/cartIndex";
 import axios from "axios";
 import {useRouter} from "next/router";
 import shortid from "shortid";
+import {useSession} from "next-auth/react";
 
 
 
 const Id = ({food}) => {
-
+    const {data:session}=useSession();
     const dispatch = useDispatch();
     const router =useRouter();
     const sku = shortid.generate();
@@ -24,11 +25,12 @@ const Id = ({food}) => {
     const [extras, setExtras] = useState([]);
     const {name} = router.query;
     const [productExtrasID,setProductExtrasID]=useState([]);
+    const [isHandleClick,setIsHandleClick]=useState(false);
 
-
+    const cart = useSelector((state) => state.cart);
     useEffect(()=>{
         if (name){
-            productExtrass.productExtras?.extras?.map((item,index)=>{
+            productExtrass.productExtras?.extras?.map((item)=>{
                 const variable = food.extraOptions.some((arr)=>arr._id.includes(item._id));
                 if(variable){
                     autoCheckboxClick(item);
@@ -77,10 +79,43 @@ const Id = ({food}) => {
     }
 
     const handleClick=()=>{
-        dispatch(cartActions.addProduct({...food,extras,price,productTotal:1,addIndex:cartIndex.addToIndex,sku}));
-        dispatch(cartIndexActions.addToCartIndex(cartIndex.addToIndex));
-
+        console.log("food",cartIndex.addToIndex);
+        setIsHandleClick(true)
+        const sortedExtras = extras.slice().sort((a, b) => a.text.localeCompare(b.text));
+        console.log("sortedExtras",sortedExtras)
+        dispatch(cartActions.addProduct({...food,extras:sortedExtras,price,productTotal:1,addIndex:cartIndex.addToIndex,sku,status:0}));
+        dispatch(cartIndexActions.addToCartIndex());
+        setProductExtrasID([]);
+        setExtras([]);
+        setPrice(food.prices[0]);
+        setIsHandleClick(false);
+        setSize(0);
+        setPrices(food.prices)
     }
+
+    useEffect(()=>{
+        const DBtoReduxCart=async ()=>{
+             setTimeout(async ()=>{
+                if(isHandleClick){
+                    setIsHandleClick(false);
+                    try {
+
+                        const addProductToDB=  cart.products[cart.products.length-1]
+
+                        const queryParams = `userId=${session?.user?.id}`;
+                        const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
+                        if (session?.user) {
+                            await axios.post(url,addProductToDB);
+                        }
+
+                    }catch (err){
+                        console.log(err.message)
+                    }
+                }},5);
+        };
+
+        DBtoReduxCart();
+    },[isHandleClick,session?.user?.id,cart.products])
 
 
 
