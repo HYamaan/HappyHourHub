@@ -74,6 +74,30 @@ const handler = async (req, res) => {
         }
     }
 
+    if(method ==="PUT"){
+
+        try {
+            const updatedUser = await User.findOneAndUpdate(
+                {_id: id},
+                {
+                    $set: {
+                        ' fullName':  req.body.fullName,
+                        'phoneNumber':req.body.phoneNumber,
+                        'email': req.body.email,
+                        'zipCode': req.body.zipCode,
+                        ' bio': req.body.bio
+                    }
+                },
+                {new: true}
+            );
+
+            res.status(201).json(updatedUser)
+
+        }catch (err){
+            console.log(err);
+            res.status(400).json({status:false,message:err.message})
+        }
+    }
 };
 
 export default handler;
