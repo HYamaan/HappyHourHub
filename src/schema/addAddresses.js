@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 
 export const addAddresses = Yup.object({
     caption:Yup.string().required("Caption name is required."),
-    fullName: Yup.string()
+    customerFullName: Yup.string()
         .min(3, 'Full name must be at least 3 characters ')
         .required('Full name is required'),
     phoneNumber: Yup.string()
