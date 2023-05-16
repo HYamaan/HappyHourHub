@@ -32,7 +32,7 @@ const Addresses = ({ user }) => {
             setIsLoading(!isLoading);
             const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/userAddress/userId=${user._id}/addressId=${addressId}`);
             setUpdateAddress(res.data);
-            console.log(res.data)
+
             setAddNewAddress(true)
 
         }catch (err){
@@ -63,8 +63,8 @@ const Addresses = ({ user }) => {
                         userAddresses.map((address,index)=>(
                             <div key={address._id ? address._id : index} className="flex lg:flex-row flex-col items-center justify-center mt-4 border-b-[1px] border-secondary pb-4 border-opacity-30 ">
                                 <div className="flex flex-col items-start gap-[1px] basis-8/12 text-sm font-workSans">
-                                    <p className="font-semibold mb-4">{address.addressType}</p>
-                                    <p>{user.fullName}</p>
+                                    <p className="font-bold text-lg mb-2">{address.addressType}</p>
+                                    <p className="font-semibold">{address.customerFullName}</p>
                                     <p>{address.address1}</p>
                                     <p>{`${address.district}, ${address.city}`}</p>
                                     <p>{address.country}</p>
@@ -90,12 +90,20 @@ const Addresses = ({ user }) => {
 
                     <div className="w-[16.188rem] h-[2.688rem] mt-5 bg-primary hover:bg-primaryBold hover:out-expo uppercase flex items-center
             justify-center rounded-lg cursor-pointer text-xs text-tertiary font-semibold"
-                    onClick={()=>setAddNewAddress(!addNewAddress)}
+                    onClick={()=>setAddNewAddress(true)}
                     >Yeni Adress Ekle</div>
                 </div>
             )
         }
-        {addNewAddress &&  <UploadNewAddresses user={user} setIsLoading={setIsLoading} isLoading={isLoading}  updateAddress={updateAddress} setAddNewAddress={setAddNewAddress}/>}
+        {addNewAddress &&  (
+            <>
+                <div className="w-full mx-auto">
+                    <Title className="text-[40px] lg:p-4 lg:mt-0 mt-5">Addresses</Title>
+                    <UploadNewAddresses user={user} setIsLoading={setIsLoading} isLoading={isLoading}  updateAddress={updateAddress} setAddNewAddress={setAddNewAddress}/>
+                </div>
+
+            </>
+        )}
     </>
 };
 
