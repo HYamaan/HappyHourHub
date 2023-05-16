@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import shortid from 'shortid';
 import {useSelector, useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice";
@@ -28,10 +28,13 @@ const MenuItem = (prop) => {
     const findCart = cart.products.find((item) => item._id === props._id);
     const dispatch = useDispatch();
     const sku = shortid.generate();
-
+    const [isHandleClick,setIsHandleClick]=useState(false);
 
 
     const createProduct = {
+        status:0,
+        productTotal: 1,
+        addIndex: cartIndex.addToIndex,
         sku,
         category: props.category,
         createdAt: props.createdAt,
@@ -76,24 +79,33 @@ const MenuItem = (prop) => {
         }
     }
 
+
 const handleClick = async () => {
-    dispatch(cartActions.addProduct({...createProduct, productTotal: 1, addIndex: cartIndex.addToIndex}));
-    dispatch(cartIndexActions.addToCartIndex(cartIndex.addToIndex));
-   await DBtoReduxCart();
+    setIsHandleClick(true);
+    dispatch(cartActions.addProduct({...createProduct}));
+
 }
+    useEffect(()=>{
+        const DBtoReduxCart=async ()=>{
 
-    const DBtoReduxCart=async ()=>{
-        try {
-            const queryParams = `userId=${session?.user?.id}`;
-            const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
-            if (session?.user) {
-                await axios.post(url,cart);
-            }
+              if(isHandleClick){
+                setIsHandleClick(false);
+                try {
 
-        }catch (err){
-            console.log(err.message)
-        }
-    }
+                    const addProductToDB=  cart.products[cart.products.length-1]
+                    const queryParams = `userId=${session?.user?.id}`;
+                    const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
+                    if (session?.user) {
+                        await axios.post(url,addProductToDB);
+                    }
+
+                }catch (err){
+                    console.log(err.message)
+                }
+            }}
+
+        DBtoReduxCart();
+    },[isHandleClick])
 
 return <React.Fragment>
     <div className="rounded-3xl bg-secondary">
