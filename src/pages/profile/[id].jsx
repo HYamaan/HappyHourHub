@@ -19,8 +19,6 @@ import {userInfoActions} from "../../redux/userInfo";
 
 
 
-
-
 const Profile = ({ user }) => {
     const dispatch =useDispatch();
     const cart = useSelector(state => state.cart)
@@ -37,22 +35,10 @@ const Profile = ({ user }) => {
     },[uploadImageShow,user]);
 
     console.log("cart",cart)
-    const DBtoReduxCart=async ()=>{
-        try {
-            const queryParams = `userId=${user._id}`;
-            const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
-            if (user) {
-                await axios.post(url,cart);
-            }
 
-        }catch (err){
-            console.log(err.message)
-        }
-    }
 
     const handleSignOut =  async () => {
         if (confirm("Are you sure you want to sign out?")) {
-            await DBtoReduxCart();
 
             dispatch(cartActions.reset());
             dispatch(cartIndexActions.reset());
