@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import {useRouter} from "next/router";
 import Link from "next/link";
 
@@ -16,8 +16,7 @@ const Header = () => {
   const router = useRouter();
   const [isSearchModal, setIsSearchModal] = useState(false);
   const [isMenuModal, setIsMenuModal] = useState(false);
-
-  //console.log("HeaderCart",cart);
+  const [showBasket, setShowBasket] = useState(false);
 
   return (
     <div className={`h-[5.5rem] z-[1000] relative 
@@ -31,7 +30,7 @@ const Header = () => {
         </div>
         <nav className={`sm:static absolute top-0 left-0  w-full h-screen  
           sm:text-white text-black sm:w-auto sm:h-auto sm:bg-transparent bg-white sm:flex sm:flex-1 hidden
-          ${isMenuModal !== false && "!grid place-content-center"}`}>
+          ${isMenuModal !== false && "!grid place-content-center"}`} >
           <ul className="flex gap-x-2 sm:flex-row flex-col items-center ">
             <li className="px-[0.313rem] py-[1.25rem] uppercase font-size hover:text-primary cursor-pointer">
               <Link href="/" className={router.pathname === "/" ? "text-primary" : ""}> Home</Link>
@@ -56,18 +55,21 @@ const Header = () => {
               </button>
           )}
         </nav>
-        <div className="flex gap-x-4 items-center relative">
+        <div className="flex gap-x-4 items-center relative"
+             onMouseEnter={()=>setShowBasket(false)}
+        >
           <button onClick={() => setIsSearchModal(true)}>
             <BsSearch className="hover:text-primary transition-all cursor-pointer" />
           </button>
-          <Link href="/auth/login" className={router.pathname === "/auth/login" ? "text-primary" : ""}>
+          <Link href="/auth/login" className={router.pathname === "/auth/login" ? "text-primary" : ""}
+                onMouseEnter={()=>setShowBasket(false)}>
              <FaUserAlt className="hover:text-primary transition-all cursor-pointer" />
-
           </Link>
 
-            <ShoppingBasket router={router} isMenuModal={isMenuModal}/>
+            <ShoppingBasket router={router} isMenuModal={isMenuModal} setShowBasket={setShowBasket} showBasket={showBasket}/>
 
-          <Link href="" className="md:inline-block hidden">
+          <Link href="" className="md:inline-block hidden"
+                onMouseEnter={()=>setShowBasket(false)}>
             <button className="btn-primary"> Order Online</button>
           </Link>
           <button
