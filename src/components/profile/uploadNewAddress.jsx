@@ -4,11 +4,12 @@ import axios from "axios";
 import {toast} from "react-toastify";
 import {useFormik} from "formik";
 import {addAddresses} from "../../schema/addAddresses";
-import Title from "../UI/Title";
+
 import Input from "../form/Input";
 
 
-const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLoading})=>{
+const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLoading,setUpdateAddress,checkout})=>{
+
     const [country,setCountry]=useState([{id:1,name:"Türkiye"}]);
     const [countryText,setCountryText]=useState(updateAddress?.country|| "");
     const [city,setCity]=useState([]);
@@ -60,13 +61,15 @@ const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLo
             values.phoneNumber= values.phoneNumber.replace(/[^\d]/g, '');
             const newValues = {
                 addressType:values.caption,
+                customerFullName:values.customerFullName,
                 country: countryText,
                 city: cityText,
                 district: districtText,
+                email:values.email,
                 phoneNumber:values.phoneNumber,
                 address1:values.address
             };
-
+            console.log("updateAddress",updateAddress)
             const res = await axios.patch(
                 `${process.env.NEXT_PUBLIC_API_URL}/userAddress/userId=${user._id}${updateAddress && `/addressId=${updateAddress?._id}`}`,
                 {
@@ -91,9 +94,9 @@ const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLo
             enableReinitialize: true,
             initialValues: {
                 caption: updateAddress?.addressType || "",
-                fullName: user?.fullName || "",
+                customerFullName: updateAddress?.customerFullName || "",
                 phoneNumber: updateAddress?.phoneNumber || "",
-                email:updateAddress?.email || "",
+                email:updateAddress?.addressEmail || "",
                 address:updateAddress?.address1 || ""
 
             },
@@ -103,14 +106,9 @@ const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLo
 
 
 
-
-
-    return (
-        <div className="w-full mx-auto">
-            <form className="lg:p-4 flex-1 lg:mt-0 mt-5" onSubmit={handleSubmit}>
-                <Title className="text-[40px]">Addresses</Title>
+    return (  <>
+            <form className="lg:p-4 flex-1 lg:mt-0 mt-3.5" onSubmit={handleSubmit}>
                 <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mt-4">
-
                     <Input id={1}
                            name="caption"
                            type="text"
@@ -124,14 +122,14 @@ const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLo
                     />
                     <Input
                         id={2}
-                        name="fullName"
+                        name="customerFullName"
                         type="text"
                         placeholder="Your Full Name"
-                        value={values.fullName}
+                        value={values.customerFullName}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        errorMessage={errors.fullName}
-                        touched={touched.fullName}
+                        errorMessage={errors.customerFullName}
+                        touched={touched.customerFullName}
                         className="col-span-2"
                     />
                     <Input
@@ -166,7 +164,7 @@ const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLo
                             <select id="select"
                                     value={countryText}
                                     onChange={(e)=>setCountryText(e.target.value)}
-                                    className="block w-full p-2 bg-gray border-gray-300 rounded-md shadow-sm focus:outline-none
+                                    className="block w-full p-4 bg-gray border-gray-300 rounded-md shadow-sm focus:outline-none
                                   focus:ring-opacity-50 shadow-2xl shadow-primary"
 
                             >
@@ -184,7 +182,7 @@ const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLo
 
                         <div className="w-full">
                             <select id="select" value={cityText} onChange={(e)=>setCityText(e.target.value)}
-                                    className="block w-full p-2 bg-gray border-gray-300 rounded-md shadow-sm focus:outline-none
+                                    className="block w-full p-4 bg-gray border-gray-300 rounded-md shadow-sm focus:outline-none
                                   focus:ring-opacity-50 shadow-2xl shadow-primary"
                             >
                                 <option key={0} value="city">
@@ -202,7 +200,7 @@ const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLo
 
                         <div className="w-full">
                             <select id="select" value={districtText} onChange={(e)=>setDistrictText(e.target.value)}
-                                    className="block w-full p-2 bg-gray border-gray-300 rounded-md shadow-sm focus:outline-none
+                                    className="block w-full p-4 bg-gray border-gray-300 rounded-md shadow-sm focus:outline-none
                                   focus:ring-opacity-50 shadow-2xl shadow-primary"
                             >
                                 <option key={0} value="districtCity">
@@ -232,13 +230,34 @@ const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLo
 
 
                 </div>
-                <button className="  bg-primary hover:bg-primaryBold hover:ease-in w-[18.438rem]
-                 h-[2.688rem] px-[1rem] py-[0.65rem] mt-2 rounded-lg text-tertiary font-semibold text-sm" type="submit">
+                {checkout ? (
+                    <>
+
+                            <div className="flex items-center justify-between gap-8 mt-6">
+                                <div className="basis-1/2 flex justify-center uppercase py-3 px-10 bg-transparent border-2 border-primary
+                             cursor-pointer rounded-lg text-sm  text-primary font-semibold tracking-wide outline-0"
+                                        onClick={()=> {
+                                            setUpdateAddress("");
+                                            setAddNewAddress(false)
+                                        }}
+
+                                > Vazgeç</div>
+
+                                <button className=" basis-1/2 bg-primary hover:bg-primaryBold hover:ease-in w-[18.438rem]
+                 h-[2.688rem] px-[1rem] py-[0.65rem]  rounded-lg text-tertiary font-semibold text-sm" type="submit">
+                                    KAYDET
+                                </button>
+                            </div>
+
+                    </>
+                ) : ( <button className="  bg-primary hover:bg-primaryBold hover:ease-in w-[18.438rem]
+                 h-[2.688rem] px-[1rem] py-[0.65rem] mt-6 rounded-lg text-tertiary font-semibold text-sm" type="submit">
                     KAYDET
-                </button>
+                </button>)
+
+                }
             </form>
-        </div>
-    );
+    </> );
 
 }
 export default UploadNewAddresses
