@@ -17,7 +17,6 @@ import LoadingPackman from "../../components/auth/loadingPackman";
 import {useDispatch, useSelector} from "react-redux";
 import {cartActions} from "../../redux/cartSlice";
 import {cartIndexActions} from "../../redux/cartIndex";
-import {userInfoActions} from "../../redux/userInfo";
 
 
 const Login = () => {
@@ -27,36 +26,24 @@ const Login = () => {
     const [isLogin,setIsLogin]=useState(false);
     const router = useRouter();
     const cart = useSelector(state => state.cart)
-    const cartIndex = useSelector((state) => state.cartIndex);
+
     const dispatch =useDispatch();
     const DBtoReduxCart=async ()=>{
         try {
             const queryParams = `userId=${currentUser._id}`;
             const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
             if (currentUser ) {
-                if( cart.totalQuantity > 0){
-                    const res = await axios.post(url,cart);
-                    if(res.status===201){
-                        console.log("LOGIN RES",res)
-                        const res =await axios.get(url);
-                        console.log("RES",res.data);
-                        dispatch(cartActions.reset());
-                        res.data.products.map(item=> {
-                            const { product, ...rest } = item;
-                            dispatch(cartActions.addProduct({ ...product, ...rest ,addIndex: cartIndex.addToIndex}))
-                            dispatch(cartIndexActions.addToCartIndex(cartIndex.addToIndex));
-                        })
-                    }
-                }else{
-                    const res =await axios.get(url);
-                    console.log("RES",res.data);
-                    dispatch(cartActions.reset());
-                    res.data.products.map(item=> {
-                        const { product, ...rest } = item;
-                        dispatch(cartActions.addProduct({ ...product, ...rest ,addIndex: cartIndex.addToIndex}))
-                        dispatch(cartIndexActions.addToCartIndex(cartIndex.addToIndex));
-                    })
+                if(cart.products.length >0){
+                    await axios.post(url,cart);
                 }
+                const res =await axios.get(url);
+                console.log("RES",res.data);
+                dispatch(cartActions.reset());
+                res.data.products.map((item,index)=> {
+                    const { product, ...rest } = item;
+                    dispatch(cartIndexActions.addToCartIndex());
+                    dispatch(cartActions.addProduct({ ...product, ...rest ,addIndex: index}))
+                })
 
             }
 
