@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
-import {AiFillCheckCircle} from "react-icons/ai";
-import {FiEdit} from "react-icons/fi";
+import {AiFillCheckCircle, AiOutlineCheckCircle} from "react-icons/ai";
+import {FiEdit,FiTrash} from "react-icons/fi";
 import {CiTrash} from "react-icons/ci";
 import {RxCircle} from "react-icons/rx";
 import axios from "axios";
@@ -15,7 +15,9 @@ const CheckOutAddress = ({
                              setCheckOutAddressInformation,
                              setCheckOutPaymentInformation,
                              isLoading,
-                             setIsLoading
+                             setIsLoading,
+                             addressSectionRef,
+                             setCompleteAddress
                          }) => {
 
 
@@ -33,10 +35,9 @@ const CheckOutAddress = ({
 
     const newAddressSectionRef = useRef(null);
     const [buttonDisable,setButtonDisable]=useState(true);
-    const addressSectionRef = useRef(null);
-    useEffect(()=>{
 
-    },[])
+
+
 
     useEffect(() => {
 
@@ -58,6 +59,7 @@ const CheckOutAddress = ({
                 addressSectionRef.current.scrollIntoView({behavior: 'smooth', block: 'start'});
             }
         }
+
     }, [addNewAddress]);
 
     useEffect(() => {
@@ -106,9 +108,9 @@ const CheckOutAddress = ({
 
     const handleCompleteOrder = () => {
         if(isCheckCargoAddress !== "-1" && isCheckE_invoice !== "-1"){
-            console.log("isCheckCargoAddress",isCheckCargoAddress)
             setCheckOutAddressInformation(false);
             setCheckOutPaymentInformation(true)
+            setCompleteAddress(true);
             dispatch(ShoppingOrderActions.addShoppingOrder({...getE_invoice, ...getCargoAddress}))
         }
     };
@@ -147,7 +149,6 @@ const CheckOutAddress = ({
     }
 
     return <>
-        <span   ref={addressSectionRef} className="hidden">Merhaba</span>
         <div
             className="lg:grid hidden gap-3 lg:grid-cols-[12.939rem,6.095rem,6.345rem,8.853rem,8.979rem] h-[5.158rem] text-[0.75rem] pb-5 border-b-2 text-sm font-semibold ">
             <div className="place-self-start pt-5 px-4">Adreslerim</div>
@@ -175,8 +176,11 @@ const CheckOutAddress = ({
                      onClick={() => onClickCargoAddress(mapAddress, index)}>
                     <div className="w-full flex items-center justify-center gap-2" >
                         {(isCheckCargoAddress === index) ? (
-                                <AiFillCheckCircle className="text-primaryBold text-lg"/>)
-                            : (<RxCircle className="text-payneGray text-lg"/>)}
+                             <>
+                                 <AiFillCheckCircle className="text-primaryBold text-xl lg:hidden"/>
+                                 <AiOutlineCheckCircle className="text-primaryBold text-xl lg:block hidden"/>
+                             </> )
+                            : (<RxCircle className="text-payneGray text-xl"/>)}
                         <span className="lg:hidden block text-xs">Kargo</span>
                     </div>
                 </div>
@@ -185,8 +189,11 @@ const CheckOutAddress = ({
                      onClick={() => onClickE_Invoice(mapAddress, index)}>
                     <div className=" w-full flex items-center justify-center gap-2">{
                         (isCheckE_invoice === index) ?
-                            (<AiFillCheckCircle className="text-primaryBold text-lg"/>) :
-                            (<RxCircle className="text-payneGray text-lg"/>)}
+                            (    <>
+                                <AiFillCheckCircle className="text-primaryBold text-xl lg:hidden"/>
+                                <AiOutlineCheckCircle className="text-primaryBold text-xl lg:block hidden"/>
+                            </>) :
+                            (<RxCircle className="text-payneGray text-xl"/>)}
                         <span className="lg:hidden block text-xs">Fatura</span>
                     </div>
                 </div>
@@ -198,7 +205,7 @@ const CheckOutAddress = ({
                     <div className="  flex lg:items-center items-end justify-center gap-1 align-baseline"
                          onClick={() => handleEditingClick(mapAddress._id)}
                     >
-                        <FiEdit className="lg:text-2xl text-xl lg:ml-4 text-cadetGray "/>
+                        <FiEdit className="lg:text-2xl text-xl lg:ml-4 text-payneGray font-light "/>
                         <span className="lg:flex hidden">
                             {(isOnMouseEnteredEdit === index) && <span>Düzenle</span>}
                         </span>
