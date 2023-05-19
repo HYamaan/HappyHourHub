@@ -8,14 +8,14 @@ import {addAddresses} from "../../schema/addAddresses";
 import Input from "../form/Input";
 
 
-const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLoading,setUpdateAddress,checkout})=>{
+const UploadNewAddresses=(props)=>{
 
     const [country,setCountry]=useState([{id:1,name:"Türkiye"}]);
-    const [countryText,setCountryText]=useState(updateAddress?.country|| "");
+    const [countryText,setCountryText]=useState(props.updateAddress?.country|| "");
     const [city,setCity]=useState([]);
-    const [cityText,setCityText]=useState(updateAddress?.city || "");
+    const [cityText,setCityText]=useState(props.updateAddress?.city || "");
     const [district,setDistrict]=useState([]);
-    const [districtText,setDistrictText]=useState(updateAddress?.district || "");
+    const [districtText,setDistrictText]=useState(props.updateAddress?.district || "");
 
 
     useEffect(()=>{
@@ -69,17 +69,17 @@ const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLo
                 phoneNumber:values.phoneNumber,
                 address1:values.address
             };
-            console.log("updateAddress",updateAddress)
+            console.log("props.updateAddress",props.updateAddress)
             const res = await axios.patch(
-                `${process.env.NEXT_PUBLIC_API_URL}/userAddress/userId=${user._id}${updateAddress && `/addressId=${updateAddress?._id}`}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/userAddress/userId=${props.user._id}${props.updateAddress && `/addressId=${props.updateAddress?._id}`}`,
                 {
                    newValues
                 }
             );
             if(res.status===200){
-                setIsLoading(!isLoading)
+                props.setIsLoading(!props.isLoading)
                 toast.success("Profile successfuly updated")
-                setAddNewAddress(false)
+                props.setAddNewAddress(false)
 
             }
 
@@ -93,11 +93,11 @@ const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLo
         useFormik({
             enableReinitialize: true,
             initialValues: {
-                caption: updateAddress?.addressType || "",
-                customerFullName: updateAddress?.customerFullName || "",
-                phoneNumber: updateAddress?.phoneNumber || "",
-                email:updateAddress?.addressEmail || "",
-                address:updateAddress?.address1 || ""
+                caption: props.updateAddress?.addressType || "",
+                customerFullName: props.updateAddress?.customerFullName || "",
+                phoneNumber: props.updateAddress?.phoneNumber || "",
+                email:props.updateAddress?.addressEmail || "",
+                address:props.updateAddress?.address1 || ""
 
             },
             onSubmit,
@@ -230,15 +230,15 @@ const UploadNewAddresses=({user,setAddNewAddress,updateAddress,isLoading,setIsLo
 
 
                 </div>
-                {checkout ? (
+                {props.checkout ? (
                     <>
 
                             <div className="flex items-center justify-between gap-8 mt-6">
                                 <div className="basis-1/2 flex justify-center uppercase py-3 px-10 bg-transparent border-2 border-primary
                              cursor-pointer rounded-lg text-sm  text-primary font-semibold tracking-wide outline-0"
                                         onClick={()=> {
-                                            setUpdateAddress("");
-                                            setAddNewAddress(false)
+                                            props.setUpdateAddress("");
+                                            props.setAddNewAddress(false)
                                         }}
 
                                 > Vazgeç</div>
