@@ -105,7 +105,7 @@ const Id = ({food}) => {
                         const queryParams = `userId=${session?.user?.id}`;
                         const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
                         if (session?.user) {
-                            await axios.post(url,addProductToDB);
+                            await axios.patch(url,addProductToDB);
                         }
 
                     }catch (err){
