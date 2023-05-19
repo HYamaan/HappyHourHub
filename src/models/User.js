@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 
+
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt=require('bcrypt')
@@ -48,7 +49,6 @@ const UserSchema = new mongoose.Schema(
                 },
                 address1:{
                     type: String,
-
                 },
             }
         ],
@@ -73,10 +73,11 @@ const UserSchema = new mongoose.Schema(
             required: [true, 'Please confirm your password'],
             validate: {
                 validator: function(el) {
-                    return el == this.password;
+                    return (el == this.password);
                 },
                 message: 'Passwords are not the same!'
-            }
+            },
+            select:false,
         },
         password1: {
             type: String,
@@ -115,16 +116,24 @@ const UserSchema = new mongoose.Schema(
             type:Date,
             select: false
         },
+        cardUserKey: {
+            type: String,
+
+        },
+        ip:{
+            type:String,
+            required:true,
+            default:"85.34.78.112"
+
+        }
     },
     { timestamps: true }
 );
 UserSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
-    this.password = await bcrypt.hash(this.password, 15);
-    //Gereksiz yer kaplamasına engel oldum
-    if(this.confirmPassword ){
-        this.confirmPassword = undefined;
-    }
+    this.password = await bcrypt.hash(this.password, 10);
+        this.confirmPassword = "";
+
     next();
 });
 
@@ -146,5 +155,10 @@ UserSchema.methods.createPasswordResetToken = function(){
 
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);
+
+
+
+
+
 
 
