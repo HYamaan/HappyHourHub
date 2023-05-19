@@ -31,6 +31,7 @@ module.exports = {
         cadetGray:"#9CA1AB",
         payneGray:"#676F79",
         frenchGray:"#BFC0C4",
+        iyzicoBg:"#F8F9FA"
 
       },
       fontFamily:{
