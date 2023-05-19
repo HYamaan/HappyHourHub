@@ -33,7 +33,7 @@ export const authOptions = {
             async authorize(credentials) {
                 dbConnect().catch(error=>{error:"Connection Failed!"});
                 const {email,password} =credentials;
-                const user = await User.findOne({email:email}).select('+password')   // Karşılaştırma yapmak için UserSchema'yı çağırdık. Daha sonra db ye bağlandık.
+                const user = await User.findOne({email:email}).select('+password') .select('+passwordConfirm')  // Karşılaştırma yapmak için UserSchema'yı çağırdık. Daha sonra db ye bağlandık.
                 if (!user) {
                     throw new Error("No user Found with email Please Sign Up..!");
                 } else {

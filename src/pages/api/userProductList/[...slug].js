@@ -3,6 +3,7 @@ import Product from "./../../../models/Product";
 import UserFavoritesList from "../../../models/userFavoritesList";
 import ShoppingCartUser from "../../../models/shoppingCartUser";
 
+import { v4 as uuidv4 } from 'uuid';
 
 const handler = async (req, res) => {
     const {method} = req;
@@ -109,7 +110,7 @@ const handler = async (req, res) => {
                             path: "userId",
                             model: "User"
                         })
-                        .select("products");
+                        .select("+products")
 
                     res.status(200).json(userShoppingCart);
                 }
@@ -128,8 +129,67 @@ const handler = async (req, res) => {
                 if (!userShoppingCart) {
                     userShoppingCart = await new ShoppingCartUser({userId});
                 }
-                    let item=req.body;
-                    const isThereAny = userShoppingCart.products.some(prod => prod.sku === req.body.sku)
+
+
+                if(!userShoppingCart.shoppingCartId){
+                    userShoppingCart.shoppingCartId=uuidv4();
+                }
+
+
+                req.body.products.map( async (item)=>{
+                    const isThereAny = userShoppingCart.products.some(prod => {
+
+                        return  prod.sku === req.body.sku
+                    })
+
+                    if (!isThereAny) {
+
+                        userShoppingCart.products.push({
+                            product: item._id,
+                            sku: item.sku,
+                            extras: item.extras,
+                            price: item.price,
+                            productTotal: item.productTotal,
+                            status: item.status
+                        })
+                    }else {
+
+                        await ShoppingCartUser.findByIdAndUpdate(userShoppingCart._id, {
+                            $pull: { 'products': { '_id': item._id } }
+                        });
+                    }
+
+                })
+
+                await userShoppingCart.save();
+                return res.status(201).json({message: "Product added to Redux list successfully"});
+            } catch (error) {
+                console.log(error);
+                return res.status(500).json({message: "Internal Server Error"});
+            }
+        }
+        if(method === "PATCH"){
+            try {
+                if (!userId) {
+                    res.status(400).json({success: false, message: 'Kullancı bulunamadı.'})
+                }
+                let userShoppingCart = await ShoppingCartUser.findOne({userId});
+
+                if (!userShoppingCart) {
+                    userShoppingCart = await new ShoppingCartUser({userId});
+                }
+
+
+                if(!userShoppingCart.shoppingCartId){
+                    userShoppingCart.shoppingCartId=uuidv4();
+                }
+
+                    const item=req.body
+
+                    const isThereAny = userShoppingCart.products.some(prod => {
+                        return  prod.sku === req.body.sku
+                    })
+
                     if (!isThereAny) {
                         userShoppingCart.products.push({
                             product: item._id,
@@ -140,10 +200,13 @@ const handler = async (req, res) => {
                             status: item.status
                         })
                     }else {
+
                         await ShoppingCartUser.findByIdAndUpdate(userShoppingCart._id, {
                             $pull: { 'products': { '_id': item._id } }
                         });
                     }
+
+
 
                 await userShoppingCart.save();
                 return res.status(201).json({message: "Product added to Redux list successfully"});
