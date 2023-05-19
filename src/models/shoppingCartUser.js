@@ -36,9 +36,13 @@ const ShoppingCartUserSchema = new mongoose.Schema({
     ],
     currency:{
         type:String,
-        default:"TRY",
+        default: "TRY",
         enum:["TRY","USD","EUR"]
+    },
+    shoppingCartId:{
+        type:String,
     }
+
 }, {
     timestamps: true
 });
