@@ -34,7 +34,7 @@ const Profile = ({ user }) => {
         getImage();
     },[uploadImageShow,user]);
 
-    console.log("cart",cart)
+
 
 
     const handleSignOut =  async () => {
