@@ -1,5 +1,5 @@
-import {useRouter} from "next/router";
-import React, { useState} from "react";
+
+import React, {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 
 import {useSession} from "next-auth/react";
@@ -8,6 +8,7 @@ import CheckOutInformation from "../../../components/checkout/ödemeBilgileri";
 import PacmanLoader from "react-spinners/PacmanLoader";
 import {FiEdit} from "react-icons/fi";
 import {ShoppingOrderActions} from "../../../redux/shoppingOrder";
+import CheckoutLastStep from "../../../components/checkout/checkoutLastStep";
 
 
 const OPC = () => {
@@ -21,10 +22,50 @@ const OPC = () => {
     const [mobileShowBasketDetail, setMobileShowBasketDetail] = useState(false);
     const [checkOutAddressInformation, setCheckOutAddressInformation] = useState(true); //true
     const [checkOutPaymentInformation, setCheckOutPaymentInformation] = useState(false); // false
-    const [checkOutLastStep, setCheckOutLastStep] = useState(false);
+    const [checkOutLastStepInformation, setCheckOutLastStepInformation] = useState(false); // false
+
+    const [checkOutPaymentMethod, setCheckOutPaymentMethod] = useState(0);
+
+    const [completeAddress,setCompleteAddress]=useState(false);
+    const [completeCheckout,setCompleteCheckout]=useState(false);
+    const addressSectionRef = useRef(null);
+    const checkoutSectionRef = useRef(null);
+    const checkoutLastSectionRef = useRef(null);
+
+    const [preInformationForm,setPreInformationForm]=useState(false);
+    const [distanceSalesContract,setDistanceSalesContract]=useState(false);
 
 
 
+
+    const cargoName = "GKN Kargo";
+
+    useEffect(() => {
+        if (completeAddress === true) {
+            if (checkoutSectionRef.current) {
+                checkoutSectionRef.current.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }
+        }
+    }, [completeAddress]);
+
+    useEffect(() => {
+        if (completeCheckout === true) {
+            if (checkoutLastSectionRef.current) {
+                checkoutLastSectionRef.current.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }
+        }
+    }, [completeCheckout]);
+
+    const handleChangePreFrom = (event) => {
+        setPreInformationForm(event.target.checked);
+    };
+    const handleChangeSalesContract = (event) => {
+        setDistanceSalesContract(event.target.checked);
+    };
+
+const  handleClickCompletePayment=()=>{
+
+}
 
 
     return <div className={`min-h-[calc(100vh_-_433px)] font-workSans  mt-10 relative`}>
@@ -38,52 +79,113 @@ const OPC = () => {
                        <div className=" w-full relative " >
                            <div className={`flex items-center justify-between py-6 border-t-2 border-b-2 
                            ${checkOutAddressInformation === false ? "!text-green-500" : "text-payneGray"}`} >
-                               <div className="text-[1.5rem] "> 1. Teslimat Bilgileri</div>
+                               <div className="text-[1.5rem] " ref={addressSectionRef}> 1. Teslimat Bilgileri</div>
                                {
                                    !checkOutAddressInformation && (
                                        <div className="flex items-center justify-center cursor-pointer"
                                        onClick={()=>{
                                                setCheckOutPaymentInformation(false);
                                                setCheckOutAddressInformation(true);
+
                                                dispatch(ShoppingOrderActions.deleteShoppingOrder(""))
                                     }
                                        } >
-                                    <FiEdit className="lg:text-2xl text-lg lg:ml-4  "/>
+                                    <FiEdit className="md:text-2xl lg:text-lg sm:text-base xs:text-sm text-lg lg:ml-4  "/>
                                    <span className="text-xs hover:underline ">Düzenle</span>
                                </div>)
                                }
                            </div>
                            {checkOutAddressInformation && session?.user?.id &&
-                               <CheckOutAddress
+                         (      <CheckOutAddress
                                    userId={session?.user?.id}
                                    isLoading={isLoading}
                                    setIsLoading={setIsLoading}
                                    setCheckOutAddressInformation={setCheckOutAddressInformation}
                                    setCheckOutPaymentInformation={setCheckOutPaymentInformation}
-                               />
+                                   addressSectionRef={addressSectionRef}
+                                   setCompleteAddress={setCompleteAddress}
+                               />)
                            }
                        </div>
 
-                <div className=" w-full  border-b-2 py-2" >
+                <div className=" w-full  border-b-2 py-2"  ref={checkoutSectionRef}>
                     <div className={`flex items-center justify-between py-6 ${checkOutPaymentInformation === false ? "!text-green-500" : "text-payneGray"}`} >
                         <div className="text-[1.5rem] "> 2. Ödeme Bilgileri</div>
                         {
                             !checkOutAddressInformation && (
-                                <div className="flex items-center justify-center cursor-pointer">
-                                    <FiEdit className="lg:text-2xl text-lg lg:ml-4  "/>
+                                <div className="flex items-center justify-center cursor-pointer "
+                                     onClick={()=>{
+                                         setCheckOutPaymentInformation(true);
+                                         setCheckOutAddressInformation(false);
+                                         dispatch(ShoppingOrderActions.deleteShoppingOrder(""))
+                                     }
+                                     }
+
+                                >
+                                    <FiEdit className="md:text-2xl lg:text-lg sm:text-sm xs:text-sm text-lg lg:ml-4"/>
                                     <span className="text-xs hover:underline ">Düzenle</span>
                                 </div>)
                         }
                     </div>
                     {checkOutPaymentInformation && session?.user?.id &&
-                        <CheckOutInformation
+                      (  <CheckOutInformation
                             userId={session?.user?.id}
                             isLoading={isLoading}
                             setIsLoading={setIsLoading}
                             setCheckOutPaymentInformation={setCheckOutPaymentInformation}
-                            setCheckOutLastStep={setCheckOutLastStep}
-                        />
+                            setCheckOutLastStepInformation={setCheckOutLastStepInformation}
+                            setCheckOutPaymentMethod={setCheckOutPaymentMethod}
+                            checkOutPaymentMethod={checkOutPaymentMethod}
+                            setCompleteCheckout={setCompleteCheckout}
+
+                        />)
                     }
+                </div>
+                <div className=" w-full  border-b-2 py-2" >
+                    <div className={`flex items-center justify-between py-6 ${setCheckOutPaymentInformation === false ? "!text-green-500" : "text-payneGray"}`} >
+                        <div className="text-[1.5rem] " ref={checkoutLastSectionRef}> 3. Siparişi Tamamlamak için Son Adım</div>
+                        {
+                            !checkOutLastStepInformation && (
+                                <div className="flex items-center justify-center cursor-pointer"
+
+                                >
+                                    <FiEdit className="md:text-2xl lg:text-lg sm:text-base xs:text-sm text-lg lg:ml-4"/>
+                                    <span className="text-xs hover:underline ">Düzenle</span>
+                                </div>)
+                        }
+                    </div>
+                    {checkOutLastStepInformation && session?.user?.id &&
+                        (  <CheckoutLastStep
+                            userId={session?.user?.id}
+                            cargoName={cargoName}
+                            isLoading={isLoading}
+                            setIsLoading={setIsLoading}
+                            setCheckOutPaymentInformation={setCheckOutPaymentInformation}
+                            setCheckOutLastStepInformation={setCheckOutLastStepInformation}
+                            checkOutPaymentMethod={checkOutPaymentMethod}
+                        />)
+                    }
+                </div>
+
+                <div className="lg:hidden block px-2 mt-10">
+                    <div className="flex gap-2 items-start mt-5 cursor-pointer">
+                        <input type="checkbox" checked={preInformationForm} onChange={handleChangePreFrom}
+                               value={preInformationForm ? 1 : 0} className="w-5 h-5 mt-2"/>
+                        <p className=" text-sm"
+                           onClick={() => handleChangePreFrom({ target: { checked: !preInformationForm } })}>
+                            <span className="underline">Ön bilgilendirme formunu </span>
+                            <span>okudum ve kabul ediyorum.</span>
+                        </p>
+                    </div>
+                    <div className="flex gap-2 items-start mt-5 cursor-pointer">
+                        <input type="checkbox" checked={distanceSalesContract} onChange={handleChangeSalesContract}
+                               value={distanceSalesContract ? 1 : 0} className="w-5 h-5 mt-2"/>
+                        <p className=" text-sm"
+                           onClick={() => handleChangeSalesContract({ target: { checked: !distanceSalesContract } })}>
+                            <span className="underline ">Mesafeli satış sözleşmesini </span>
+                            <span>okudum ve onaylıyorum.</span>
+                        </p>
+                    </div>
                 </div>
 
             </div>
@@ -123,7 +225,26 @@ const OPC = () => {
                             </div>
                         </div>
                     </div>
-
+                    <div className="lg:block hidden px-2 mt-10">
+                        <div className="flex gap-2 items-start mt-5 cursor-pointer">
+                            <input type="checkbox" checked={preInformationForm} onChange={handleChangePreFrom}
+                                   value={preInformationForm ? 1 : 0} className="w-5 h-5 mt-2"/>
+                            <p className=" text-sm"
+                               onClick={() => handleChangePreFrom({ target: { checked: !preInformationForm } })}>
+                                <span className="underline">Ön bilgilendirme formunu </span>
+                                <span>okudum ve kabul ediyorum.</span>
+                            </p>
+                        </div>
+                        <div className="flex gap-2 items-start mt-5 cursor-pointer">
+                            <input type="checkbox" checked={distanceSalesContract} onChange={handleChangeSalesContract}
+                                   value={distanceSalesContract ? 1 : 0} className="w-5 h-5 mt-2"/>
+                            <p className=" text-sm"
+                               onClick={() => handleChangeSalesContract({ target: { checked: !distanceSalesContract } })}>
+                                <span className="underline ">Mesafeli satış sözleşmesini </span>
+                                <span>okudum ve onaylıyorum.</span>
+                            </p>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -166,7 +287,7 @@ const OPC = () => {
                 </>}
                 <button
                     className="w-full p-2 bg-tertiary text-secondary  mt-3 uppercase text-sm font-semibold"
-                    onClick={() => routeCheckoutPage()}
+                    onClick={handleClickCompletePayment}
                 >
                     Sepeti onayla
                 </button>
