@@ -1,8 +1,8 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, { useEffect, useState} from "react";
 import shortid from 'shortid';
 import {useSelector, useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice";
-import {cartIndexActions} from "../../redux/cartIndex";
+
 import {FavoriteProductsActions} from "../../redux/FavoriteProducts";
 
 import styles from "./MenuItem.module.css";
@@ -96,7 +96,7 @@ const handleClick = async () => {
                     const queryParams = `userId=${session?.user?.id}`;
                     const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
                     if (session?.user) {
-                        await axios.post(url,addProductToDB);
+                        await axios.patch(url,addProductToDB);
                     }
 
                 }catch (err){

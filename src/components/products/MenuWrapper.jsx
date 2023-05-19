@@ -22,7 +22,7 @@ const MenuWrapper = ({categoryList ,productList})=>{
                 const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-favorite-list/${queryParams}`;
                 if(session){
                     const res = await axios.get(url);
-                    setLikes(res.data.products.map(item=>item._id))
+                    setLikes(res.data?.products.map(item=>item._id))
 
                 }
 

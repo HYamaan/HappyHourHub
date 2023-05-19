@@ -2,6 +2,7 @@ import React, {useEffect, useState,} from "react";
 import {useSession, signIn, getSession} from "next-auth/react"
 import Link from "next/link";
 
+
 import {toast} from 'react-toastify';
 import {useFormik} from "formik";
 import {BsGithub} from "react-icons/bs"
@@ -19,35 +20,39 @@ import {cartActions} from "../../redux/cartSlice";
 import {cartIndexActions} from "../../redux/cartIndex";
 
 
+
 const Login = () => {
 
     const {data: session} = useSession();
     const [currentUser, setCurrentUser] = useState();
-    const [isLogin,setIsLogin]=useState(false);
+    const [isLogin, setIsLogin] = useState(false);
     const router = useRouter();
     const cart = useSelector(state => state.cart)
 
-    const dispatch =useDispatch();
-    const DBtoReduxCart=async ()=>{
+    const dispatch = useDispatch();
+    const DBtoReduxCart = async () => {
         try {
             const queryParams = `userId=${currentUser._id}`;
             const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
-            if (currentUser ) {
-                if(cart.products.length >0){
-                    await axios.post(url,cart);
-                }
-                const res =await axios.get(url);
-                console.log("RES",res.data);
-                dispatch(cartActions.reset());
-                res.data.products.map((item,index)=> {
-                    const { product, ...rest } = item;
-                    dispatch(cartIndexActions.addToCartIndex());
-                    dispatch(cartActions.addProduct({ ...product, ...rest ,addIndex: index}))
-                })
 
+            if (currentUser) {
+
+                const res = await axios.post(url, cart);
+                if (res.status === 201) {
+                    const res = await axios.get(url);
+                    console.log("RES", res.data);
+                    dispatch(cartActions.reset());
+                    res.data.products.map((item, index) => {
+                        const {product, ...rest} = item;
+                        dispatch(cartIndexActions.addToCartIndex());
+                        dispatch(cartActions.addProduct({...product, ...rest, addIndex: index}))
+                    })
+                }
             }
 
-        }catch (err){
+
+        } catch
+            (err) {
             console.log(err.message)
         }
     }
@@ -83,20 +88,21 @@ const Login = () => {
         getUser();
     }, [session, setCurrentUser]);
 
-    useEffect(()=>{
-        if(currentUser !==undefined){
+    useEffect(() => {
+        if (currentUser !== undefined) {
+
             DBtoReduxCart();
         }
-    },[currentUser])
+    }, [currentUser])
 
 
     useEffect(() => {
-            const pushLogin=async ()=>{
-                if (currentUser && session) {
-                   await router.push(`/profile/${currentUser._id}`);
+        const pushLogin = async () => {
+            if (currentUser && session) {
+                await router.push(`/`);
 
-                }
             }
+        }
         pushLogin()
     }, [currentUser, session, router.push]);
 
