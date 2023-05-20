@@ -16,20 +16,19 @@ let lookup = require('binlookup')()
 
 const CheckOutInformation = ({
                                  userId,
+                                 userInfo,
                                  setCheckOutPaymentMethod,
                                  checkOutPaymentMethod,
                                  setCompleteCheckout,
                                  isLoading,
                                  setIsLoading,
                                  setCheckOutPaymentInformation,
-                                 setCheckOutLastStepInformation
+                                 setCheckOutLastStepInformation,
+                                 setCardPaymentInformation,
+                                 isCardInValid
                              }) => {
-    const {data: session} = useSession()
-    const cart = useSelector(state => state.cart)
-    const dispatch = useDispatch();
 
 
-    const [showSaveCardList, setShowSaveCardList] = useState(false);
     const [cardList, setCardList] = useState([]);
     const [selectCard, setSelectCard] = useState("0");
 
@@ -39,14 +38,13 @@ const CheckOutInformation = ({
     const [isChecked3DCard, setChecked3DCard] = useState(false);
 
 
-    const [userInfo, setUserInfo] = useState([]);
-    const shoppingOrderMain = useSelector(state => state.shoppingOrder)
+
     const [monthText, setMonthText] = useState("");
     const [month, setMonth] = useState([]);
     const [yearText, setYearText] = useState("");
     const [year, setYear] = useState([]);
 
-    const [isCardInValid, setIsCardInValid] = useState(false);
+
     const [isCardHolderName, setIsCardHolderName] = useState(false);
     const [isCardCvv, setIsCardCvv] = useState(false);
     const [isCardAlias, setIsCardAlias] = useState(false);
@@ -55,22 +53,6 @@ const CheckOutInformation = ({
     const cardRef = useRef("");
     const holderNameRef = useRef("");
     const cvvRef = useRef("");
-
-    useEffect(() => {
-        const getUser = async () => {
-            const queryParams = `userId=${userId}`;
-            const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
-            const res = await axios.get(url);
-            setUserInfo(() => [res.data.products, res.data.userId, res.data.shoppingCartId, res.data.currency]);
-            dispatch(cartActions.reset());
-            res.data.products.map((item, index) => {
-                const {product, ...rest} = item;
-                dispatch(cartIndexActions.addToCartIndex());
-                dispatch(cartActions.addProduct({...product, ...rest, addIndex: index}))
-            })
-        }
-        getUser()
-    }, [userId])
 
 
     useEffect(() => {
@@ -95,123 +77,58 @@ const CheckOutInformation = ({
         getYear();
     }, [])
 
-    // const handleOnSubmit = async () => {
-    //     const cardNumber = cardRef.current?.value;
-    //     const cardHolderName = holderNameRef.current?.value;
-    //     const cardCvv = cvvRef.current?.value;
-    //     const cardAlias = saveCardAliasRef.current?.value;
-    //     cardCvv === "" ? setIsCardCvv(true) : setIsCardCvv(false)
-    //     cardHolderName === "" ? setIsCardHolderName(true) : setIsCardHolderName(false)
-    //     if (isCheckedSaveCard) {
-    //         cardAlias === "" ? setIsCardAlias(true) : setIsCardAlias(false)
-    //     }
-    //
-    //
-    //     const shoppingOrder = shoppingOrderMain.shoppingOrder;
-    //
-    //     const e_invoice = shoppingOrder[0].e_invoice;
-    //     const cargoAddress = shoppingOrder[0].cargoAddress;
-    //
-    //     if (checkOutPaymentMethod === 0) {
-    //
-    //         const notSelectCard = {
-    //             products: userInfo[0],
-    //             userId: userInfo[1],
-    //             shoppingCartId: userInfo[2],
-    //             currency: userInfo[3],
-    //             e_invoice,
-    //             cargoAddress,
-    //             total: cart.total,
-    //             totalQuantity: cart.totalQuantity,
-    //             cardHolderName,
-    //             expireYear: yearText,
-    //             expireMonth: monthText,
-    //             cardNumber,
-    //             cvc: cardCvv,
-    //             registerCard: registerCardCheckBox,
-    //             isSave: false
-    //         };
-    //         if (registerCardCheckBox === "1") {
-    //             const cardAlias = saveCardAliasRef.current.value;
-    //             notSelectCard.cardAlias = cardAlias;
-    //             console.log("registerCard", notSelectCard)
-    //         }
-    //
-    //         try {
-    //
-    //             let url;
-    //             if (isChecked3DCard) {
-    //                 url = `${process.env.NEXT_PUBLIC_API_URL}/payment_threeds/payments/cart-addPayment`
-    //
-    //             } else {
-    //                 url = `${process.env.NEXT_PUBLIC_API_URL}/payment/cart-addPayment`
-    //
-    //             }
-    //
-    //             if (url !== null) {
-    //                 const res = await axios.post(url, notSelectCard)
-    //                 if (res.status === 200) {
-    //                     setIsCardInValid(false);
-    //                     dispatch(cartActions.reset())
-    //                 }
-    //
-    //             }
-    //
-    //         } catch (err) {
-    //             if (err.response.data.message.trim() === "Kart numarası geçersizdir") {
-    //                 setIsCardInValid(true);
-    //             }
-    //             console.log("err", err)
-    //
-    //         }
-    //     }
-    //     if(checkOutPaymentMethod===1) {
-    //
-    //         const selectCardOrder = {
-    //             products: userInfo[0],
-    //             userId: userInfo[1],
-    //             shoppingCartId: userInfo[2],
-    //             currency: userInfo[3],
-    //             e_invoice,
-    //             cargoAddress,
-    //             total: cart.total,
-    //             totalQuantity: cart.totalQuantity,
-    //             isSave: true
-    //         };
-    //
-    //         try {
-    //             const queryParams = `cardIndex=${selectCard}`;
-    //             let url;
-    //             if (isChecked3DCard) {
-    //                 url = `${process.env.NEXT_PUBLIC_API_URL}/payment_threeds/payments/cart-addPayment?${queryParams}`
-    //             } else {
-    //
-    //                 url = `${process.env.NEXT_PUBLIC_API_URL}/payment/cart-addPayment?${queryParams}`
-    //             }
-    //             if (url !== null) {
-    //                 const res = await axios.post(url, selectCardOrder)
-    //                 if (res.status === 200) {
-    //                     dispatch(cartActions.reset())
-    //                     dispatch(ShoppingOrderActions.deleteShoppingOrder())
-    //
-    //                 }
-    //                 console.log("Res", res)
-    //
-    //             }
-    //
-    //         } catch (err) {
-    //             console.log("Res", err)
-    //
-    //         }
-    //     }
-    //
-    // }
+
 
 
     const handleOnSubmit = () => {
+        setIsLoading(true);
+
+        if (checkOutPaymentMethod === 0) {
+            const cardNumber = cardRef.current?.value;
+            const cardHolderName = holderNameRef.current?.value;
+            const cardCvv = cvvRef.current?.value;
+            const cardAlias = saveCardAliasRef.current?.value;
+
+            setIsCardCvv(cardCvv === "");
+            setIsCardHolderName(cardHolderName === "");
+
+            if (isCheckedSaveCard) {
+                setIsCardAlias(cardAlias === "");
+
+                if (cardAlias) {
+                    setCardPaymentInformation((prevPaymentInformation) => ({
+                        ...prevPaymentInformation,
+                        cardAlias: cardAlias
+                    }));
+                }
+            }
+
+            if (cardCvv && cardHolderName && cardNumber && yearText && monthText) {
+                setCardPaymentInformation((prevPaymentInformation) => ({
+                    ...prevPaymentInformation,
+                    cardCvv: cardCvv,
+                    cardHolderName: cardHolderName,
+                    cardNumber: cardNumber,
+                    yearText: yearText,
+                    monthText: monthText,
+                    registerCardCheckBox: registerCardCheckBox,
+                    isChecked3DCard: isChecked3DCard
+                }));
+            }
+        }
+
+        if (checkOutPaymentMethod === 1) {
+            setCardPaymentInformation((prevPaymentInformation) => ({
+                ...prevPaymentInformation,
+                selectCard: selectCard,
+                isChecked3DCard: isChecked3DCard
+            }));
+        }
+
         setCheckOutPaymentInformation(false)
         setCheckOutLastStepInformation(true);
         setCompleteCheckout(true)
+        setIsLoading(false);
     }
 
     const handleChangeSaveCard = (event) => {
@@ -221,34 +138,6 @@ const CheckOutInformation = ({
     const handleChange3DCard = (event) => {
         setChecked3DCard(event.target.checked);
     };
-    const handlePaymentWithIyzico = async () => {
-
-        const shoppingOrder = shoppingOrderMain.shoppingOrder;
-
-        const e_invoice = shoppingOrder[0].e_invoice;
-        const cargoAddress = shoppingOrder[0].cargoAddress;
-
-        const selectCardOrder = {
-            products: userInfo[0],
-            userId: userInfo[1],
-            shoppingCartId: userInfo[2],
-            currency: userInfo[3],
-            e_invoice,
-            cargoAddress,
-            total: cart.total,
-            totalQuantity: cart.totalQuantity,
-            isSave: true
-        };
-        try {
-            const url = `${process.env.NEXT_PUBLIC_API_URL}/checkout/payments/cart-addPayment`
-            if (userInfo) {
-                const res = await axios.post(url, selectCardOrder)
-            }
-            console.log("RES________________", res.data)
-        } catch (err) {
-            console.log(err);
-        }
-    }
 
 
     useEffect(() => {
@@ -257,7 +146,7 @@ const CheckOutInformation = ({
 
                 if (userInfo[1]?.cardUserKey) {
                     try {
-                        const queryParams = `userId=${session?.user?.id}`;
+                        const queryParams = `userId=${userId}`;
                         const url = `${process.env.NEXT_PUBLIC_API_URL}/payment/cart-list?${queryParams}`
                         const res = await axios.get(url);
                         setCardList(res?.data?.data)
@@ -277,7 +166,7 @@ const CheckOutInformation = ({
     }
 
 
-    return <>
+    return <div>
         <div className="flex flex-row items-center justify-center w-full font-workSans">
             {checkOutPaymentInformation.map((item, index) => {
                 return <div key={item} className=" w-full  lg:pt-5 p-1  cursor-pointer"
@@ -391,11 +280,12 @@ const CheckOutInformation = ({
 
             </div>
 
-            {!showSaveCardList && <div className="flex gap-4 items-center mt-5">
+
+                <div className="flex gap-4 items-center mt-5">
                 <input type="checkbox" checked={isCheckedSaveCard} onChange={handleChangeSaveCard}
                        value={isCheckedSaveCard ? 1 : 0} className="w-4 h-4 align-top"/>
                 <span className="align-text-bottom">Kartımı Kaydet</span>
-            </div>}
+            </div>
             <div className="flex gap-4 items-center mt-5">
                 <input type="checkbox" checked={isChecked3DCard} onChange={handleChange3DCard}
                        value={isChecked3DCard ? 1 : 0} className="w-4 h-4 align-top"/>
@@ -435,8 +325,7 @@ const CheckOutInformation = ({
             </div>
         </div>)}
         {checkOutPaymentMethod === 2 && (<>
-            <div className="w-full flex flex-col mt-4  py-2 px-4 bg-transparent font-medium"
-                 onClick={handlePaymentWithIyzico}>
+            <div className="w-full flex flex-col mt-4  py-2 px-4 bg-transparent font-medium">
                 <div className="flex md:items-end items-center gap-4 font-light">
                     <Image src="/images/iyzico.png"
                            alt={"/images/iyzico.png"}
@@ -467,7 +356,7 @@ const CheckOutInformation = ({
             </div>
         </div>
 
-    </>
+    </div>
 
 }
 export default CheckOutInformation;
