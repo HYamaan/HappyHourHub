@@ -12,8 +12,9 @@ import Link from "next/link";
 import {BiRightArrowAlt} from "react-icons/bi";
 import {BsShieldFillCheck} from "react-icons/bs";
 import {HiOutlineXMark} from "react-icons/hi2";
+import CartMenuItem from "../../components/cart/cartMenuItem";
 
-const Cart = ({userList}) => {
+const Cart = ({userList,productList}) => {
 
     const {data: session} = useSession();
     const dispatch = useDispatch();
@@ -149,11 +150,11 @@ const Cart = ({userList}) => {
         await router.push("/menu");
     }
 
-
-    return<>
-
-            <div className={`min-h-[calc(100vh_-_433px)] font-workSans w-full h-full relative`}>
-                {cart.products.length !== 0 ? (<> <div className="flex justify-between  lg:flex-row flex-col m-auto  max-w-[70rem]">
+    console.log("products",cart.products.length)
+    return<div className="m-auto  max-w-[70rem]">
+            <div className={` ${cart.products.length === 0 ?"min-h-[calc(30vh)]" :"min-h-[calc(100vh_-_433px)]"} font-workSans w-full h-full relative mb-14`}>
+                {cart.products.length !== 0 ? (<>
+                        <div className="flex justify-between  lg:flex-row flex-col ">
                     <div className={`lg:basis-[68%] py-4 px-4  ${mobileShowBasketDetail ?
                         "after:content[''] after:absolute after:top-0 after:left-0 after:bg-[#212529] after:w-full after:h-full after:opacity-70 after:z-20" : ""} `}
                          onClick={()=>{mobileShowBasketDetail && setMobileShowBasketDetail(!mobileShowBasketDetail)}}
@@ -260,7 +261,8 @@ const Cart = ({userList}) => {
                     </div>
 
 
-                    <div className={` lg:basis-[32%] w-full flex items-center justify-center md:block hidden h-full sticky top-10 mt-16 lg:mb-0  mb-[6.6rem]`}>
+                    <div className={` lg:basis-[32%] w-full flex items-center justify-center md:block hidden h-full
+                   sticky top-10 mt-16 lg:mb-0  mb-[6.6rem]`}>
                         <div className={`h-[11.255rem] w-full  border-[1.1px] font-medium  rounded-tr-lg rounded-tl-lg `}>
                             <div className="p-[0.948rem]">
                                 <div className="text-[1.063rem] md:mt-0 mt-10 font-workSans mb-5">Sipariş Özeti</div>
@@ -336,7 +338,7 @@ const Cart = ({userList}) => {
                         </div>
                     </div>
 
-                    <div className={`fixed bottom-0 bg-primary px-6 pb-6 pt-2 w-full md:hidden block 
+                    <div className={`fixed bottom-0 bg-primary z-50 px-6 pb-6 pt-2 w-full md:hidden block 
             ${mobileShowBasketDetail ? "z-50 " : "border-t-[1px] border-tertiary"}
             `}>
                         <div>
@@ -369,7 +371,7 @@ const Cart = ({userList}) => {
                                     <span>Kargo Ücreti</span>
                                     <span>Ücretsiz Kargo</span>
                                 </div></>}
-                            <button className="w-full p-2 bg-tertiary text-secondary  mt-3 uppercase text-sm font-semibold"
+                            <button className="w-full p-2 bg-tertiary text-secondary z-[20000]  mt-3 uppercase text-sm font-semibold"
                                     onClick={()=>routeCheckoutPage()}
                             >
                                 Sepeti onayla
@@ -377,7 +379,8 @@ const Cart = ({userList}) => {
                         </div>
                     </div>
                 </div></>)
-                    : (<div className="absolute flex items-center justify-center flex-col w-full h-full">
+                    :
+                    (<div className="absolute flex items-center justify-center flex-col w-full h-full">
                        <div>
                            Sepetinizde ürün bulunmamaktadır
                        </div>
@@ -385,15 +388,19 @@ const Cart = ({userList}) => {
                              onClick={noProductInBasket}
                         >Alışverişe Başla</div>
                     </div>  )}
+
             </div>
-    </>
+        <CartMenuItem productList={productList}/>
+    </div>
 
 }
 export const getServerSideProps = async () => {
     const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users`);
+    const product = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products?limit=10`)
     return {
         props: {
             userList: res.data ? res.data : [],
+            productList:product.data ? product.data :[]
         }
     }
 }
