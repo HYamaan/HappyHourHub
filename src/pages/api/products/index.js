@@ -5,10 +5,26 @@ const handler = async (req, res) => {
     await dbConnect();
     const {method} = req;
 
+
     if (method === "GET") {
         try{
-            const products = await Product.find();
-            res.status(200).json(products);
+            console.log("REQ:QYEY",req.query)
+            let products;
+            if("limit" && "mostRepeatedCategory" in req.query){
+                products = await Product.find({category:req.query.mostRepeatedCategory}).sort({ price: 1 }).limit(parseInt(req.query.limit)).exec();
+            }
+            else if ("limit" in req.query) {
+                products = await Product.find().sort({ price: 1 }).limit(parseInt(req.query.limit)).exec();
+            }else {
+                products = await Product.find();
+            }
+
+            if (products) {
+                return res.status(200).json(products);
+            } else {
+                return res.status(404).json({ message: "Ürün bulunamadı" });
+            }
+
         }catch (err){
 
             console.log(err);
