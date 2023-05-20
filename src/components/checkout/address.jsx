@@ -38,7 +38,6 @@ const CheckOutAddress = ({
 
 
 
-
     useEffect(() => {
 
         if((isCheckCargoAddress !== -1) && (isCheckE_invoice !== -1)){
@@ -63,6 +62,7 @@ const CheckOutAddress = ({
     }, [addNewAddress]);
 
     useEffect(() => {
+        setCompleteAddress(false);
         const getUser = async () => {
             try {
                 const res = await axios.get(
@@ -148,7 +148,7 @@ const CheckOutAddress = ({
         setIsCheckE_invoice(index)
     }
 
-    return <>
+    return <div >
         <div
             className="lg:grid hidden gap-3 lg:grid-cols-[12.939rem,6.095rem,6.345rem,8.853rem,8.979rem] h-[5.158rem] text-[0.75rem] pb-5 border-b-2 text-sm font-semibold ">
             <div className="place-self-start pt-5 px-4">Adreslerim</div>
@@ -274,6 +274,6 @@ const CheckOutAddress = ({
 
         </div>
 
-    </>
+    </div>
 }
 export default CheckOutAddress;
