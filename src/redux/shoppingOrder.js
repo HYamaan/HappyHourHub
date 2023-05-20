@@ -2,7 +2,7 @@ import {createSlice} from "@reduxjs/toolkit";
 
 
 const ShoppingOrder = createSlice({
-    name: "favoriteProducts",
+    name: "ShoppingOrder",
     initialState: {
         shoppingOrder: [],
     },

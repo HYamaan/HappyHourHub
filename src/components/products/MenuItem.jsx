@@ -108,7 +108,7 @@ const handleClick = async () => {
     },[isHandleClick])
 
 return <React.Fragment>
-    <div className="rounded-3xl bg-secondary">
+    <div className="rounded-3xl bg-secondary z-0">
         <div className="w-full relative bg-tertiary h-[215px] grid place-content-center
                     rounded-bl-[46px] rounded-tl-2xl rounded-tr-2xl peer-hover:scale-120  ">
             <Link href={`/product/${props._id}`}>

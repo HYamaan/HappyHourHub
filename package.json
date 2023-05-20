@@ -32,6 +32,7 @@
     "express-rate-limit": "^6.7.0",
     "express-slow-down": "^1.6.0",
     "formik": "^2.2.9",
+    "html-react-parser": "^3.0.16",
     "iyzipay": "^2.0.48",
     "jose": "^4.14.3",
     "js": "^0.1.0",
