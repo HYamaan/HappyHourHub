@@ -114,7 +114,7 @@ const CartMenuItem = ({productList}) => {
 
     return <div className="w-full ">
         <div>
-            <div className="w-full h-full mt-20 flex items-center justify-center text-2xl font-workSans mb-3 ">Sepete EnÇok Eklenenler</div>
+            <div className="w-full h-full  flex items-center justify-center text-2xl font-workSans mb-3 ">Sepete EnÇok Eklenenler</div>
             {SliderComponent(productList)}
         </div>
         {
