@@ -9,16 +9,16 @@ import {ProductExtrasActions} from "../../redux/ProductExtras";
 import {useRouter} from "next/router";
 
 
-
 const CheckoutLastStep = ({
                               userId,
+                              userInfo,
                               cargoName,
-                              checkOutPaymentMethod,
-                              setCompleteCheckout,
+                              checkOutPaymentMethod,                   setCompleteCheckout,
                               isLoading,
                               setIsLoading,
                               setCheckOutPaymentInformation,
                               setCheckOutLastStepInformation
+
                           }) => {
     const {data: session} = useSession()
     const cart = useSelector(state => state.cart)
@@ -27,27 +27,9 @@ const CheckoutLastStep = ({
     const shoppingOrderMain = useSelector(state => state.shoppingOrder)
 
 
-    const [userInfo, setUserInfo] = useState([]);
-    useEffect(() => {
-        const getUser = async () => {
-            const queryParams = `userId=${userId}`;
-            const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
-            const res = await axios.get(url);
-            setUserInfo(() => [res.data.products, res.data.userId, res.data.shoppingCartId, res.data.currency]);
-            dispatch(cartActions.reset());
-            res.data.products.map((item, index) => {
-                const {product, ...rest} = item;
-                dispatch(cartIndexActions.addToCartIndex());
-                dispatch(cartActions.addProduct({...product, ...rest, addIndex: index}))
-            })
-        }
-        getUser()
-    }, [userId])
-
     const shoppingOrder = shoppingOrderMain.shoppingOrder;
     const e_invoice = shoppingOrder[0]?.e_invoice;
     const cargoAddress = shoppingOrder[0]?.cargoAddress;
-
 
     const productPageHandler = (product) => {
         const name = "productPage";
@@ -59,11 +41,11 @@ const CheckoutLastStep = ({
     }
     const checkOutPaymentInformation = ["Kredi Kartı", "Kayıtlı Kart ile Öde", "iyzico ile Öde"];
 
-    return <div>
+    return <div className="px-3">
         <div
-            className="flex  lg:flex-row flex-col  leading-6 text-left tracking-wider gap-3">
-            <div className="lg:basis-1/2 flex flex-col gap-3">
-                <div className="place-self-start lg:pt-5 px-2.5 lg:col-span-1 col-span-full">
+            className="flex  lg:flex-row flex-col  leading-6 text-left tracking-wider gap-4 border-b-2 pb-7">
+            <div className="lg:basis-1/2 flex flex-col ">
+                <div className="place-self-start lg:pt-5 px-1 lg:col-span-1 col-span-full">
                     <div className="flex flex-col items-start gap-[4px] text-sm font-workSans font-light">
                         <p className="font-semibold mb-4">Kargo Adresi</p>
                         <p>{e_invoice?.name} {e_invoice?.surName}</p>
@@ -75,7 +57,7 @@ const CheckoutLastStep = ({
                 </div>
             </div>
             <div className="lg:basis-1/2 flex flex-col ">
-                <div className="place-self-start lg:pt-5 px-2.5 lg:col-span-1 col-span-full">
+                <div className="place-self-start lg:pt-5 px-1 lg:col-span-1 col-span-full">
                     <div className="flex flex-col items-start gap-[4px] text-sm font-workSans font-light">
                         <p className="font-semibold mb-4">Fatura Adresi</p>
                         <p>{cargoAddress?.name} {cargoAddress?.surName}</p>
@@ -97,7 +79,7 @@ const CheckoutLastStep = ({
 
         </div>
         <div>
-            {cart.products.map((product, index) => {
+            {cart.products?.map((product, index) => {
                 return <div key={index}
 
                             className="flex items-start h-[11.375rem] mt-4 border-secondary border-b-[1px] border-opacity-40">
@@ -117,7 +99,8 @@ const CheckoutLastStep = ({
                                onClick={() => productPageHandler(product)}
                             >{product.title}</p>
                             <p className="text-cadetGray md:mb-0 mb-1">
-                                            <span className="text-stateGray font-workSans font-semibold md:w-full max-w-[8.5rem]">
+                                            <span
+                                                className="text-stateGray font-workSans font-semibold md:w-full max-w-[8.5rem]">
                                         {product.extras.length > 0 ? "Options:" : ""}</span>
                                 {product.extras.map(ext => ext.text).join(', ')}
                             </p>
