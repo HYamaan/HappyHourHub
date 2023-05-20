@@ -1,18 +1,18 @@
-import {nanoid} from 'nanoid'
+
 import Iyzipay from 'iyzipay';
 import User from '../../../models/User';
-import ShoppingCartUser from "../../../models/shoppingCartUser";
+
 import moment from "moment";
 import Order from "../../../models/Order";
 import CompletePayment from "../../../utilities/payments";
-import {fi} from "timeago.js/lib/lang";
+
 
 const handler = async (req, res) => {
     const {method} = req;
     const query = req.query.slug[1];
     const ip = req.connection.remoteAddress || req.headers["x-forwarded-for"];
     console.log("ip", ip)
-    const userAgent = req.headers["user-agent"];
+
 
     const iyzipay = new Iyzipay({
         apiKey: process.env.IYZICO_PAYMENT_API_KEY,
@@ -54,7 +54,9 @@ const handler = async (req, res) => {
 
                     await CompletePayment(result, result.basketId);
 
-                    return res.status(200).json({data: result});
+
+                    res.writeHead(302, { Location: `${process.env.NEXT_PUBLIC_URL}/cart` });
+                    res.end();
                 } catch (err) {
 
                     res.status(500).json({status: false, message: err.errorMessage})
@@ -80,7 +82,6 @@ const handler = async (req, res) => {
                         }];
                     }).flat();
                 }
-                ;
 
 
                 try {
@@ -133,6 +134,7 @@ const handler = async (req, res) => {
                             });
                         }
                         if (findOrder?.completed) {
+
                             return res.status(400).json({status: false, message: "shopping basket paid more"})
                         }
 
@@ -151,7 +153,8 @@ const handler = async (req, res) => {
 
                     `;
 
-                    res.send(html)
+
+                    res.send(result.paymentPageUrl);
                 } catch (err) {
                     return res.status(500).json({
                         success: 'fail', message: err.message || 'Beklenmedik bir hat ile karşılaşıldı'
@@ -211,29 +214,6 @@ const getData = (req, ip) => {
     };
     return data;
 }
-const getUserCards = async (cardUserKey, res, iyzipay, conversationId, locale) => {
-    const data = {
-        locale: locale || Iyzipay.LOCALE.TR, conversationId: conversationId || nanoid(), cardUserKey
-    }
 
-    const result = await new Promise((resolve, reject) => {
-        iyzipay.cardList.retrieve(data, (err, result) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-    if (result.status !== 'success') {
-        return res.status(500).json({
-            status: result.status, message: result.errorMessage
-        });
-    }
-    result.cardDetails.map(item => {
-        item.cardUserKey = cardUserKey
-    });
-    return result;
-}
 
 export default handler;
