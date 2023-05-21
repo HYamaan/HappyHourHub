@@ -16,6 +16,7 @@ import {cartActions} from "../../redux/cartSlice";
 import {cartIndexActions} from "../../redux/cartIndex";
 import {ProductExtrasActions} from "../../redux/ProductExtras";
 import {userInfoActions} from "../../redux/userInfo";
+import NewOrder from "../../components/profile/newOrder";
 
 
 
@@ -52,7 +53,7 @@ const Profile = ({ user }) => {
 
 
     return (<>
-        <div className="flex lg:w-[72.188rem] lg:mx-auto w-full lg:px-10 px-4 min-h-[calc(100vh_-_233px)] lg:flex-row flex-col lg:mb-0 mb-10">
+        <div className="flex lg:w-[75.188rem] lg:mx-auto w-full lg:px-10 px-4 min-h-[calc(100vh_-_233px)] lg:flex-row flex-col lg:mb-0 mb-10">
             <div className="lg:w-80 w-100 flex-shrink-0">
                 <div className="relative flex flex-col items-center px-10 py-5 border border-b-0">
                         <Image
@@ -133,7 +134,7 @@ const Profile = ({ user }) => {
             {tabs === 0 && <Account user={user} />}
 
             {tabs === 1 && <MyAddresses user={user} />}
-            {tabs === 2 && <Order />}
+            {tabs === 2 && <NewOrder user={user}/>}
             {tabs === 3 && <FavoriteList user={user} />}
             {tabs === 4 && <Password user={user} />}
         </div>
