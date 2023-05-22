@@ -25,8 +25,7 @@ const handler = async (req, res) => {
 
         if (req.query.slug[1] === "complete") {
             if (method === "POST") {
-                console.log("req.body____________________________", req.body)
-                console.log("req.query____________________________", req.query)
+
 
                 try {
                     const data = {
@@ -121,12 +120,21 @@ const handler = async (req, res) => {
                                 status: -1,
                                 completed: false,
                                 paidPrice: data?.paidPrice,
+                                cargoPrice:data?.cargoPrice,
+                                couponCodePrice:data?.couponCode,
+                                couponId:data?.couponId,
                                 quantity: data.basketItems.length,
-                                address: {
+                                e_invoiceAddress: {
                                     contactName: data?.billingAddress?.contactName,
                                     country: data?.billingAddress?.country,
                                     city: data?.billingAddress?.city,
                                     address1: data?.billingAddress?.address
+                                },
+                                cargoAddress:{
+                                    contactName: data?.shippingAddress?.contactName,
+                                    country: data?.shippingAddress?.country,
+                                    city: data?.shippingAddress?.city,
+                                    address1: data?.shippingAddress?.address
                                 },
                                 productOrder: req.body.products,
                                 currency: data?.currency,
@@ -172,7 +180,10 @@ const getData = (req, ip) => {
         locale: "tr",
         conversationId: req.body.shoppingCartId,
         price: req.body.total.toString(),
-        paidPrice: req.body.total.toString(), // pricePayload gelicek
+        paidPrice: req.body.paidPrice.toString(), // pricePayload gelicek
+        cargoPrice:req.body.cargoPrice,
+        couponCode:req.body?.couponCode,
+        couponId:req.body?.couponName,
         currency: req.body.currency,
         basketId: req.body.shoppingCartId,//Sipariş Numarası
         paymentGroup: "PRODUCT",
