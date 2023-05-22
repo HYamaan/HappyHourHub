@@ -24,11 +24,11 @@ const OrderSchema = new mongoose.Schema(
         },
 
         price:{
-            type:Number,
+            type:String,
             required:true,
         },
         paidPrice:{
-            type:Number,
+            type:String,
             required:true,
         },
         quantity:{
@@ -38,8 +38,7 @@ const OrderSchema = new mongoose.Schema(
         installment:{
             type:Number,
         },
-        address:[
-            {
+        e_invoiceAddress:{
                 contactName:{
                     type:String
                 },
@@ -52,9 +51,37 @@ const OrderSchema = new mongoose.Schema(
                 address1:{
                     type: String,
                 },
-            }
-        ],
-
+            },
+        cargoAddress:{
+            contactName:{
+                type:String
+            },
+            country: {
+                type: String,
+            },
+            city:{
+                type: String,
+            },
+            address1:{
+                type: String,
+            },
+        },
+        cargoPrice:{
+            type:String,
+            default:0,
+        },
+        couponCodePrice:{
+            type:String,
+            default:0,
+        },
+        couponId:{
+            type:String,
+        },
+        cargo:{
+            type:String,
+            default:"Yurt içi Kargo",
+            enum: ["Yur içi Kargo","Aras Kargo", "GKN Kargo"],
+        },
         status:{
             type:Number,
             default:-1,
@@ -75,11 +102,7 @@ const OrderSchema = new mongoose.Schema(
             default: "TRY",
             enum:["TRY","USD","EUR"]
         },
-        cargo:{
-            type:String,
-            default:"Yurt içi Kargo",
-            enum: ["Yur içi Kargo","Aras Kargo", "GKN Kargo"],
-        },
+
         paymentSuccessId:{
             type:String
         }
