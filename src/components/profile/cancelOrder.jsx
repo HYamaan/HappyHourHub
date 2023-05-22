@@ -40,10 +40,10 @@ const CancelOrder=({setCancelOrder,user,order})=>{
             {!isLoading ?
                 (  <OutsideClickHandler onOutsideClick={() => setCancelOrder(false)}>
                     <div className="w-full h-full grid place-content-center relative">
-                        <div className="relative z-50 md:w-[600px] w-72  bg-white border-2 lg:p-10 p-4 rounded-3xl">
-                            <Title className="lg:text-[40px] text-lg text-center capitalize">why do you want to cancel</Title>
+                        <div className="relative z-50 md:w-[600px] w-72  bg-white border-2 lg:p-10 p-3 rounded-3xl">
+                            <Title className="lg:text-[40px] text-xl text-center capitalize">why do you want to cancel</Title>
 
-                            <div className="flex flex-col text-sm my-4">
+                            <div className="flex flex-col text-sm my-2">
 
                                 <span className="font-semibold mb-2 capitalize">Reason</span>
                                 <select id="select"

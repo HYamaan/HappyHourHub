@@ -97,7 +97,9 @@ const NewOrder = ({user}) => {
                                         currency: order.currency,
                                         minimumFractionDigits: 2
                                     }).format((order.price))} `}</p>
-                                    <p className=" flex items-center justify-center  border-[1.11px] border-primary rounded-xl text-primary p-2.5 cursor-pointer">Detay</p>
+                                    <p className=" flex items-center justify-center  border-[1.11px] border-primary rounded-xl text-primary p-2.5 cursor-pointer"
+                                       onClick={()=>{  handleClickDetails(order)}}
+                                    >Detay</p>
                                 </div>
                             </div>
                         })}

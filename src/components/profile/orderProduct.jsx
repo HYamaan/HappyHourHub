@@ -68,11 +68,12 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
         "3": "Teslim Edildi",
     }
 
+    console.log("order",order)
 
     return <div className="flex flex-col h-full w-full lg:px-4">
 
         <div className="h-full w-full pl-4 mb-6 font-workSans ">
-            <Title className="text-[40px] mt-4  border-b-2 w-full">Sipariş Özeti</Title>
+            <Title className="lg:text-[40px] text-[32px] mt-4  border-b-2 w-full">Sipariş Özeti</Title>
             <div className="lg:w-full w-full lg:flex hidden flex-col ">
                 <div className="flex   gap-2 text-[14px] py-8 font-semibold text-cadetGray border-b-[1.11px]">
                     <p className="basis-[23.7675%]">Sipariş Numarası</p>
@@ -107,35 +108,44 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
             </div>
             <div className="w-full lg:hidden flex flex-col justify-between  border-b-[1.11px] py-4">
                 {
-                    <div className="flex flex-row border-b-[1.11px] py-4">
-                        <div className="basis-1/2 flex flex-col gap-4 text-[14px] py-5 font-semibold text-cadetGray">
-                            <p className="">Sipariş Numarası</p>
-                            <p className="">Sipariş Tarihi</p>
-                            <p className="">Sipariş Durumu</p>
-                            <p className="">Ödeme Durumu</p>
-                            <p className="">Sipariş Toplamı</p>
-                            <p className="">Detay</p>
-                        </div>
-                        <div className="basis-1/2 flex flex-col gap-4 text-[14px] py-6  text-payneGray">
-                            <p className=" cursor-pointer hover:underline">HHP{order.conversationId.slice(0, 6)}</p>
-                            <p className="">{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</p>
-                            <p className="">{statusInformation[order.status]}</p>
-                            <p className="">{paymentInformation[String(order.completed)]}</p>
-                            <p className="">{`${new Intl.NumberFormat('tr-TR', {
-                                style: 'currency',
-                                currency: order.currency,
-                                minimumFractionDigits: 2
-                            }).format((order.price))} `}</p>
-                            <p className=" flex items-center justify-center  border-[1.11px] border-primary rounded-xl text-primary p-2.5 cursor-pointer">Detay</p>
-                        </div>
-                    </div>
+                   <>
+                       <div className="flex flex-row border-b-[1.11px] py-2 mb-4 border-b-2">
+                           <div className="basis-1/2 flex flex-col gap-4 text-[14px] py-5 font-semibold text-cadetGray">
+                               <p className="">Sipariş Numarası</p>
+                               <p className="">Sipariş Tarihi</p>
+                               <p className="">Sipariş Durumu</p>
+                               <p className="">Ödeme Durumu</p>
+                               <p className="">Gönderim Durumu</p>
+                               <p className="">Sipariş Toplamı</p>
+
+                           </div>
+                           <div className="basis-1/2 flex flex-col gap-4 text-[14px] py-5  text-payneGray">
+                               <p className=" cursor-pointer hover:underline">HHP{order.conversationId.slice(0, 6)}</p>
+                               <p className="">{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</p>
+                               <p className="">{statusInformation[order.status]}</p>
+                               <p className="">{paymentInformation[String(order.completed)]}</p>
+                               <p className="">{`${new Intl.NumberFormat('tr-TR', {
+                                   style: 'currency',
+                                   currency: order.currency,
+                                   minimumFractionDigits: 2
+                               }).format((order.price))} `}</p>
+                               <p>{cargoStatusInformation[order.status]}</p>
+
+                           </div>
+                       </div>
+
+                       <div className=" flex items-center justify-center  rounded-xl text-tertiary bg-primaryBold  p-2.5 cursor-pointer"
+                            onClick={()=>{setCancelOrder(true)}}
+                       >SİPARİŞ İPTALİ
+                       </div>
+                   </>
                 }
             </div>
         </div>
 
 
         <div className="w-full h-full flex flex-col  px-2 font-workSans mb-4">
-            <Title className="text-[40px] mt-4  border-b-2 border-stateGray w-full">Ürünler</Title>
+            <Title className="lg:text-[40px] text-[32px] mt-4  border-b-2 border-stateGray w-full">Ürünler</Title>
             <div
                 className="lg:flex hidden items-center flex-row w-full gap-5 text-cadetGray font-semibold text-sm  pt-5 pb-6 border-b-2">
                 <div className="basis-6/12 text-left">ÜRÜN</div>
@@ -164,7 +174,7 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
                             <div className="max-w-[12.063rem] pt-1 pl-2 pb-4 self-start tracking-normal">
                                 <p className="max-w-[10.063rem] text-secondary mr-2 font-semibold">MEN BASIC KOTON -
                                     SİYAH</p>
-                                <p className="my-1">Ürün Kodu: <span>HHH{order.sku}</span></p>
+                                <p className="my-1">Ürün Kodu: <span>HHH{item.sku}</span></p>
                                 <p>Options:<span> {item.extras.length > 0 ? `${item.extras.map(ext => ext.text).join(', ')}` : "STD"}</span>
                                 </p>
                             </div>
@@ -192,26 +202,34 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
             }
 
             <div className="h-full w-full lg:hidden flex flex-col pt-2 pb-7 font-workSans font-light text-sm">
-                <div className="flex flex-row h-[8.438rem]  border-b-2">
-                    <div className="flex items-center h-full">
-                        <Image
-                            src="/images/admin.png"
-                            alt="client1.jpg"
-                            width={100}
-                            height={100}
-                            priority={true}
-                            style={{objectFit: "contain"}}
-                            className="w-full h-full rounded-full flex  items-center p-3"
-                        />
-                    </div>
-                    <div className="max-w-[12.063rem] p-3 self-start tracking-normal text-xs">
-                        <p className="my-1">49,99 TL</p>
-                        <p className="max-w-[10.063rem] text-secondary mr-2 font-semibold">MEN BASIC KOTON - SİYAH</p>
-                        <p className="my-1">Ürün Kodu: <span>SC1075012STD</span></p>
-                        <p>Beden: <span>STD</span></p>
-                        <p>Adet: <span>1</span></p>
-                    </div>
-                </div>
+                {
+                    order.productOrder.map((item, index) => {
+                      return   <div key={item._id} className="flex flex-row h-[8.438rem]  border-b-2">
+                          <div className="flex items-center h-full">
+                              <Image
+                                  src={item.product.image}
+                                  alt={item.product.image.toString()}
+                                  width={100}
+                                  height={100}
+                                  priority={true}
+                                  style={{objectFit: "cover"}}
+                                  className="rounded-full object-contain"
+                              />
+                          </div>
+                          <div className="max-w-[12.063rem] p-3 self-start tracking-normal text-xs">
+                              <p className="my-1">      {new Intl.NumberFormat('tr-TR', {
+                                  style: 'currency', currency: 'TRY', minimumFractionDigits: 2
+                              }).format((item.price))}</p>
+                              <p className="max-w-[10.063rem] text-secondary mr-2 font-semibold">MEN BASIC KOTON - SİYAH</p>
+                              <p className="my-1">Ürün Kodu: <span>HHH{item.sku}</span></p>
+                              <p>Options:<span> {item.extras.length > 0 ? `${item.extras.map(ext => ext.text).join(', ')}` : "STD"}</span></p>
+                              <p>Adet: <span>{item.productTotal}</span></p>
+                          </div>
+
+                      </div>
+                    })
+
+                }
 
 
             </div>
