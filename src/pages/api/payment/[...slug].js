@@ -90,13 +90,22 @@ const handler = async (req, res) => {
                     status: -1,
                     completed: false,
                     paidPrice: data?.paidPrice,
+                    cargoPrice:data?.cargoPrice,
+                    couponCodePrice:data?.couponCode,
+                    couponId:data?.couponId,
                     quantity: req.body?.products.length,
                     installment: parseInt(data?.installment),
-                    address: {
+                    e_invoiceAddress: {
                         contactName: data?.billingAddress?.contactName,
                         country: data?.billingAddress?.country,
                         city: data?.billingAddress?.city,
                         address1: data?.billingAddress?.address
+                    },
+                    cargoAddress:{
+                        contactName: data?.shippingAddress?.contactName,
+                        country: data?.shippingAddress?.country,
+                        city: data?.shippingAddress?.city,
+                        address1: data?.shippingAddress?.address
                     },
                     productOrder: req.body.products,
                     currency: data?.currency,
@@ -269,7 +278,7 @@ const handler = async (req, res) => {
                 }else{
 
                     //IADE EDİLEN ÜRÜNÜN STATUS DEĞERİNİ -9 YAPTIK
-                    const updatedOrder = await Order.findOneAndUpdate(
+                    await Order.findOneAndUpdate(
                         {
                             paymentSuccessId: req.body.paymentSuccessId,
                             'productOrder._id': order.productOrder[cancelProductIndex]._id
@@ -370,7 +379,7 @@ const handler = async (req, res) => {
                     locale: req.body.locale || Iyzipay.LOCALE.TR,
                     conversationId: req.body.basketId,
                     paymentId: payment?.paymentId,
-                    ip: req.body.userId.ip,
+                    ip: req.body.userIp,
                     ...reasonObj
                 }
 
@@ -383,14 +392,21 @@ const handler = async (req, res) => {
                         }
                     });
                 });
-                console.log("result", result)
+
                 if (result.status !== 'success') {
                     return res.status(500).json({
                         status: result.status, message: result.errorMessage
                     });
+                }else{
+                 await Order.updateOne(
+                        { _id: req.body.orderId },
+                     {status:"-9"}
+
+                    );
+
+
                 }
 
-                await CompletePayment(result, result.basketId);
 
                 return res.status(200).json({data: result});
             } catch (err) {
@@ -548,7 +564,7 @@ const getSaveCard = async (dataInfo, res, iyzipay) => {
             }
             return result;
         } catch (err) {
-            console.log(err);
+            res.status(500).json({status: false, message: err.errorMessage})
         }
 
     } else {
@@ -561,8 +577,11 @@ const getData = (req, ip) => {
         locale: "tr",
         conversationId: req.body.shoppingCartId,
         price: req.body.total,
-        paidPrice: req.body.total, // pricePayload gelicek
+        paidPrice: req.body.paidPrice, // pricePayload gelicek
         currency: req.body.currency,
+        cargoPrice:req.body.cargoPrice,
+        couponCode:req.body.couponCode,
+        couponId:req.body.couponName,
         installment: '1', // TAKSİTLENDİRME DEĞERLERİ
         basketId: req.body.shoppingCartId,//Sipariş Numarası
         paymentChannel: "WEB",
