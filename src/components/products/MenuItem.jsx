@@ -44,8 +44,13 @@ const MenuItem = (prop) => {
         extras: [],
         price: props.prices[0],
         title: props.title,
+        currency:props?.currency,
+        totalSell:props?.totalSell,
+        kdv:props?.kdv,
+        stock:props?.stock,
         updatedAt: props.updatedAt,
         _id: props._id,
+
     }
     const [like, setUnLike] = useState(false);
     useEffect(()=>{
@@ -65,7 +70,7 @@ const MenuItem = (prop) => {
                     await axios.post(url);
 
                 } else {
-                    console.log("BUrada")
+
                    setLikes((prev)=>prev.filter(item=>item !== prop._id))
                     setUnLike(false);
                     await axios.delete(url);
@@ -78,7 +83,6 @@ const MenuItem = (prop) => {
             console.log(err);
         }
     }
-
 
 const handleClick = async () => {
     setIsHandleClick(true);
@@ -127,7 +131,7 @@ return <React.Fragment>
             <div className="text-left">
                 <h3 className="text-lg font-semibold">{props.title}</h3>
                 <div className="text-[15px] mt-2">
-                    {props.desc}
+                    {props.descForMenu}
                 </div>
             </div>
             <div className="flex items-center justify-between mt-4">
