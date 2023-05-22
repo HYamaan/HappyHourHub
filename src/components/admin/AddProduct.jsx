@@ -13,15 +13,18 @@ const AddProduct = ({setIsProductModal}) => {
 
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
+    const [descForMenu, setDescForMenu] = useState("");
     const [category, setCategory] = useState("");
     const [prices, setPrices] = useState([]);
+    const [kdv,setKDV]=useState("");
+    const [totalQuantity,setTotalQuantity] =useState(0);
 
     const [extra, setExtra] = useState("");
     const [extraOptions, setExtraOptions] = useState([]);
 
     const [categories,setCategories] = useState("");
 
-    const [isloading,setLoading]=useState(false);
+    const [isloading,setLoading]=useState(false)
 
 
 
@@ -78,8 +81,11 @@ const AddProduct = ({setIsProductModal}) => {
                     image: url,
                     title,
                     desc,
+                    descForMenu,
                     category: category.toLowerCase(),
                     prices,
+                    stock:totalQuantity,
+                    kdv:kdv,
                     extraOptions,
                 };
 
@@ -110,12 +116,13 @@ const AddProduct = ({setIsProductModal}) => {
 
 
         return (<div
-            className="fixed top-0 left-0 w-screen h-screen z-40
-            after:w-screen after:h-screen after:bg-white after:absolute after:top-0 after:left-0 after:opacity-60 grid place-content-center">
+            className="fixed top-0 left-0 w-screen h-screen
+            after:w-screen after:h-screen after:bg-white after:absolute after:top-0
+            after:left-0 after:opacity-60 grid place-content-center">
             {!isloading ?
                 (  <OutsideClickHandler onOutsideClick={() => setIsProductModal(false)}>
-                    <div className="w-full h-full grid place-content-center relative">
-                        <div className="relative z-50 md:w-[600px] w-[370px]  bg-white border-2 p-10 rounded-3xl">
+                    <div className="w-full h-[1rem]]   mt-10 grid place-content-center relative">
+                        <div className="relative z-50 md:w-[600px] w-[370px] h-3/4 overflow-y-auto no-scrollbar  bg-white border-2 p-10 rounded-3xl">
                             <Title className="text-[40px] text-center">Add a New Product</Title>
 
                             <div className="flex flex-col text-sm mt-6">
@@ -136,6 +143,16 @@ const AddProduct = ({setIsProductModal}) => {
                                     onChange={(e) => setTitle(e.target.value)}
                                 />
                             </div>
+                            <div className="flex flex-col text-sm mt-4">
+                                <span className="font-semibold mb-[2px]">Description For Menu</span>
+                                <textarea
+                                    className="border-2 p-1 text-sm px-1 outline-none"
+                                    placeholder="Write a description Menu..."
+                                    onChange={(e) => setDescForMenu(e.target.value)}
+                                    maxLength={100}
+                                />
+                            </div>
+
                             <div className="flex flex-col text-sm mt-4">
                                 <span className="font-semibold mb-[2px]">Description</span>
                                 <textarea
@@ -194,6 +211,27 @@ const AddProduct = ({setIsProductModal}) => {
                                     </div>
                                 ) }
                             </div>
+                            <div className="flex gap-6">
+                                <div className="flex flex-col text-sm mt-4">
+                                    <span className="font-semibold mb-[2px]">KDV</span>
+                                    <input
+                                        type="text"
+                                        className="border-2 p-1 text-sm px-1 outline-none w-36"
+                                        placeholder="KDV"
+                                        onChange={(e) => setKDV(e.target.value)}
+                                    />
+                                </div>
+                                <div className="flex flex-col text-sm mt-4">
+                                    <span className="font-semibold mb-[2px]">Adet</span>
+                                    <input
+                                        type="Number"
+                                        className="border-2 p-1 text-sm px-1 outline-none w-36"
+                                        placeholder="Adet"
+                                        onChange={(e) => setTotalQuantity(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
                             <div className="flex flex-col text-sm mt-4 w-full">
                                 <span className="font-semibold mb-[2px]">Extra</span>
                                 <div className="flex  gap-6 w-full md:flex-nowrap flex-wrap">

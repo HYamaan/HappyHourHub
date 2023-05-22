@@ -7,9 +7,15 @@ const cartSlice = createSlice({
         products: [],
         totalQuantity: 0,
         total: 0,
+        mainTotal: 0,
+        couponCart: {},
+        cargoPrice: 0,
+        couponCodeRemovalProcessState: 0,
     },
     reducers: {
         addProduct: (state, action) => {
+            console.log("state.mainTotal", state.mainTotal);
+
             const extras = action.payload.extras;
 
             const existingProductIndex = state.products.findIndex((item) => {
@@ -17,7 +23,8 @@ const cartSlice = createSlice({
                     item._id === action.payload._id &&
                     item.extras.length === extras.length &&
                     item.extras.every((value, index) => {
-                        console.log("index",value._id, extras[index]._id); return value._id === extras[index]._id})
+                        return value._id === extras[index]._id
+                    })
                 );
             });
 
@@ -35,6 +42,10 @@ const cartSlice = createSlice({
 
             state.totalQuantity++;
             state.total += action.payload.price;
+            state.mainTotal += action.payload.price;
+            console.log("STATE_TOTAL",state.total,"STATE_MAIN",state.mainTotal)
+
+
         },
         increaseProduct: (state, action) => {
 
@@ -51,6 +62,7 @@ const cartSlice = createSlice({
             if (addItemIndex >= 0) {
                 state.totalQuantity++;
                 state.total += action.payload.price;
+                state.mainTotal += action.payload.price;
                 const tempProduct = {...action.payload, productTotal: state.products[addItemIndex].productTotal + 1};
                 state.products[addItemIndex] = tempProduct;
 
@@ -71,6 +83,7 @@ const cartSlice = createSlice({
                 if (state.products[decreaseItemIndex].productTotal > 0) {
                     state.totalQuantity--;
                     state.total -= action.payload.price;
+                    state.mainTotal -= action.payload.price;
                     const tempProduct = {
                         ...action.payload,
                         productTotal: state.products[decreaseItemIndex].productTotal - 1
@@ -82,6 +95,7 @@ const cartSlice = createSlice({
                         } else {
                             state.totalQuantity++;
                             state.total += action.payload.price;
+                            state.mainTotal += action.payload.price;
                             const tempProduct = {
                                 ...action.payload,
                                 productTotal: state.products[decreaseItemIndex].productTotal + 1
@@ -110,6 +124,7 @@ const cartSlice = createSlice({
 
                             state.totalQuantity -= state.products[removeItemIndex].productTotal;
                             state.total -= state.products[removeItemIndex].price * state.products[removeItemIndex].productTotal;
+                            state.mainTotal -= state.products[removeItemIndex].price * state.products[removeItemIndex].productTotal;
                             state.products.splice(removeItemIndex, 1);
                             // state.products.filter((item) => item.addIndex !== action.payload.addIndex);
                         } else {
@@ -120,13 +135,60 @@ const cartSlice = createSlice({
             }
 
         },
-
-
         reset: (state, action) => {
             state.products = [];
             state.total = 0;
+            state.mainTotal = 0;
             state.totalQuantity = 0;
         },
+        resetOther: (state, action) => {
+            state.couponCart = {};
+            state.cargoPrice = 0;
+                state.couponCodeRemovalProcessState = 0;
+        },
+        addCargoPrice: (state, action) => {
+
+            if (state.cargoPrice === 0) {
+                state.cargoPrice = action.payload;
+
+                state.mainTotal += Number(action.payload)
+
+            }
+
+        },
+        removeCargoPrice: (state, action) => {
+            if (state.cargoPrice !== 0) {
+                state.mainTotal -= Number(action.payload);
+                state.cargoPrice = 0
+            }
+        },
+        setCouponId: (state, action) => {
+            const newState = Object.assign({}, state); // Mevcut durumun bir kopyasını oluşturuyoruz
+            state.couponCart = action.payload;
+            const couponCodeRemovalProcess = state.mainTotal - action.payload?.couponAmount; // -0.65
+            state.mainTotal -= +action.payload?.couponAmount;
+
+            if (state.mainTotal < 0) {
+                state.couponCodeRemovalProcessState = action.payload?.couponAmount - couponCodeRemovalProcess;
+                state.couponCart.couponAmount = state.mainTotal - state.couponCodeRemovalProcessState;
+                state.mainTotal = 0;
+            }
+
+        },
+        removeCouponId: (state, action) => {
+            const newState = Object.assign({}, state); // Mevcut durumun bir kopyasını oluşturuyoruz
+
+            if (state.couponCodeRemovalProcessState !== 0) {
+                state.mainTotal += newState.couponCodeRemovalProcessState;
+            } else {
+                state.mainTotal += action.payload;
+            }
+            state.couponCodeRemovalProcessState = 0;
+            state.couponCart = {};
+
+            return state; // Yeni durumu dönüyoruz
+        },
+
     }
 });
 

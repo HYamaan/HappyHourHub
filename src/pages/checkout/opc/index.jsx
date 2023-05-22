@@ -51,7 +51,6 @@ const OPC = () => {
     const cargoName = "GKN Kargo";
 
 
-
     useEffect(() => {
         if (completeAddress === true) {
             if (checkoutSectionRef.current) {
@@ -79,19 +78,32 @@ const OPC = () => {
                 const res = await axios.get(url);
                 setUserInfo(() => [res.data.products, res.data.userId, res.data.shoppingCartId, res.data.currency]);
                 dispatch(cartActions.reset());
+                dispatch(cartActions.resetOther());
                 res.data.products.map((item, index) => {
                     const {product, ...rest} = item;
                     dispatch(cartIndexActions.addToCartIndex());
                     dispatch(cartActions.addProduct({...product, ...rest, addIndex: index}))
-                })
+                });
+                console.log("cart.total",cart.total)
+                if(cart.total < 1000){
+                    dispatch(cartActions.addCargoPrice(parseInt(19)));
+                };
+                cart.couponCart?.couponAmount && dispatch(cartActions.setCouponId( {
+                    couponAmount: cart.couponCart?.couponAmount,
+                    couponId: cart.couponCart?.couponId
+                } ));
+
+
+
+
             }
         }
         getUser();
     }, [session?.user?.id]);
 
 
+
     const [basketCompleteError,setBasketCompleteError]=useState(true);
-    const [htmlContent,setHtmlContent]=useState("");
 
     useEffect(()=>{
         if(preInformationForm === true && distanceSalesContract === true){
@@ -105,7 +117,7 @@ const OPC = () => {
 
     const handleClickCompletePayment = async () => {
 
-        console.log(preInformationForm,distanceSalesContract)
+
             if(preInformationForm === true && distanceSalesContract === true){
                 const shoppingOrder = shoppingOrderMain.shoppingOrder;
 
@@ -125,6 +137,10 @@ const OPC = () => {
                         e_invoice,
                         cargoAddress,
                         total: cart.total,
+                        paidPrice:cart.mainTotal,
+                        cargoPrice:cart?.cargoPrice,
+                        couponCode:cart.couponCart?.couponAmount,
+                        couponName:cart.couponCart?.couponId,
                         totalQuantity: cart.totalQuantity,
                         cardHolderName: cardPaymentInformation.cardHolderName,
                         expireYear: cardPaymentInformation.yearText,
@@ -137,7 +153,7 @@ const OPC = () => {
                     if (cardPaymentInformation.registerCardCheckBox === "1") {
 
                         notSelectCard.cardAlias = cardPaymentInformation.cardAlias;
-                        console.log("registerCard", notSelectCard)
+
                     }
 
                     try {
@@ -156,6 +172,8 @@ const OPC = () => {
                             if (res.status === 200){
                                 await router.push("/")
                                 dispatch(cartActions.reset())
+                                dispatch(cartActions.removeCargoPrice())
+                                dispatch(cartActions.removeCouponId())
                                 dispatch(ShoppingOrderActions.deleteShoppingOrder())
                             }
                         }
@@ -178,9 +196,14 @@ const OPC = () => {
                         e_invoice,
                         cargoAddress,
                         total: cart.total,
+                        paidPrice:cart.mainTotal,
+                        cargoPrice:cart?.cargoPrice,
+                        couponCode:cart.couponCart?.couponAmount,
+                        couponName:cart.couponCart?.couponId,
                         totalQuantity: cart.totalQuantity,
                         isSave: true
                     };
+
 
                     try {
                         const queryParams = `cardIndex=${cardPaymentInformation.selectCard}`;
@@ -196,6 +219,8 @@ const OPC = () => {
                             if (res.status === 200){
                                 await router.push("/")
                                 dispatch(cartActions.reset())
+                                dispatch(cartActions.removeCargoPrice())
+                                dispatch(cartActions.removeCouponId())
                                 dispatch(ShoppingOrderActions.deleteShoppingOrder())
                             }
 
@@ -221,6 +246,11 @@ const OPC = () => {
                         e_invoice,
                         cargoAddress,
                         total: cart.total,
+                        paidPrice:cart.mainTotal,
+                        cargoPrice:cart?.cargoPrice,
+                        couponCode:cart.couponCart?.couponAmount,
+
+                        couponName:cart.couponCart?.couponId,
                         totalQuantity: cart.totalQuantity,
                         isSave: true
                     };
@@ -228,12 +258,15 @@ const OPC = () => {
                         const url = `${process.env.NEXT_PUBLIC_API_URL}/checkout/payments/cart-addPayment`
                         if (userInfo) {
                             const res=await axios.post(url, selectCardOrder)
-                            console.log("IYZICO_RES",res.data)
+
+
                             if (res.status === 200){
 
                                 await router.push(res.data);
 
                                 dispatch(cartActions.reset())
+                                dispatch(cartActions.removeCargoPrice())
+                                dispatch(cartActions.removeCouponId())
                                 dispatch(ShoppingOrderActions.deleteShoppingOrder())
                             }
                         }
@@ -527,8 +560,23 @@ const OPC = () => {
                             <div
                                 className="w-full flex flex-row items-center justify-between text-[#212529] text-[0.95rem] pb-2 border-b-[1.11px] ">
                                 <span className="text-sm">Kargo Ücreti</span>
-                                <span className=" font-semibold">Ücretsiz Kargo</span>
+                                <span className=" font-semibold">{new Intl.NumberFormat('tr-TR', {
+                                    style: 'currency',
+                                    currency: 'TRY',
+                                    minimumFractionDigits: 2
+                                }).format((cart.cargoPrice))}</span>
                             </div>
+                            {
+                                cart.couponCart.length>0 && ( <div
+                                    className="w-full flex flex-row items-center justify-between text-[#212529] text-[0.95rem] pb-2 border-b-[1.11px] ">
+                                    <span className="text-sm">Kupon </span>
+                                    <span className=" font-semibold">-{new Intl.NumberFormat('tr-TR', {
+                                        style: 'currency',
+                                        currency: 'TRY',
+                                        minimumFractionDigits: 2
+                                    }).format((cart.couponCart?.couponAmount))}</span>
+                                </div>)
+                            }
 
                             <div
                                 className="w-full flex flex-row items-center justify-between text-[#212529] text-[0.95rem] mt-2  ">
@@ -537,7 +585,7 @@ const OPC = () => {
                                     style: 'currency',
                                     currency: 'TRY',
                                     minimumFractionDigits: 2
-                                }).format((cart.total))}₺</span>
+                                }).format((cart.mainTotal))}₺</span>
                             </div>
                         </div>
                     </div>
@@ -605,7 +653,7 @@ const OPC = () => {
                         style: 'currency',
                         currency: 'TRY',
                         minimumFractionDigits: 2
-                    }).format((cart.total))}₺
+                    }).format((cart.mainTotal))}₺
                     </div>
                 </div>
                 {mobileShowBasketDetail && <>
@@ -616,13 +664,28 @@ const OPC = () => {
                                 style: 'currency',
                                 currency: 'TRY',
                                 minimumFractionDigits: 2
-                            }).format((cart.total))}₺</span>
+                            }).format((cart.total))}</span>
                         </div>
                     </div>
                     <div className=" flex items-center justify-between mt-2 flex-row  ">
                         <span>Kargo Ücreti</span>
-                        <span>Ücretsiz Kargo</span>
+                        <span>{new Intl.NumberFormat('tr-TR', {
+                            style: 'currency',
+                            currency: 'TRY',
+                            minimumFractionDigits: 2
+                        }).format((cart.cargoPrice))}</span>
                     </div>
+                    {
+                        cart.couponCart?.couponAmount && (                            <div
+                            className="w-full flex flex-row items-center justify-between text-[#212529] text-[0.95rem] pb-2 border-b-[1.11px] ">
+                            <span className="text-sm">Kupon </span>
+                            <span className=" font-semibold">-{new Intl.NumberFormat('tr-TR', {
+                                style: 'currency',
+                                currency: 'TRY',
+                                minimumFractionDigits: 2
+                            }).format((cart.couponCart?.couponAmount))}</span>
+                        </div>)
+                    }
                 </>}
                 <button
                     className={`w-full p-2  text-secondary  mt-3 uppercase text-sm font-semibold ${basketCompleteError ? "bg-tertiary text-secondary" : `${styles.checkOutComplete} text-tertiary bg-gray-700 `}`}
