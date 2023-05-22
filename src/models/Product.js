@@ -4,10 +4,14 @@ const ProductSchema = new mongoose.Schema({
     image: {
         type: String, required: true,
     }, title: {
-        type: String, required: true, maxlength: 60,
+        type: String, required: true, maxlength: 90,
     }, desc: {
-        type: String, required: true, maxlength: 300,
-    }, category: {
+        type: String, required: true, maxlength: 1000,
+    },
+    descForMenu: {
+        type: String, required: true, maxlength: 100,
+    },
+    category: {
         type: String, required: true,
     }, prices: {
         type: [Number], required: true,
@@ -34,6 +38,14 @@ const ProductSchema = new mongoose.Schema({
         required:true,
         default:"PHYSICAL",
         enum : ["PHYSICAL","VIRTUAL"]
+    },
+    kdv:{
+        type:String,
+        default:0.18,
+    },
+    totalSell:{
+        type:Number,
+        default:0
     }
 
 }, {timestamps: true});
