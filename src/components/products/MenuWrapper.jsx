@@ -42,7 +42,7 @@ const MenuWrapper = ({categoryList ,productList})=>{
 
 
     const favoriteProduct = useSelector((state)=>state.favoriteProducts)
-    console.log("favoriteProduct",favoriteProduct)
+
 
     return<React.Fragment>
         <div className="container mx-auto ">

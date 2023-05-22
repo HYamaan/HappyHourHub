@@ -11,7 +11,6 @@ const handler = async (req,res)=> {
     const {method} = req;
     const query = req.query.slug[1];
     const ip = req.connection.remoteAddress || req.headers["x-forwarded-for"];
-    console.log("ip",ip)
     const userAgent = req.headers["user-agent"];
 
     const iyzipay = new Iyzipay({
@@ -23,12 +22,10 @@ const handler = async (req,res)=> {
 
 
    if(req.query.slug[0] === "payments"){
-       console.log("req",req.query)
 
 
        if(req.query.slug[1] === "complete"){
                 if(method === "POST"){
-                    console.log("req.body____________________________",req.body)
                     if(!req.body?.paymentId){
                         return res.status(400).json({status:false,message:"Payment id is required"})
                     }
@@ -52,7 +49,6 @@ const handler = async (req,res)=> {
                                 }
                             });
                         });
-                        console.log("result",result)
                         if (result.status !== 'success') {
                             return res.status(500).json({
                                 status: result.status,
@@ -153,13 +149,22 @@ const handler = async (req,res)=> {
                            status: -1,
                            completed: false,
                            paidPrice: data?.paidPrice,
+                           cargoPrice:data?.cargoPrice,
+                           couponCodePrice:data?.couponCode,
+                           couponId:data?.couponId,
                            quantity: req.body?.products.length,
                            installment: parseInt(data?.installment),
-                           address: {
+                           e_invoiceAddress: {
                                contactName: data?.billingAddress?.contactName,
                                country: data?.billingAddress?.country,
                                city: data?.billingAddress?.city,
                                address1: data?.billingAddress?.address
+                           },
+                           cargoAddress:{
+                               contactName: data?.shippingAddress?.contactName,
+                               country: data?.shippingAddress?.country,
+                               city: data?.shippingAddress?.city,
+                               address1: data?.shippingAddress?.address
                            },
                            productOrder: req.body.products,
                            currency: data?.currency,
@@ -193,7 +198,10 @@ const getData = (req,ip)=>{
         locale: "tr",
         conversationId: req.body.shoppingCartId,
         price: req.body.total.toString(),
-        paidPrice: req.body.total.toString(), // pricePayload gelicek
+        paidPrice: req.body.paidPrice.toString(), // pricePayload gelicek
+        cargoPrice:req.body?.cargoPrice,
+        couponCode:req.body?.couponCode,
+        couponId:req.body?.couponName,
         currency: req.body.currency,
         installment: '1', // TAKSİTLENDİRME DEĞERLERİ
         basketId: req.body.shoppingCartId,//Sipariş Numarası

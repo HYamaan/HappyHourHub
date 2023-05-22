@@ -8,7 +8,14 @@ const handler = async (req, res) => {
 
     if (method === "GET") {
         try {
-            const orders = await Orders.findById(id);
+            let orders;
+            if("email" in req.query){
+                orders = await Orders.find({email:req.query.email});
+            }else{
+                orders = await Orders.findById(id);
+            }
+
+
             res.status(200).json(orders);
         } catch (err) {
             console.log(err);

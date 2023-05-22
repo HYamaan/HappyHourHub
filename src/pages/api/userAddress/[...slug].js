@@ -48,7 +48,7 @@ const handler = async (req, res) => {
                     },
                     {new: true}
                 );
-                console.log("updateUser",updatedUser)
+
                 res.status(200).json(updatedUser);
             } else {
                 const updatedUser = await User.findByIdAndUpdate(

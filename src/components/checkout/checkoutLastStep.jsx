@@ -1,12 +1,11 @@
 import {useSession} from "next-auth/react";
 import {useDispatch, useSelector} from "react-redux";
-import axios from "axios";
-import {cartActions} from "../../redux/cartSlice";
-import {cartIndexActions} from "../../redux/cartIndex";
+
 import React, {useEffect, useState} from "react";
 import Image from "next/image";
 import {ProductExtrasActions} from "../../redux/ProductExtras";
 import {useRouter} from "next/router";
+import Title from "../UI/Title";
 
 
 const CheckoutLastStep = ({
@@ -78,7 +77,8 @@ const CheckoutLastStep = ({
             </div>
 
         </div>
-        <div>
+        <div className="max-h-[17rem] overflow-y-auto">
+            <Title className="text-[40px] mt-4  border-b-2 w-full">Siparişlerim</Title>
             {cart.products?.map((product, index) => {
                 return <div key={index}
 

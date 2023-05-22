@@ -8,7 +8,7 @@ const handler = async (req, res) => {
 
     if (method === "GET") {
         try{
-            console.log("REQ:QYEY",req.query)
+
             let products;
             if("limit" && "mostRepeatedCategory" in req.query){
                 products = await Product.find({category:req.query.mostRepeatedCategory}).sort({ price: 1 }).limit(parseInt(req.query.limit)).exec();

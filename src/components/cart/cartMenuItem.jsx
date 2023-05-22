@@ -29,7 +29,6 @@ const CartMenuItem = ({productList}) => {
         }
         getFavoriteProducts();
     }, [session, setLikes])
-    console.log(JSON.parse(JSON.parse(localStorage.getItem("persist:root")).cart))
     const categories = cart.products.map((item) => item.category);
     const counts = {};
 
@@ -54,7 +53,7 @@ const CartMenuItem = ({productList}) => {
                 if (mostRepeatedCategory) {
                     console.log(mostRepeatedCategory)
                     const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products?limit=10&mostRepeatedCategory=${mostRepeatedCategory}`)
-                    console.log("res", res);
+
                     setMostRepeatProducts(res.data);
                 }
             } catch (err) {
@@ -114,7 +113,7 @@ const CartMenuItem = ({productList}) => {
 
     return <div className="w-full ">
         <div>
-            <div className="w-full h-full  flex items-center justify-center text-2xl font-workSans mb-3 ">Sepete EnÇok Eklenenler</div>
+            <div className="w-full h-full  flex items-center justify-center text-2xl font-workSans mb-3 ">Sepete En Çok Eklenenler</div>
             {SliderComponent(productList)}
         </div>
         {

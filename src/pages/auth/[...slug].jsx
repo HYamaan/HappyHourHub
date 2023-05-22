@@ -7,7 +7,7 @@ import RegisterVerify from "../../components/auth/verifyCode";
 const Slug = () => {
     const router =useRouter();
     const { id,verifyCode } = router.query;
-    console.log("routER",router.query)
+
 
     return <>
         {id && <ResetPasswordId  id={id}/>}
