@@ -20,7 +20,6 @@ import {cartActions} from "../../redux/cartSlice";
 import {cartIndexActions} from "../../redux/cartIndex";
 
 
-
 const Login = () => {
 
     const {data: session} = useSession();
@@ -36,18 +35,20 @@ const Login = () => {
             const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
 
             if (currentUser) {
-
-                const res = await axios.post(url, cart);
-                if (res.status === 201) {
-                    const res = await axios.get(url);
-                    console.log("RES", res.data);
-                    dispatch(cartActions.reset());
-                    res.data.products.map((item, index) => {
-                        const {product, ...rest} = item;
-                        dispatch(cartIndexActions.addToCartIndex());
-                        dispatch(cartActions.addProduct({...product, ...rest, addIndex: index}))
-                    })
+                if (cart.products.length > 0) {
+                    await axios.post(url, cart);
                 }
+
+
+                const res = await axios.get(url);
+                console.log("RES", res.data);
+                dispatch(cartActions.reset());
+                res.data.products.map((item, index) => {
+                    const {product, ...rest} = item;
+                    dispatch(cartIndexActions.addToCartIndex());
+                    dispatch(cartActions.addProduct({...product, ...rest, addIndex: index}))
+                })
+
             }
 
 
