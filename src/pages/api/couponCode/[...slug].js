@@ -7,7 +7,19 @@ export default async function handler(req, res) {
     const {method}=req;
     const slug = req.query.slug[0];
 
-
+    if(slug === "get-coupon-code"){
+        if (method==="GET"){
+            try {
+                const coupons = await CouponCode.find().populate({
+                    path:"productId",
+                    model:"Product"
+                });
+                return res.status(200).json(coupons);
+            }catch (err){
+                console.log(err);
+            }
+        }
+    }
     if(slug === "add-coupon-code"){
 
         if(method === "POST"){
@@ -67,6 +79,19 @@ export default async function handler(req, res) {
             res.status(400).json({ error: 'Geçersiz istek' });
         }
     }
+    if(slug === "delete-coupon-code"){
+        if(method==="DELETE"){
+            try {
+
+               if(req.query.deleteId){
+                   await CouponCode.findByIdAndDelete(req.query.deleteId);
+               }
+            }catch (err){
+                res.status(400).json({status:false,message:"Beklenmeyen bir hata meydana geldi."})
+            }
+        }
+    }
+
 
 
 }
