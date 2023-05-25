@@ -20,106 +20,63 @@ const Cart = ({userList, productList}) => {
     const dispatch = useDispatch();
     const router = useRouter();
     let cart = useSelector(state => state.cart);
-    const user = userList?.find((user) => user.email === session?.user?.email);
-    const [cartProduct, setCartProduct] = useState([]);
+
     const [mobileShowBasketDetail, setMobileShowBasketDetail] = useState(false)
     const [showCouponCode, setShowCouponCode] = useState(false);
-    const [textCouponCode, setTextCouponCode] = useState( cart.couponCart.couponText || "");
+    const [textCouponCode, setTextCouponCode] = useState(cart?.couponCart?.couponText || "");
     const [isCouponCode, setIsCouponCode] = useState(false);
     const [couponCodePrice, setCouponCodePrice] = useState(0);
+    const [couponCodeId, setCouponCodeId] = useState("");
 
 
     const [isHandleClick, setIsHandleClick] = useState(false);
-    const [product, setProduct] = useState(null);
-    const [cargoPrice,setCargoPrice]=useState(cart.cargoPrice);
-
-
-
-    useEffect(() => {
-
-            if (cart.total < 1000) {
-                if (cargoPrice === 0) {
-                    const cargoPrice2 = 19;
-                    setCargoPrice(cargoPrice2);
-                    dispatch(cartActions.addCargoPrice(cargoPrice2));
-                }
-            }else{
-                if (cargoPrice !== 0) {
-                    dispatch(cartActions.removeCargoPrice(cargoPrice));
-                    setCargoPrice(0);
-                }
-            }
-
-    }, [cart.total]);
-
-
-
-    const cartProducts = () => cart.products.forEach((item) => {
-        const products = {
-            image: item.image,
-            title: item.title,
-            extras: item.extras,
-            price: item.price,
-            quantity: item.productTotal,
-            orderId: item._id,
-        };
-
-        setCartProduct((prev) => [...prev, products]);
-    });
+    const [isUpdateClick, setIsUpdateClick] = useState(false);
+    const [deleteProduct, setDeleteProduct] = useState(null);
+    const [updateProduct, setUpdateProduct] = useState({});
+    const [cargoPrice, setCargoPrice] = useState(cart.cargoPrice);
+    const [menuItemClickForCart, setMenuItemClickForCart] = useState(false);
+    const [isLoading,setIsLoading]=useState(false);
 
 
     useEffect(() => {
-        cartProducts();
-    }, [cart?.products.length])
 
-    const newOrder = {
-        email: user?.email,
-        customer: user?.fullName,
-        address: user?.address ? user?.address : "No address",
-        quantity: cart.totalQuantity,
-        total: cart.total,
-        mainTotal: cart.mainTotal,
-        productOrder: cartProduct,
-
-    }
-
-    const createOrder = async () => {
-        try {
-            if (session) {
-                if (confirm("Are you sure to order?")) {
-                    if (newOrder.address === 'No address') {
-                        await router.push(`/profile/${user._id}`)
-                        Error('Define User address.'); //throw new
-
-                    }
-                    const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, newOrder);
-                    if (res.status === 201) {
-                        dispatch(cartActions.reset())
-                        toast.success("Order created successfully", {autoClose: 1000});
-                        await router.push(`/order/${res.data._id}`);
-
-                    }
-                }
-            } else {
-                Error('Please login first'); // throw new
-
+        if (cart.total < 1000) {
+            if (cargoPrice === 0) {
+                const cargoPrice2 = 19;
+                setCargoPrice(cargoPrice2);
+                dispatch(cartActions.addCargoPrice(cargoPrice2));
             }
-        } catch (err) {
-            toast.error(`${err.message}`, {autoClose: 1000})
-            setTimeout(() => {
-                router.push("/auth/login");
-            }, 700);
-            console.log(err);
+        } else {
+            if (cargoPrice !== 0) {
+                dispatch(cartActions.removeCargoPrice(cargoPrice));
+                setCargoPrice(0);
+            }
         }
-    }
+
+    }, [cart.total, menuItemClickForCart, isUpdateClick, deleteProduct]);
+
 
     const increaseItemHandler = (item) => {
+        setIsUpdateClick(!isUpdateClick)
+        setUpdateProduct({
+            data: {
+                _id: item._id,
+                productTotal: item.productTotal + 1
+            }
+        });
         dispatch(cartActions.increaseProduct(item));
 
     }
     const decreaseItemHandler = (item) => {
+        setIsUpdateClick(!isUpdateClick)
+        setUpdateProduct({
+            data: {
+                _id: item._id,
+                productTotal: item.productTotal - 1
+            }
+        });
         dispatch(cartActions.decreaseProduct(item));
-        if(cart.totalQuantity=== 1 ){
+        if (cart.totalQuantity === 1) {
             dispatch(cartActions.removeCouponId(cart.couponCart.couponAmount));
             dispatch(cartActions.resetOther());
             setShowCouponCode(false)
@@ -131,9 +88,9 @@ const Cart = ({userList, productList}) => {
     }
     const removeItemHandler = (item) => {
         setIsHandleClick(true)
-        setProduct(item);
+        setDeleteProduct(item);
         dispatch(cartActions.removeProduct(item));
-        if(cart.totalQuantity=== 1 ){
+        if (cart.totalQuantity === 1) {
             dispatch(cartActions.removeCouponId(cart.couponCart.couponAmount));
             dispatch(cartActions.resetOther());
             setShowCouponCode(false);
@@ -152,7 +109,6 @@ const Cart = ({userList, productList}) => {
         Router.push({
             pathname: "/product/" + product._id.toString(), query: {name},
         })
-
     }
     const ApplyCouponCode = async () => {
 
@@ -161,27 +117,28 @@ const Cart = ({userList, productList}) => {
 
                 const searchCoupon = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/couponCode/search-coupon-code`,
                     {couponCode: textCouponCode})
-                console.log("carts",cart)
+                console.log("carts", cart)
 
                 if (searchCoupon?.data?.success) {
                     if (couponCodePrice === 0) {
-                      if(searchCoupon.data?.productId){
-                          const findProduct = cart.products.find(item=>item._id === searchCoupon.data.productId._id);
-                          dispatch(cartActions.setCouponId({
-                              couponAmount: findProduct.price,
-                              couponId: searchCoupon.data?.couponId,
-                              couponText:searchCoupon.data?.code
-                          }))
-                      }else{
-                          dispatch(cartActions.setCouponId({
-                              couponAmount: searchCoupon.data?.discountAmount,
-                              couponId: searchCoupon.data?.couponId,
-                              couponText:searchCoupon.data?.code
-                          }))
-                      }
+                        if (searchCoupon.data?.productId) {
+                            const findProduct = cart.products.find(item => item._id === searchCoupon.data.productId._id);
+                            dispatch(cartActions.setCouponId({
+                                couponAmount: findProduct.price,
+                                couponId: searchCoupon.data?.couponId,
+                                couponText: searchCoupon.data?.code
+                            }))
+                        } else {
+                            dispatch(cartActions.setCouponId({
+                                couponAmount: searchCoupon.data?.discountAmount,
+                                couponId: searchCoupon.data?.couponId,
+                                couponText: searchCoupon.data?.code
+                            }))
+                        }
 
                     }
                     setCouponCodePrice(searchCoupon.data.discountAmount)
+                    setCouponCodeId(searchCoupon.data.couponId)
                     setIsCouponCode(true)
                 } else {
                     if (couponCodePrice !== 0) {
@@ -197,35 +154,63 @@ const Cart = ({userList, productList}) => {
                 dispatch(cartActions.removeCouponId(couponCodePrice));
                 setCouponCodePrice(0)
             }
+            toast.error(err.response.data.message)
             setIsCouponCode(false)
             console.log(err);
         }
     }
     const routeCheckoutPage = async () => {
         if (session?.user) {
-            await router.push('/checkout/opc');
+            try {
+                //Update Kargo Price FOR DB
+
+                let queryParams = "";
+                const couponPriceQuery = `${couponCodePrice !== 0 && `couponPrice=${couponCodePrice}&couponId=${couponCodeId}`}`;
+                const cargoPriceQuery = `${cargoPrice !== 0 && `kargoPrice=${cargoPrice}`}`
+                if (cargoPrice !== 0 && couponCodePrice === 0) {
+                    queryParams = `userId=${session?.user?.id}?${cargoPriceQuery}`;
+                } else if (couponCodePrice !== 0 && cargoPrice === 0) {
+                    queryParams = `userId=${session?.user?.id}?${couponPriceQuery}`;
+                } else if (couponCodePrice !== 0 && cargoPrice !== 0) {
+                    queryParams = `userId=${session?.user?.id}?${cargoPriceQuery}&${couponPriceQuery}`;
+                } else {
+                    queryParams = `userId=${session?.user?.id}?delete-cargo-couponPrice`
+                }
+                const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
+                console.log("url", url)
+                if (session?.user) {
+                    await axios.patch(url);
+                }
+
+                await router.push('/checkout/opc');
+            } catch (err) {
+                console.log(err);
+            }
         } else {
             await router.push('/auth/login');
             toast.warn("Please login first")
         }
     }
-
+    //DELETE PRODUCT FOR DB
     useEffect(() => {
         const DBtoReduxCart = async () => {
             setTimeout(async () => {
-                if (isHandleClick && product) {
+                if (isHandleClick && deleteProduct) {
                     setIsHandleClick(false);
                     try {
-
+                        setIsLoading(true);
                         const queryParams = `userId=${session?.user?.id}`;
                         const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
                         if (session?.user) {
 
-                            await axios.delete(url, {data: {sku: product.sku}});
-
+                           const res =  await axios.delete(url, {data: {sku: deleteProduct.sku}});
+                            if(res.status===200){
+                                setIsLoading(false);
+                            }
                         }
 
                     } catch (err) {
+                        setIsLoading(false);
                         console.log(err.message)
                     }
                 }
@@ -233,7 +218,40 @@ const Cart = ({userList, productList}) => {
         };
 
         DBtoReduxCart();
-    }, [isHandleClick, product, session?.user])
+    }, [isHandleClick, deleteProduct, session?.user])
+
+    //UPDATE PRODUCT FOR DB
+    useEffect(() => {
+
+        const DBtoReduxCart = async () => {
+
+            setTimeout(async () => {
+                if (updateProduct) {
+                        setIsLoading(true);
+                    try {
+                        console.log(updateProduct)
+                        const queryParams = `userId=${session?.user?.id}?updateProductTotal=${updateProduct.data.productTotal}&productId=${updateProduct.data._id}`;
+                        const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
+                        if (session?.user) {
+                           const res = await axios.patch(url);
+                           if (res.status===200){
+                               setIsLoading(false);
+                           }
+
+                        }
+
+                    } catch (err) {
+                        setIsLoading(false);
+                        console.log(err.message)
+                    }
+                }
+            }, 5);
+        };
+
+        DBtoReduxCart();
+    }, [isUpdateClick, updateProduct, session?.user])
+
+
     const noProductInBasket = async () => {
         await router.push("/menu");
     }
@@ -448,6 +466,7 @@ const Cart = ({userList, productList}) => {
                                 </div>
                                 <button className="w-full p-2 bg-primary text-tertiary rounded-lg mt-2 "
                                         onClick={() => routeCheckoutPage()}
+                                        disabled={isLoading}
                                 >Siparişi Tamamla
                                 </button>
                             </div>
@@ -501,6 +520,7 @@ const Cart = ({userList, productList}) => {
                                 </>}
                                 <button
                                     className="w-full p-2 bg-tertiary text-secondary z-[20000]  mt-3 uppercase text-sm font-semibold"
+                                    disabled={isLoading}
                                     onClick={() => routeCheckoutPage()}
                                 >
                                     Sepeti onayla
@@ -522,7 +542,8 @@ const Cart = ({userList, productList}) => {
                 </div>)}
 
         </div>
-        <CartMenuItem productList={productList}/>
+        <CartMenuItem menuItemClickForCart={menuItemClickForCart} setMenuItemClickForCart={setMenuItemClickForCart}
+                      productList={productList}/>
     </div>
 
 }
