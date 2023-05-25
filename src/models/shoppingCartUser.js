@@ -41,7 +41,17 @@ const ShoppingCartUserSchema = new mongoose.Schema({
     },
     shoppingCartId:{
         type:String,
+    },
+    couponId:{
+      type:String
+    },
+    couponPrice:{
+        type:String
+    },
+    cargoPrice:{
+        type:String
     }
+
 
 }, {
     timestamps: true
