@@ -122,7 +122,7 @@ const CheckoutLastStep = ({
                                         className="font-semibold font-workSans text-base md:text-[1.2rem] text-primary">
                                                 {new Intl.NumberFormat('tr-TR', {
                                                     style: 'currency', currency: 'TRY', minimumFractionDigits: 2
-                                                }).format((product.price * product.productTotal))}₺
+                                                }).format((product.price * product.productTotal))}
                                         </span>
                                 </div>
                             </div>

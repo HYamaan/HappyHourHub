@@ -6,7 +6,7 @@ import axios from "axios";
 import {useSession} from "next-auth/react";
 import {useSelector} from "react-redux";
 
-const CartMenuItem = ({productList}) => {
+const CartMenuItem = ({productList,setMenuItemClickForCart,menuItemClickForCart}) => {
     const {data: session} = useSession();
     const [likes, setLikes] = useState([]);
     const cart = useSelector(state => state.cart);
@@ -51,7 +51,6 @@ const CartMenuItem = ({productList}) => {
         const getProducts = async () => {
             try {
                 if (mostRepeatedCategory) {
-                    console.log(mostRepeatedCategory)
                     const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products?limit=10&mostRepeatedCategory=${mostRepeatedCategory}`)
 
                     setMostRepeatProducts(res.data);
@@ -104,6 +103,9 @@ const CartMenuItem = ({productList}) => {
                 return <div key={product._id} className="px-5 pb-4 z-0">
                     <MenuItem
                         {...product}
+                        menuItemClickForCart={menuItemClickForCart}
+                        setMenuItemClickForCart={setMenuItemClickForCart}
+                        likes={likes}
                         setLikes={setLikes}
                         likeProd={likes}/>
                 </div>

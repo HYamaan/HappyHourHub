@@ -57,7 +57,7 @@ const Addresses = ({ user }) => {
     return<>
         {
             !addNewAddress && (
-                <div className="w-full ml-5 mt-1  font-workSans">
+                <div className="w-full lg:ml-5 mt-1  font-workSans">
                     <Title className="text-[40px] mt-4 border-b-2 w-full">Addresses</Title>
                     {userAddresses.length >0 ? (
                         userAddresses.map((address,index)=>(

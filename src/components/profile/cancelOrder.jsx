@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 import Title from "../UI/Title";
 
@@ -7,16 +7,32 @@ import axios from "axios";
 import {toast} from "react-toastify";
 
 
-const CancelOrder=({setCancelOrder,user,order})=>{
+const CancelOrder=({setCancelOrder,order})=>{
 
     const [isLoading,setIsLoading]=useState(false);
     const [desc, setDescription] = useState("");
     const [reasonText,setReasonText]=useState("");
+    const [userIp,setUserIp]=useState("");
     const reasonEnum = ["double_payment", "buyer_request", "fraud", "other"];
+
+    useEffect(()=>{
+            const getUser = async ()=>{
+                try {
+                    const user = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users?basketId=${order.email}`)
+                    console.log("user",user.data)
+                    if(user.status === 200){
+                        setUserIp(user.data[0].ip)
+                    }
+                }catch (err){
+                    console.log(err);
+                }
+            }
+        getUser();
+    },[order])
     const handleCrate= async ()=>{
         try {
             const cancel= await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/payment/cancel?paymentSuccessId=${order.paymentSuccessId}`,{
-                userIp:user.ip,
+                userIp:userIp,
                 orderId:order._id,
                 conversationId:order.conversationId,
                 reason:reasonText,
