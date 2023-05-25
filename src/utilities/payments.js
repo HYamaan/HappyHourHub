@@ -1,4 +1,5 @@
 import Order from "../models/Order";
+import Product from "../models/Product";
 
 import PaymentFail from "../models/payment-fail";
 import {nanoid} from "nanoid";
@@ -46,11 +47,26 @@ const CompletePayment = async (result,shoppingBasketId) => {
                 { completed: true, status: 0, paymentSuccessId: payment._id },
                 { new: true }
             );
+
+            const updateProductPromises = updatedOrder.productOrder.map(async (item) => {
+                const productId = item.product._id;
+                const update = {
+                    $inc: { stock: -1, totalSell: 1 }
+                };
+                return Product.findByIdAndUpdate(productId, update);
+            });
+
+            await Promise.all(updateProductPromises);
+
             const updatedDocument = await ShoppingCartUser.findOne({ shoppingCartId: shoppingBasketId});
             updatedDocument.shoppingCartId=undefined;
              updatedDocument.products=[];
-             await updatedDocument.save();
+            updatedDocument.couponPrice=undefined;
+            updatedDocument.couponId=undefined;
+            updatedDocument.cargoPrice=undefined;
 
+             await updatedDocument.save();
+            console.log("updatedOrder.couponId",updatedOrder.couponId)
              if(updatedOrder){
                  await CouponCode.findByIdAndDelete(updatedOrder.couponId)
              }
