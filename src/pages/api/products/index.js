@@ -10,11 +10,11 @@ const handler = async (req, res) => {
         try{
 
             let products;
-            if("limit" && "mostRepeatedCategory" in req.query){
+            if ("limit" in req.query && "mostRepeatedCategory" in req.query){
                 products = await Product.find({category:req.query.mostRepeatedCategory}).sort({ price: 1 }).limit(parseInt(req.query.limit)).exec();
             }
             else if ("limit" in req.query) {
-                products = await Product.find().sort({ price: 1 }).limit(parseInt(req.query.limit)).exec();
+                products = await Product.find().sort({ totalSell: 1 }).limit(parseInt(req.query.limit)).exec();
             }else {
                 products = await Product.find();
             }

@@ -52,7 +52,7 @@ const Order = () => {
     return <>
         <div className=" flex-1 lg:p-8 lg:mt-0 mt-5">
             <div className="flex justify-between mb-1">
-                <Title className="text-[40px]">Order Page</Title>
+                    <Title className="text-[40px]">Order Page</Title>
                 {
                    !customerProduct &&
                     <div className="flex items-center justify-center">
