@@ -11,34 +11,32 @@ import shortid from "shortid";
 import {useSession} from "next-auth/react";
 
 
-
 const Id = ({food}) => {
-    const {data:session}=useSession();
+    const {data: session} = useSession();
     const dispatch = useDispatch();
-    const router =useRouter();
+    const router = useRouter();
     const sku = shortid.generate();
-    const cartIndex = useSelector((state)=>state.cartIndex);
-    const productExtrass = useSelector((state)=>state.productExtras);
+    const cartIndex = useSelector((state) => state.cartIndex);
+    const productExtrass = useSelector((state) => state.productExtras);
     const [prices, setPrices] = useState(food.prices);
-    const [price, setPrice] = useState(food.prices[0]);
+    const [price, setPrice] = useState(food?.prices[0]);
     const [size, setSize] = useState(0);
     const [extras, setExtras] = useState([]);
     const {name} = router.query;
-    const [productExtrasID,setProductExtrasID]=useState([]);
-    const [isHandleClick,setIsHandleClick]=useState(false);
+    const [productExtrasID, setProductExtrasID] = useState([]);
+    const [isHandleClick, setIsHandleClick] = useState(false);
 
     const cart = useSelector((state) => state.cart);
-    useEffect(()=>{
-        if (name){
-            productExtrass.productExtras?.extras?.map((item)=>{
-                const variable = food.extraOptions.some((arr)=>arr._id.includes(item._id));
-                if(variable){
+    useEffect(() => {
+        if (name) {
+            productExtrass.productExtras?.extras?.map((item) => {
+                const variable = food.extraOptions.some((arr) => arr._id.includes(item._id));
+                if (variable) {
                     autoCheckboxClick(item);
                 }
             })
         }
-    },[]);
-
+    }, []);
 
 
     const handleSize = (sizeIndex) => {
@@ -53,9 +51,9 @@ const Id = ({food}) => {
         setPrice((price) => number + price);
 
     }
-    const autoCheckboxClick=(item)=>{
-        setProductExtrasID((prev)=>[...prev,item._id]);
-        setExtras((prev)=>[...prev,item]);
+    const autoCheckboxClick = (item) => {
+        setProductExtrasID((prev) => [...prev, item._id]);
+        setExtras((prev) => [...prev, item]);
         changePrice(item.price);
 
     }
@@ -63,8 +61,7 @@ const Id = ({food}) => {
     const handleChange = (e, item) => {
 
 
-
-        const checked= productExtrasID?.includes(item._id) ? false : e.target.checked;
+        const checked = productExtrasID?.includes(item._id) ? false : e.target.checked;
 
         if (checked) {
             autoCheckboxClick(item);
@@ -78,45 +75,55 @@ const Id = ({food}) => {
 
     }
 
-    const handleClick=()=>{
-        console.log("food",cartIndex.addToIndex);
+    const handleClick =  () => {
         setIsHandleClick(true)
         const sortedExtras = extras.slice().sort((a, b) => a.text.localeCompare(b.text));
-        console.log("sortedExtras",sortedExtras)
-        dispatch(cartActions.addProduct({...food,extras:sortedExtras,price,productTotal:1,addIndex:cartIndex.addToIndex,sku,status:0}));
+        dispatch(cartActions.addProduct({
+            ...food,
+            extras: sortedExtras,
+            price,
+            productTotal: 1,
+            addIndex: cartIndex.addToIndex,
+            sku,
+            status: 0
+        }));
         dispatch(cartIndexActions.addToCartIndex());
         setProductExtrasID([]);
         setExtras([]);
         setPrice(food.prices[0]);
-        setIsHandleClick(false);
         setSize(0);
-        setPrices(food.prices)
+        setPrices(food.prices);
+
     }
 
-    useEffect(()=>{
-        const DBtoReduxCart=async ()=>{
-             setTimeout(async ()=>{
-                if(isHandleClick){
+    useEffect(() => {
+
+        if (session?.user.id) {
+
+            const DBtoReduxCart = async () => {
+                console.log(isHandleClick)
+                if(isHandleClick){ //kullanmazsak Db ye iki defa istek atıyor
                     setIsHandleClick(false);
                     try {
-
-                        const addProductToDB=  cart.products[cart.products.length-1]
-
-                        const queryParams = `userId=${session?.user?.id}`;
+                        const addProductToDB = cart.products[cart.products.length - 1]
+                        console.log("addProduct", addProductToDB)
+                        const queryParams = `userId=${session?.user?.id}?add-product`;
                         const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
                         if (session?.user) {
-                            await axios.patch(url,addProductToDB);
+                            await axios.patch(url, addProductToDB);
                         }
 
-                    }catch (err){
+                    } catch (err) {
                         console.log(err.message)
                     }
-                }},5);
-        };
+                }
 
-        DBtoReduxCart();
-    },[isHandleClick,session?.user?.id,cart.products])
+            };
 
+            DBtoReduxCart();
+        }
+
+    }, [isHandleClick, session?.user?.id, cart.products])
 
 
     return <React.Fragment>
@@ -134,7 +141,7 @@ const Id = ({food}) => {
                 <p className="text-sm lg:my-4 lg:pr-24 py-4 lg:mx-0 mx-[1rem]">
                     {food.desc}
                 </p>
-                {food.prices.length > 1  && <div>
+                {food.prices.length > 1 && <div>
                     <h4 className="font-bold text-xl mb-2">Choose the Size</h4>
                     <div className="flex items-center gap-x-20
                                 lg:justify-start justify-center">
@@ -162,14 +169,14 @@ const Id = ({food}) => {
                     </div>
                 </div>}
                 <div className="flex gap-x-4 my-6 lg:justify-start justify-center">
-                    {food.extraOptions.map((item)=>
+                    {food.extraOptions.map((item) =>
                         <label className="flex items-center gap-x-2" key={item._id}>
-                            { (
+                            {(
                                 <input type="checkbox" className="w-5 h-5 accent-primary m "
-                                    checked={productExtrasID?.includes(item._id) ? true : false }
-                                    onChange={(e) => {
-                                        handleChange(e, item);
-                                    }}/>
+                                       checked={productExtrasID?.includes(item._id) ? true : false}
+                                       onChange={(e) => {
+                                           handleChange(e, item);
+                                       }}/>
                             )
 
                             }
@@ -178,17 +185,17 @@ const Id = ({food}) => {
                     )}
 
                 </div>
-                <button className="btn-primary sm:mb-0 mb-4" onClick={()=>handleClick()}>Add to Cart</button>
+                <button className="btn-primary sm:mb-0 mb-4" onClick={() => handleClick()}>Add to Cart</button>
             </div>
         </div>
     </React.Fragment>
 }
-export const getServerSideProps = async ({params})=>{
+export const getServerSideProps = async ({params}) => {
 
     const product = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/${params.id}`)
-    return{
-        props:{
-            food: product.data ? product.data :[],
+    return {
+        props: {
+            food: product.data ? product.data : [],
         }
     }
 }
