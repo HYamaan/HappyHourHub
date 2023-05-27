@@ -23,7 +23,16 @@ const handler = async (req, res) => {
     }
     if (method === "PUT") {
         try {
-            const ordersUpdate = await Orders.findByIdAndUpdate(id,req.body,{new:true});
+
+            const ordersUpdate = await Orders.findByIdAndUpdate(id,
+                {
+                    $set:{
+                        status:req.body.status,
+                        "productOrder.$[].status": req.body.status
+                    },
+                }
+                ,{new:true});
+
             res.status(200).json(ordersUpdate);
         } catch (err) {
             console.log(err);

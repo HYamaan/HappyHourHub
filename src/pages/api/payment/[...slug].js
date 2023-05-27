@@ -573,6 +573,7 @@ const getSaveCard = async (dataInfo, res, iyzipay) => {
 }
 
 const getData = (req, ip) => {
+
     let data = {
         locale: "tr",
         conversationId: req.body.shoppingCartId,
@@ -622,7 +623,7 @@ const getData = (req, ip) => {
                 category1: item.product.category,
                 category2: item.product.category,
                 itemType: Iyzipay.BASKET_ITEM_TYPE.PHYSICAL,
-                price: item.price
+                price: item.price * item.productTotal
             }]
         }).flat() || [],
     };

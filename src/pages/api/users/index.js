@@ -7,8 +7,13 @@ const handler = async (req, res) => {
 
     if (method === "GET") {
     try{
-        const users = await User.find();
-        res.status(200).json(users);
+      if(req.query === "basketId"){
+          const user = await User.find();
+          res.status(200).json(user);
+      }else{
+          const users = await User.find();
+          res.status(200).json(users);
+      }
     }catch (err){
 
         console.log(err);

@@ -3,7 +3,7 @@ import Product from "./../../../models/Product";
 import UserFavoritesList from "../../../models/userFavoritesList";
 import ShoppingCartUser from "../../../models/shoppingCartUser";
 
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 
 const handler = async (req, res) => {
     const {method} = req;
@@ -111,7 +111,6 @@ const handler = async (req, res) => {
                             model: "User"
                         })
                         .select("+products")
-
                     res.status(200).json(userShoppingCart);
                 }
             } catch (err) {
@@ -131,15 +130,15 @@ const handler = async (req, res) => {
                 }
 
 
-                if(!userShoppingCart.shoppingCartId){
-                    userShoppingCart.shoppingCartId=uuidv4();
+                if (!userShoppingCart.shoppingCartId) {
+                    userShoppingCart.shoppingCartId = uuidv4();
                 }
 
 
-                req.body.products.map( async (item)=>{
+                req.body.products.map(async (item) => {
                     const isThereAny = userShoppingCart.products.some(prod => {
 
-                        return  prod.sku === req.body.sku
+                        return prod.sku === req.body.sku
                     })
 
                     if (!isThereAny) {
@@ -152,10 +151,10 @@ const handler = async (req, res) => {
                             productTotal: item.productTotal,
                             status: item.status
                         })
-                    }else {
+                    } else {
 
                         await ShoppingCartUser.findByIdAndUpdate(userShoppingCart._id, {
-                            $pull: { 'products': { '_id': item._id } }
+                            $pull: {'products': {'_id': item._id}}
                         });
                     }
 
@@ -168,26 +167,92 @@ const handler = async (req, res) => {
                 return res.status(500).json({message: "Internal Server Error"});
             }
         }
-        if(method === "PATCH"){
-            try {
-                if (!userId) {
-                    res.status(400).json({success: false, message: 'Kullancı bulunamadı.'})
+        if (method === "PATCH") {
+
+            if (req.query?.updateProductTotal) {
+
+                try {
+                    if (!userId) {
+                        res.status(400).json({success: false, message: 'Kullancı bulunamadı.'})
+                    }
+                    let userShoppingCart = await ShoppingCartUser.findOne({userId});
+                    const productToUpdate = userShoppingCart.products.find(product => product._id.toString() === req.query.productId);
+                    if (!productToUpdate) {
+                        return res.status(404).json({success: false, message: 'Ürün bulunamadı.'});
+                    }
+                    productToUpdate.productTotal = req.query.updateProductTotal;
+                    await userShoppingCart.save();
+                    return res.status(200).json({success: true});
+                } catch (err) {
+                    console.log(err);
+                    return res.status(500).json({success: false, message: 'İç server hatası.'});
                 }
-                let userShoppingCart = await ShoppingCartUser.findOne({userId});
+            }
+            else if (req.query?.kargoPrice || req.query?.couponPrice) {
+                try {
+                    if (!userId) {
+                        res.status(400).json({success: false, message: 'Kullancı bulunamadı.'})
+                    }
+                    let userShoppingCart = await ShoppingCartUser.findOne({userId});
+                    if(req.query?.kargoPrice && !req.query?.couponPrice){
+                        userShoppingCart.cargoPrice = req.query.kargoPrice;
+                        userShoppingCart.couponId = undefined;
+                        userShoppingCart.couponPrice=undefined;
+                    }
+                  else if(!req.query?.kargoPrice && req.query?.couponPrice){
+                        userShoppingCart.cargoPrice = undefined;
+                        userShoppingCart.couponPrice = req.query.couponPrice.toString()
+                        userShoppingCart.couponId = req.query.couponId.toString()
+                    }else{
+                        userShoppingCart.cargoPrice = req.query.kargoPrice;
+                        userShoppingCart.couponPrice = req.query.couponPrice.toString()
+                        userShoppingCart.couponId = req.query.couponId.toString()
+                    }
 
-                if (!userShoppingCart) {
-                    userShoppingCart = await new ShoppingCartUser({userId});
+                        await userShoppingCart.save();
+                    return res.status(200).json({success: true});
+                } catch (err) {
+                    console.log(err);
+                    return res.status(500).json({success: false, message: 'İç server hatası.'});
                 }
+            }
+            else if('delete-cargo-couponPrice' in req.query){
 
-
-                if(!userShoppingCart.shoppingCartId){
-                    userShoppingCart.shoppingCartId=uuidv4();
+                try {
+                    if (!userId) {
+                        res.status(400).json({success: false, message: 'Kullancı bulunamadı.'})
+                    }
+                    let userShoppingCart = await ShoppingCartUser.findOne({userId});
+                        userShoppingCart.cargoPrice = undefined;
+                        userShoppingCart.couponId = undefined;
+                        userShoppingCart.couponPrice=undefined;
+                    await userShoppingCart.save();
+                    return res.status(200).json({success: true});
+                } catch (err) {
+                    console.log(err);
+                    return res.status(500).json({success: false, message: 'İç server hatası.'});
                 }
+            }
+            else if ('add-product' in req.query) {
+                try {
+                    if (!userId) {
+                        res.status(400).json({success: false, message: 'Kullancı bulunamadı.'})
+                    }
+                    let userShoppingCart = await ShoppingCartUser.findOne({userId});
 
-                    const item=req.body
+                    if (!userShoppingCart) {
+                        userShoppingCart = await new ShoppingCartUser({userId});
+                    }
+
+
+                    if (!userShoppingCart.shoppingCartId) {
+                        userShoppingCart.shoppingCartId = uuidv4();
+                    }
+
+                    const item = req.body
 
                     const isThereAny = userShoppingCart.products.some(prod => {
-                        return  prod.sku === req.body.sku
+                        return prod.sku === req.body.sku
                     })
 
                     if (!isThereAny) {
@@ -199,44 +264,43 @@ const handler = async (req, res) => {
                             productTotal: item.productTotal,
                             status: item.status
                         })
-                    }else {
+                    } else {
 
                         await ShoppingCartUser.findByIdAndUpdate(userShoppingCart._id, {
-                            $pull: { 'products': { '_id': item._id } }
+                            $pull: {'products': {'_id': item._id}}
                         });
                     }
 
-
-
-                await userShoppingCart.save();
-                return res.status(201).json({message: "Product added to Redux list successfully"});
-            } catch (error) {
-                console.log(error);
-                return res.status(500).json({message: "Internal Server Error"});
+                    await userShoppingCart.save();
+                    return res.status(201).json({message: "Product added to Redux list successfully"});
+                } catch (error) {
+                    console.log(error);
+                    return res.status(500).json({message: "Internal Server Error"});
+                }
             }
         }
         if (method === "DELETE") {
             try {
                 if (!userId) {
-                    return res.status(400).json({ success: false, message: 'Kullanıcı bulunamadı.' });
+                    return res.status(400).json({success: false, message: 'Kullanıcı bulunamadı.'});
                 }
 
                 const sku = req.body.sku;
 
                 const result = await ShoppingCartUser.findOneAndUpdate(
-                    { userId },
-                    { $pull: { products: { sku } } },
-                    { new: true }
+                    {userId},
+                    {$pull: {products: {sku}}},
+                    {new: true}
                 );
 
                 if (!result) {
-                    return res.status(400).json({ message: "Kullanıcı sepeti bulunamadı" });
+                    return res.status(400).json({message: "Kullanıcı sepeti bulunamadı"});
                 }
 
-                return res.status(200).json({ message: "Ürün başarıyla silindi" });
+                return res.status(200).json({message: "Ürün başarıyla silindi"});
             } catch (error) {
                 console.log(error);
-                return res.status(500).json({ message: "Internal Server Error" });
+                return res.status(500).json({message: "Internal Server Error"});
             }
         }
 
