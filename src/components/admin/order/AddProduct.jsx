@@ -1,17 +1,19 @@
 import Image from "next/image";
 import React, {useEffect, useState} from "react";
 import OutsideClickHandler from "react-outside-click-handler";
-import Title from "../UI/Title";
+import Title from "../../UI/Title";
 import {GiCancel} from "react-icons/gi";
 import axios from "axios";
 import {toast} from "react-toastify";
 import PacmanLoader from "react-spinners/PacmanLoader";
 
-const AddProduct = ({setIsProductModal}) => {
+const AddProduct = (props) => {
+    const {setIsProductModal,...prop}=props
     const [file, setFile] = useState();
     const [imageSrc, setImageSrc] = useState();
 
     const [title, setTitle] = useState("");
+    const [productType, setProductType] = useState("");
     const [desc, setDesc] = useState("");
     const [descForMenu, setDescForMenu] = useState("");
     const [category, setCategory] = useState("");
@@ -55,7 +57,7 @@ const AddProduct = ({setIsProductModal}) => {
             setImageSrc(onLoadEvent.target.result);
             setFile(changeEvent.target.files[0]);
         }
-        reader.readAsDataURL(changeEvent.target.files[0]);
+        reader?.readAsDataURL(changeEvent.target.files[0]);
     }
 
 
@@ -64,22 +66,24 @@ const AddProduct = ({setIsProductModal}) => {
     }
 
 
+
     const handleCrate = async () => {
 
-        const formData = new FormData();
+        let formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", "fast-food");
 
-
-        try {
+        if(formData){
+            try {
                 setLoading(true);
                 const uploadRes = await axios.post("https://api.cloudinary.com/v1_1/dqotmpx6v/image/upload", formData);
-              setLoading(false);
+                setLoading(false);
                 const {url} = uploadRes.data;
 
                 const newProduct = {
                     image: url,
                     title,
+                    productType,
                     desc,
                     descForMenu,
                     category: category.toLowerCase(),
@@ -89,20 +93,37 @@ const AddProduct = ({setIsProductModal}) => {
                     extraOptions,
                 };
 
-            setLoading(true);
+                setLoading(true);
                 const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/products`, newProduct);
-            setLoading(false);
+                setLoading(false);
                 if (res.status === 200) {
-
                     setIsProductModal(false);
+                    setExtra("")
+                    setExtraOptions([])
+                    setCategories("")
+                    setTotalQuantity(0)
+                    setKDV("")
+                    setPrices([])
+                    setCategory("")
+                    setDescForMenu("")
+                    setDesc("")
+                    setTitle("");
+                    setProductType("")
+
                     toast.success("Product created successfully");
+
                 }else{
+                    setLoading(false);
+                    setIsProductModal(false);
                     throw new Error();
                 }
 
-        } catch (err) {
-            toast.error("Failed to load for unknown reason!!")
-            console.log(err);
+            } catch (err) {
+                setIsProductModal(false);
+                setLoading(false);
+                toast.error("Failed to load for unknown reason!!")
+                console.log(err);
+            }
         }
     }
 
@@ -116,7 +137,7 @@ const AddProduct = ({setIsProductModal}) => {
 
 
         return (<div
-            className="fixed top-0 left-0 w-screen h-screen
+            className="fixed lg:top-15 left-0 w-screen h-screen
             after:w-screen after:h-screen after:bg-white after:absolute after:top-0
             after:left-0 after:opacity-60 grid place-content-center">
             {!isloading ?
@@ -144,12 +165,21 @@ const AddProduct = ({setIsProductModal}) => {
                                 />
                             </div>
                             <div className="flex flex-col text-sm mt-4">
+                                <span className="font-semibold mb-[2px]">Product Type</span>
+                                <input
+                                    type="text"
+                                    className="border-2 p-1 text-sm px-1 outline-none"
+                                    placeholder="Write a Product Type..."
+                                    onChange={(e) => setProductType(e.target.value)}
+                                />
+                            </div>
+                            <div className="flex flex-col text-sm mt-4">
                                 <span className="font-semibold mb-[2px]">Description For Menu</span>
                                 <textarea
                                     className="border-2 p-1 text-sm px-1 outline-none"
                                     placeholder="Write a description Menu..."
                                     onChange={(e) => setDescForMenu(e.target.value)}
-                                    maxLength={100}
+                                    maxLength={140}
                                 />
                             </div>
 
@@ -173,7 +203,6 @@ const AddProduct = ({setIsProductModal}) => {
                                     {categories.length>0 && categories.map((categoryItem)=>(
                                         <option value={categoryItem.title} key={categoryItem._id}>{categoryItem.title}</option>
                                     ))}
-
                                 </select>
                             </div>
 

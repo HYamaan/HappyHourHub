@@ -3,11 +3,7 @@ import dataMonth from "../../libs/countryData/month.json"
 import dataYear from "../../libs/countryData/year.json"
 
 import axios from "axios";
-import {useDispatch, useSelector} from "react-redux";
-import {cartActions} from "../../redux/cartSlice";
-import {useSession} from "next-auth/react";
-import {ShoppingOrderActions} from "../../redux/shoppingOrder";
-import {cartIndexActions} from "../../redux/cartIndex";
+
 import {AiFillCheckCircle, AiOutlineCheckCircle} from "react-icons/ai";
 import {RxCircle} from "react-icons/rx";
 import Image from "next/image";
@@ -23,6 +19,7 @@ const CheckOutInformation = ({
                                  isLoading,
                                  setIsLoading,
                                  setCheckOutPaymentInformation,
+                                 setCompletePaymentInformation,
                                  setCheckOutLastStepInformation,
                                  setCardPaymentInformation,
                                  isCardInValid
@@ -56,6 +53,7 @@ const CheckOutInformation = ({
 
 
     useEffect(() => {
+        setCompletePaymentInformation(false);
         setMonth([]);
         setYear([]);
         const getMonth = async () => {
@@ -125,7 +123,8 @@ const CheckOutInformation = ({
             }));
         }
 
-        setCheckOutPaymentInformation(false)
+        setCheckOutPaymentInformation(false);
+        setCompletePaymentInformation(true);
         setCheckOutLastStepInformation(true);
         setCompleteCheckout(true)
         setIsLoading(false);

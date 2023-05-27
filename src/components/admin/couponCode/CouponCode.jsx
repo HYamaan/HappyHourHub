@@ -56,7 +56,7 @@ const CouponCode = () => {
         }
         getCouponsCode();
     }, [showCreateCouponCode])
-    console.log("coupon", couponsWithProduct)
+
     return <>
         <div className="lg:min-w-[1000px] leading-6 tracking-wide ">
 

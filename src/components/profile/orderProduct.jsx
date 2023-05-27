@@ -20,7 +20,7 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
         return totalKdv + kdv;
     }, 0);
     const CargoPrice = order.cargoPrice;
-    const price = order.price;
+    const price = order.paidPrice;
     const MainPrice = parseFloat(order.paidPrice) + KDV;
 
 
@@ -90,11 +90,9 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
                     <p className="basis-[23.45%]">{moment(order.createdAt).locale('tr').format('YYYY-MM-DD dddd')}</p>
                     <p className="basis-[21.45%]">{statusInformation[order.status]}</p>
                     <p className="basis-[21.45%]">{paymentInformation[String(order.completed)]}</p>
-                    <p className="basis-[13.71%]">{`${new Intl.NumberFormat('tr-TR', {
-                        style: 'currency',
-                        currency: order.currency,
-                        minimumFractionDigits: 2
-                    }).format((order.price))} `}</p>
+                    <p className="basis-[13.71%]"> {new Intl.NumberFormat('tr-TR', {
+                        style: 'currency', currency: 'TRY', minimumFractionDigits: 2
+                    }).format((MainPrice))}</p>
 
                 </div>
                 {order.status !== "-9" && (
@@ -124,11 +122,9 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
                                <p className="">{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</p>
                                <p className="">{statusInformation[order.status]}</p>
                                <p className="">{paymentInformation[String(order.completed)]}</p>
-                               <p className="">{`${new Intl.NumberFormat('tr-TR', {
-                                   style: 'currency',
-                                   currency: order.currency,
-                                   minimumFractionDigits: 2
-                               }).format((order.price))} `}</p>
+                               <p className="">{new Intl.NumberFormat('tr-TR', {
+                                   style: 'currency', currency: 'TRY', minimumFractionDigits: 2
+                               }).format((MainPrice))}</p>
                                <p>{cargoStatusInformation[order.status]}</p>
 
                            </div>
@@ -239,15 +235,21 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
                         <div className=" basis-1/2 font-semibold flex flex-col gap-5 ">
                             <p>Ara Toplam</p>
                             <p> Kargo Ücreti</p>
+
+                            {order?.couponCodePrice != 0 && (<p> Kupon Kodu</p>)}
                             <p> KDV</p>
                         </div>
                         <div className="lg:w-full basis-1/2 flex  items-center flex-col gap-5 font-light ml-5 ">
                             <p> {new Intl.NumberFormat('tr-TR', {
                                 style: 'currency', currency: 'TRY', minimumFractionDigits: 2
-                            }).format((price))}</p>
+                            }).format((order.price))}</p>
                             <p> {CargoPrice === 0 ? "Ücretsiz Kargo" : (<>{new Intl.NumberFormat('tr-TR', {
                                 style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                             }).format((CargoPrice))}</>)}</p>
+                            {order?.couponCodePrice != 0 && (
+                                <p> {new Intl.NumberFormat('tr-TR', {
+                                style: 'currency', currency: 'TRY', minimumFractionDigits: 2
+                            }).format((order.couponCodePrice) * -1)}</p>)}
                             <p> {new Intl.NumberFormat('tr-TR', {
                                 style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                             }).format((KDV))}</p>

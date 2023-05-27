@@ -9,9 +9,12 @@ import Footer from "../../components/admin/Footer";
 import axios from "axios";
 import {useRouter} from "next/router";
 import {toast} from "react-toastify";
-import AddProduct from "../../components/admin/AddProduct";
+import AddProduct from "../../components/admin/order/AddProduct";
 import UserComments from "../../components/admin/UserComments";
 import {RiCustomerService2Fill} from "react-icons/ri";
+import NewOrder from "../../components/admin/order/newOrder";
+import CouponCode from "../../components/admin/couponCode/CouponCode";
+import Products from "../../components/admin/product/products";
 
 
 
@@ -39,8 +42,8 @@ const Profile = () => {
     }
 
     return <React.Fragment>
-        <div className="flex md:flex-row flex-col px-10 gap-x-3 min-h-[calc(100vh_-_433px)] mb-20">
-            <div className="w-80 flex-shrink-0">
+        <div className="flex md:flex-row flex-col lg:px-10 lg:gap-x-3 min-h-[calc(100vh_-_433px)] mb-20 mx-auto w-full px-4">
+            <div className="lg:w-80  flex-shrink-0">
                 <div className="relative flex flex-col items-center px-10 py-5 border border-b-0">
                     <Image
                         src="/images/admin.png"
@@ -74,19 +77,25 @@ const Profile = () => {
                             <button className="ml-1">Categories</button>
                         </li>
                         <li className={`border w-full p-3 hover:bg-primary
-                            cursor-pointer hover:text-white transition-all ${tabs === 3 ?"bg-primary text-tertiary" : ""}`}
+                            cursor-pointer hover:text-white transition-all ${tabs === 3?"bg-primary text-tertiary" : ""}`}
                             onClick={()=>setTabs(3)}>
-                            <i className="fa fa-window-maximize"></i>
-                            <button className="ml-1">Footer</button>
+                            <i className="fa-solid fa-gift"></i>
+                            <button className="ml-1">Coupon Code</button>
                         </li>
                         <li className={`border w-full p-3 hover:bg-primary
                             cursor-pointer hover:text-white transition-all ${tabs === 4 ?"bg-primary text-tertiary" : ""}`}
                             onClick={()=>setTabs(4)}>
+                            <i className="fa fa-window-maximize"></i>
+                            <button className="ml-1">Footer</button>
+                        </li>
+                        <li className={`border w-full p-3 hover:bg-primary
+                            cursor-pointer hover:text-white transition-all ${tabs === 5 ?"bg-primary text-tertiary" : ""}`}
+                            onClick={()=>setTabs(5)}>
                             <i className="fa-solid fa-comment"></i>
                             <button className="ml-1">Customer Comment</button>
                         </li>
                         <li className={`border w-full p-3 hover:bg-primary flex justify-center
-                            cursor-pointer hover:text-white transition-all ${tabs === 5 ?"bg-primary text-tertiary" : ""}`}
+                            cursor-pointer hover:text-white transition-all ${tabs === 6 ?"bg-primary text-tertiary" : ""}`}
                             onClick={customerService}>
 
                             <button className="ml-1 flex items-center justify-center gap-2">
@@ -102,12 +111,12 @@ const Profile = () => {
                     </ul>
                 </div>
             </div>
-            {tabs === 0 && (<Product/>)}
-            {tabs === 1 && (<Order />)}
+            {tabs === 0 && (<Products/>)}
+            {tabs === 1 && (<NewOrder />)}
             {tabs===2 && (<Category/>)}
-            {tabs===3 && (<Footer/>)}
-            {tabs===4 && (<UserComments/>)}
-
+            {tabs===3 && (<CouponCode/>)}
+            {tabs===4 && (<Footer/>)}
+            {tabs===5 && (<UserComments/>)}
 
             {isProductModal && <AddProduct setIsProductModal={setIsProductModal}/>}
             <button className=" absolute btn-primary !w-12 !h-12 !p-0 bottom-14 right-14 text-4xl"

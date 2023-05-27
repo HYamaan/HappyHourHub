@@ -46,7 +46,7 @@ const Login = () => {
                 res.data.products.map((item, index) => {
                     const {product, ...rest} = item;
                     dispatch(cartIndexActions.addToCartIndex());
-                    dispatch(cartActions.addProduct({...product, ...rest, addIndex: index}))
+                    dispatch(cartActions.addProductbyDb({...product, ...rest, addIndex: index}))
                 })
 
             }

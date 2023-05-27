@@ -54,7 +54,7 @@ const MenuItem = (prop) => {
     }
     const [like, setUnLike] = useState(false);
     useEffect(()=>{
-        setUnLike(()=>likeProd.includes(props._id))
+        setUnLike(()=>likeProd?.includes(props._id))
     },[props._id])
     const addFavoriteList = async () => {
         dispatch(FavoriteProductsActions.addFavoriteProduct(props));
@@ -66,7 +66,7 @@ const MenuItem = (prop) => {
 
                 if (!like) {
                     setUnLike(true);
-                    setLikes((prev)=>[...prev,props._id])
+                setLikes((prev)=> (prev.length >0) ? [...prev,props._id] : [props._id])
                     await axios.post(url);
 
                 } else {
@@ -86,6 +86,7 @@ const MenuItem = (prop) => {
 
 const handleClick = async () => {
     setIsHandleClick(true);
+    props?.setMenuItemClickForCart && props.setMenuItemClickForCart(!props.menuItemClickForCart)
     dispatch(cartActions.addProduct({...createProduct}));
 
 }
@@ -97,7 +98,7 @@ const handleClick = async () => {
                 try {
 
                     const addProductToDB=  cart.products[cart.products.length-1]
-                    const queryParams = `userId=${session?.user?.id}`;
+                    const queryParams = `userId=${session?.user?.id}?add-product`;
                     const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
                     if (session?.user) {
                         await axios.patch(url,addProductToDB);
@@ -116,7 +117,7 @@ return <React.Fragment>
         <div className="w-full relative bg-tertiary h-[215px] grid place-content-center
                     rounded-bl-[46px] rounded-tl-2xl rounded-tr-2xl peer-hover:scale-120  ">
             <Link href={`/product/${props._id}`}>
-                <div className="relative w-36 h-36 sm:hover:scale-110 transition-all">
+                <div className="relative w-64 h-40 sm:hover:scale-110 transition-all">
                     <Image src={props.image} alt={props.image} fill style={{objectFit: "contain"}}
                            sizes="w-full h-full" priority={true}/>
                 </div>
@@ -128,9 +129,9 @@ return <React.Fragment>
             </div>
         </div>
         <div className=" text-[#ffff] p-[25px]">
-            <div className="text-left">
+            <div className="text-left h-28 w-full">
                 <h3 className="text-lg font-semibold">{props.title}</h3>
-                <div className="text-[15px] mt-2">
+                <div className="text-[15px] mt-2 ">
                     {props.descForMenu}
                 </div>
             </div>
