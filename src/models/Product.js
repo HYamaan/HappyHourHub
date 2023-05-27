@@ -4,12 +4,15 @@ const ProductSchema = new mongoose.Schema({
     image: {
         type: String, required: true,
     }, title: {
-        type: String, required: true, maxlength: 90,
-    }, desc: {
-        type: String, required: true, maxlength: 1000,
+        type: String, required: true, maxlength: 150,
+    },productType:{
+        type:String,required:true,maxlength:50
+    },
+    desc: {
+        type: String, required: true, maxlength: 1200,
     },
     descForMenu: {
-        type: String, required: true, maxlength: 100,
+        type: String, required: true, maxlength: 150,
     },
     category: {
         type: String, required: true,

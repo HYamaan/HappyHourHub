@@ -14,7 +14,7 @@ const cartSlice = createSlice({
     },
     reducers: {
         addProduct: (state, action) => {
-            console.log("state.mainTotal", state.mainTotal);
+
 
             const extras = action.payload.extras;
 
@@ -43,10 +43,20 @@ const cartSlice = createSlice({
             state.totalQuantity++;
             state.total += action.payload.price;
             state.mainTotal += action.payload.price;
-            console.log("STATE_TOTAL",state.total,"STATE_MAIN",state.mainTotal)
+
 
 
         },
+        addProductbyDb: (state, action) => {
+
+            state.products.push(action.payload);
+            state.totalQuantity += action.payload.productTotal;
+            state.total += action.payload.price * action.payload.productTotal;
+            state.mainTotal += action.payload.price  * action.payload.productTotal;
+
+
+        },
+
         increaseProduct: (state, action) => {
 
             // const itemIndex = state.products.findIndex((item)=>item._id === action.payload._id);
@@ -150,7 +160,6 @@ const cartSlice = createSlice({
 
             if (state.cargoPrice === 0) {
                 state.cargoPrice = action.payload;
-
                 state.mainTotal += Number(action.payload)
 
             }

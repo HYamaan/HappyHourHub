@@ -59,15 +59,17 @@ const NewOrder = ({user}) => {
                         <div className={`max-h-[30rem] overflow-y-auto no-scrollbar`}>
                             {userOrders.reverse().map((order)=>{
                                 return   <div key={order._id} className="flex flex-row  gap-2 py-4 text-payneGray border-b-[1.11px]">
-                                    <p className="basis-[15.09%] cursor-pointer hover:underline">HHP{order.conversationId.slice(0,6)}</p>
+                                    <p className="basis-[15.09%] cursor-pointer hover:underline"
+                                       onClick={()=>{  handleClickDetails(order)}}
+                                    >HHP{order.conversationId.slice(0,6)}</p>
                                     <p className="basis-[20.45%]">{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</p>
                                     <p className="basis-[18.45%]">{statusInformation[order.status]}</p>
                                     <p className="basis-[18.45%]">{paymentInformation[String(order.completed)]}</p>
                                     <p className="basis-[10.71%]">{`${new Intl.NumberFormat('tr-TR', {
                                         style: 'currency',
                                         currency: order.currency,
-                                        minimumFractionDigits: 2
-                                    }).format((order.price))} `}</p>
+                                        minimumFractionDigits: 2 
+                                    }).format((order.paidPrice))} `}</p>
                                     <p className="basis-[12.84%] flex items-center justify-center  border-[1.11px]
                     border-primary rounded-xl text-primary p-2.5 cursor-pointer"
                                        onClick={()=>{  handleClickDetails(order)}}
@@ -96,7 +98,7 @@ const NewOrder = ({user}) => {
                                         style: 'currency',
                                         currency: order.currency,
                                         minimumFractionDigits: 2
-                                    }).format((order.price))} `}</p>
+                                    }).format((order.paidPrice))} `}</p>
                                     <p className=" flex items-center justify-center  border-[1.11px] border-primary rounded-xl text-primary p-2.5 cursor-pointer"
                                        onClick={()=>{  handleClickDetails(order)}}
                                     >Detay</p>
