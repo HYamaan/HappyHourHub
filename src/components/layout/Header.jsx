@@ -19,7 +19,7 @@ const Header = () => {
   const [showBasket, setShowBasket] = useState(false);
 
   return (
-    <div className={`h-[5.5rem] z-[1000] relative 
+    <div className={`h-[5.5rem] z-30 relative 
     ${router.pathname === "/" ? "bg-transparent" : "bg-secondary"}`} >
       <div
         className="container mx-auto text-white flex justify-between

@@ -13,7 +13,7 @@ const handler = async (req, res) => {
         if (method === "GET") {
             try {
                 if (!userId) {
-                    const adminMainPageControlComments = await UserFavoritesList.find()
+                    const favoriteList = await UserFavoritesList.find()
                         .populate({
                             path: "products",
                             model: "Product"
@@ -21,10 +21,12 @@ const handler = async (req, res) => {
                             path: "userId",
                             model: "User"
                         });
-                    res.status(200).json(adminMainPageControlComments);
+                    const filteredProducts = favoriteList.products.filter(item => item.product );
+                    favoriteList.products =[...filteredProducts]
+                    res.status(200).json(favoriteList);
                 }
                 if (userId) {
-                    const adminMainPageControlComments = await UserFavoritesList.findOne({userId})
+                    const favoriteList = await UserFavoritesList.findOne({userId})
                         .populate({
                             path: "products",
                             model: "Product"
@@ -32,7 +34,9 @@ const handler = async (req, res) => {
                             path: "userId",
                             model: "User"
                         });
-                    res.status(200).json(adminMainPageControlComments);
+                    const filteredProducts = favoriteList.products.filter(item => item.product );
+                    favoriteList.products =[...filteredProducts]
+                    res.status(200).json(favoriteList);
                 }
             } catch (err) {
                 console.log(err);
@@ -98,6 +102,9 @@ const handler = async (req, res) => {
                             path: "userId",
                             model: "User"
                         });
+
+                    const filteredProducts = userShoppingCart.products.filter(item => item.product );
+                    userShoppingCart.products =[...filteredProducts]
                     res.status(200).json(userShoppingCart);
                 }
                 if (userId) {
@@ -110,7 +117,9 @@ const handler = async (req, res) => {
                             path: "userId",
                             model: "User"
                         })
-                        .select("+products")
+                        .select("+products");
+                    const filteredProducts = userShoppingCart.products.filter(item => item.product );
+                        userShoppingCart.products =[...filteredProducts]
                     res.status(200).json(userShoppingCart);
                 }
             } catch (err) {
@@ -141,7 +150,7 @@ const handler = async (req, res) => {
                         return prod.sku === req.body.sku
                     })
 
-                    if (!isThereAny) {
+                    if (!isThereAny && req.body.products.includes(req.body.products.hasOwnProperty("product"))) {
 
                         userShoppingCart.products.push({
                             product: item._id,
@@ -159,9 +168,14 @@ const handler = async (req, res) => {
                     }
 
                 })
+                const filteredProducts = userShoppingCart.includes(item => item.products );
+                if(filteredProducts){
+                    await userShoppingCart.save();
+                    return res.status(201).json({message: "Product added to Redux list successfully"});
+                }else{
+                    return res.status(500).json({message: "Internal Server Error"});
+                }
 
-                await userShoppingCart.save();
-                return res.status(201).json({message: "Product added to Redux list successfully"});
             } catch (error) {
                 console.log(error);
                 return res.status(500).json({message: "Internal Server Error"});

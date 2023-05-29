@@ -7,7 +7,7 @@ import axios from "axios";
 import {toast} from "react-toastify";
 
 
-const addOrderComment=({setIsProductModal,userId})=>{
+const AddOrderComment=({setIsProductModal,userEmail,setIsShowComments,orderId})=>{
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [isLoading,setIsLoading]=useState(false);
@@ -19,19 +19,20 @@ const addOrderComment=({setIsProductModal,userId})=>{
         try {
             setIsProductModal(false);
             const newComment={
-                userId:userId._id,
+                email:userEmail,
                 comment:comment,
             }
             setIsLoading(true);
             const res=await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/comments`,newComment);
             if(res.status===201){
+               const updateComment= await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}?comment=true`);
+                console.log("updateComment",updateComment)
                 setIsLoading(false);
+                setIsShowComments(false);
                 toast.success("Your comment has been posted."+"\n"+"Thank you.");
-            }else{
-                throw new Error();
             }
         }catch (err){
-            console.log(err);
+            toast.error("your comment could not be forwarded, try again");
         }
     }
 
@@ -80,4 +81,4 @@ const addOrderComment=({setIsProductModal,userId})=>{
         </div>);
 
 }
-export default addOrderComment;
+export default AddOrderComment;

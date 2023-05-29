@@ -3,9 +3,8 @@ import React, {useEffect, useState} from "react";
 import Image from "next/image";
 import Account from "../../components/profile/Account";
 import Password from "../../components/profile/Password";
-import Order from "../../components/profile/Order";
 import UploadImage from "../../components/profile/UploadImage";
-import {getSession, signOut, useSession} from "next-auth/react";
+import {getSession, signOut} from "next-auth/react";
 import {useRouter} from "next/router";
 import axios from "axios";
 import {toast} from "react-toastify";
@@ -22,7 +21,6 @@ import NewOrder from "../../components/profile/newOrder";
 
 const Profile = ({ user }) => {
     const dispatch =useDispatch();
-    const cart = useSelector(state => state.cart)
     const  [uploadImageShow,setUploadImageShow]=useState(false);
     const  [uploadImageArr,setUploadImageArr]=useState(user);
     const [tabs, setTabs] = useState(0);
@@ -42,6 +40,7 @@ const Profile = ({ user }) => {
         if (confirm("Are you sure you want to sign out?")) {
 
             dispatch(cartActions.reset());
+            dispatch(cartActions.resetOther());
             dispatch(cartIndexActions.reset());
             dispatch(ProductExtrasActions.reset());
             dispatch(userInfoActions.userInfoReset());

@@ -100,7 +100,7 @@ const CartMenuItem = ({productList,setMenuItemClickForCart,menuItemClickForCart}
     const SliderComponent=(itemList)=>{
         return   <Slider {...settings} >
             {itemList.map(product => {
-                return <div key={product._id} className="px-5 pb-4 z-0">
+                return <div key={product._id} className="px-5 pb-4 !z-0">
                     <MenuItem
                         {...product}
                         menuItemClickForCart={menuItemClickForCart}
@@ -113,7 +113,7 @@ const CartMenuItem = ({productList,setMenuItemClickForCart,menuItemClickForCart}
         </Slider>
     }
 
-    return <div className="w-full ">
+    return <div className={`w-full z-30`}>
         <div>
             <div className="w-full h-full  flex items-center justify-center text-2xl font-workSans mb-3 ">Sepete En Çok Eklenenler</div>
             {SliderComponent(productList)}

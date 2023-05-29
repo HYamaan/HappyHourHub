@@ -19,7 +19,14 @@ const handler = async (req, res) => {
     }
     if (method === "POST") {
         try{
-            const newUserComments = await UserComments.create(req.body);
+            const findUserId= await User.findOne({email:req.body.email})
+            if (!findUserId){
+                res.status(400).json({status:false,message:"user not found"})
+            }
+            const newUserComments = await UserComments.create({
+                userId:findUserId._id,
+                comment:req.body.comment
+            });
             res.status(201).json(newUserComments);
         }catch (err){
             console.log(err);

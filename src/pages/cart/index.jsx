@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Image from "next/image";
 import {useSelector, useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice";
@@ -14,7 +14,7 @@ import {BsShieldFillCheck} from "react-icons/bs";
 import {HiOutlineXMark} from "react-icons/hi2";
 import CartMenuItem from "../../components/cart/cartMenuItem";
 
-const Cart = ({userList, productList}) => {
+const Cart = ({ productList}) => {
 
     const {data: session} = useSession();
     const dispatch = useDispatch();
@@ -33,14 +33,14 @@ const Cart = ({userList, productList}) => {
     const [isUpdateClick, setIsUpdateClick] = useState(false);
     const [deleteProduct, setDeleteProduct] = useState(null);
     const [updateProduct, setUpdateProduct] = useState({});
-    const [cargoPrice, setCargoPrice] = useState(cart.cargoPrice);
+    const [cargoPrice, setCargoPrice] = useState( 0);
     const [menuItemClickForCart, setMenuItemClickForCart] = useState(false);
     const [isLoading,setIsLoading]=useState(false);
 
 
     useEffect(() => {
-
         if (cart.total < 1000) {
+
             if (cargoPrice === 0) {
                 const cargoPrice2 = 19;
                 setCargoPrice(cargoPrice2);
@@ -52,8 +52,12 @@ const Cart = ({userList, productList}) => {
                 setCargoPrice(0);
             }
         }
+        if(cart.totalQuantity === 0){
+            dispatch(cartActions.removeCargoPrice(cargoPrice));
+            setCargoPrice(0);
+        }
 
-    }, [cart.total, menuItemClickForCart, isUpdateClick, deleteProduct]);
+    }, [cart.total, menuItemClickForCart, isUpdateClick, deleteProduct,cart.totalQuantity]);
 
 
     const increaseItemHandler = (item) => {
@@ -256,13 +260,14 @@ const Cart = ({userList, productList}) => {
         await router.push("/menu");
     }
 
-    return <div className="m-auto  max-w-[70rem]">
+    return <div className={`m-auto  max-w-[70rem] ${mobileShowBasketDetail ?
+        "after:content[''] after:absolute after:top-0 after:left-0 after:bg-[#212529] " +
+        "after:w-full after:h-full after:opacity-70 after:z-40" : ""}`}>
         <div
-            className={` ${cart.products.length === 0 ? "min-h-[calc(30vh)]" : "min-h-[calc(100vh_-_433px)]"} font-workSans w-full h-full relative mb-14`}>
+            className={` ${cart.products.length === 0 ? "min-h-[calc(10vh)]" : `min-h-[calc(100vh_-_${190.89*cart.products.length}px)]`} font-workSans w-full h-full relative mb-14`}>
             {cart.products.length !== 0 ? (<>
                     <div className="flex justify-between  lg:flex-row flex-col ">
-                        <div className={`lg:basis-[68%] py-4 px-4  ${mobileShowBasketDetail ?
-                            "after:content[''] after:absolute after:top-0 after:left-0 after:bg-[#212529] after:w-full after:h-full after:opacity-70 after:z-20" : ""} `}
+                        <div className={`lg:basis-[68%] py-4 px-4   `}
                              onClick={() => {
                                  mobileShowBasketDetail && setMobileShowBasketDetail(!mobileShowBasketDetail)
                              }}
@@ -376,8 +381,8 @@ const Cart = ({userList, productList}) => {
                         <div className={` lg:basis-[32%] w-full flex items-center justify-center md:block hidden h-full
                    sticky top-10 mt-16 lg:mb-0  mb-[6.6rem]`}>
                             <div
-                                className={`min-h-[11.255rem] w-full  border-[1.1px] font-medium  rounded-tr-lg rounded-tl-lg `}>
-                                <div className="p-[0.948rem]">
+                                className={`min-h-[11.255rem] w-full  font-medium  rounded-tr-lg rounded-tl-lg `}>
+                                <div className="p-[0.948rem]  border-[1.1px]">
                                     <div className="text-[1.063rem] md:mt-0 mt-10 font-workSans mb-5">Sipariş Özeti</div>
                                     <div className="text-sm font-sans self-start text-left pb-3 ">
                                         <div
@@ -396,7 +401,7 @@ const Cart = ({userList, productList}) => {
                                                 style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                                             }).format((cart.cargoPrice))}</span>
                                         </div>
-                                        {isCouponCode && (
+                                        {isCouponCode && couponCodePrice !== 0 &&(
                                             <div
                                                 className="w-full flex flex-row items-center justify-between text-[#212529] text-[0.95rem] my-2 pb-2 border-b-[1.11px] ">
                                                 <span className="text-sm">Kupon Kodu</span>
@@ -477,7 +482,8 @@ const Cart = ({userList, productList}) => {
             `}>
                             <div>
                                 <div
-                                    className={`flex items-center justify-between flex-row mt-1  font-semibold ${mobileShowBasketDetail ? "mb-3" : "mb-[-0.2rem]"}`}>
+                                    className={`flex items-center justify-between flex-row mt-1 
+                                     font-semibold ${mobileShowBasketDetail ? "mb-3" : "mb-[-0.2rem]"}`}>
                                     <div className={`flex item-center justify-center gap-2  `}>
                                         <span className="place-self-start"
                                               onClick={() => setMobileShowBasketDetail(!mobileShowBasketDetail)}>
@@ -511,12 +517,12 @@ const Cart = ({userList, productList}) => {
                                             style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                                         }).format((cart.cargoPrice))}</span>
                                     </div>
-                                    <div className=" flex items-center justify-between mt-2 flex-row  ">
+                                    {isCouponCode && couponCodePrice !== 0 &&(<div className=" flex items-center justify-between mt-2 flex-row  ">
                                         <span>Kupon Kodu</span>
                                         <span>{new Intl.NumberFormat('tr-TR', {
                                             style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                                         }).format((Math.abs(couponCodePrice) * -1))}</span>
-                                    </div>
+                                    </div>)}
                                 </>}
                                 <button
                                     className="w-full p-2 bg-tertiary text-secondary z-[20000]  mt-3 uppercase text-sm font-semibold"

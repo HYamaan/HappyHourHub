@@ -39,7 +39,6 @@ const Login = () => {
                     await axios.post(url, cart);
                 }
 
-
                 const res = await axios.get(url);
                 console.log("RES", res.data);
                 dispatch(cartActions.reset());
@@ -47,7 +46,8 @@ const Login = () => {
                     const {product, ...rest} = item;
                     dispatch(cartIndexActions.addToCartIndex());
                     dispatch(cartActions.addProductbyDb({...product, ...rest, addIndex: index}))
-                })
+                });
+
 
             }
 

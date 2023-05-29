@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const OrderSchema = new mongoose.Schema(
     {
         conversationId:{
@@ -105,6 +106,10 @@ const OrderSchema = new mongoose.Schema(
 
         paymentSuccessId:{
             type:String
+        },
+        isComment:{
+            type:Boolean,
+            default:false
         }
 
     },

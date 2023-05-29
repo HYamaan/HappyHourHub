@@ -54,7 +54,7 @@ const handler = async (req, res) => {
                     await CompletePayment(result, result.basketId);
 
 
-                    res.writeHead(302, { Location: `${process.env.NEXT_PUBLIC_URL}/cart` });
+                    res.writeHead(302, { Location: `${process.env.NEXT_PUBLIC_URL}/checkout/complete/${result.paymentId}` });
                     res.end();
                 } catch (err) {
 

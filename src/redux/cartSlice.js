@@ -14,6 +14,9 @@ const cartSlice = createSlice({
     },
     reducers: {
         addProduct: (state, action) => {
+            if(state.totalQuantity === 0){
+                state.mainTotal=0;
+            }
 
 
             const extras = action.payload.extras;
@@ -158,16 +161,16 @@ const cartSlice = createSlice({
         },
         addCargoPrice: (state, action) => {
 
+
             if (state.cargoPrice === 0) {
                 state.cargoPrice = action.payload;
-                state.mainTotal += Number(action.payload)
-
+                state.mainTotal += action.payload
             }
 
         },
         removeCargoPrice: (state, action) => {
             if (state.cargoPrice !== 0) {
-                state.mainTotal -= Number(action.payload);
+                state.mainTotal -= action.payload;
                 state.cargoPrice = 0
             }
         },
