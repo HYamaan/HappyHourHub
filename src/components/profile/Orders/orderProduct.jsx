@@ -12,7 +12,7 @@ const OrderProduct = ({user, order, statusInformation, paymentInformation}) => {
     const [cartPaymentLog, setCartPaymentLog] = useState({});
     const [cancelOrder, setCancelOrder] = useState(false);
     const [beforeCancelOrder, setBeforeCancelOrder] = useState(false);
-    const [status,setStatus]=useState(statusInformation[order.status]);
+    const [status,setStatus]=useState(order.status);
 
 
     const KDV = order.productOrder.reduce((totalKdv, item) => {
@@ -24,8 +24,9 @@ const OrderProduct = ({user, order, statusInformation, paymentInformation}) => {
     const MainPrice = parseFloat(order.paidPrice) + KDV;
 
 
-    //GET ORDER
     useEffect(() => {
+
+        //GET ORDER
         const paymentInformation = async () => {
             try {
 
@@ -45,10 +46,8 @@ const OrderProduct = ({user, order, statusInformation, paymentInformation}) => {
                 console.log(err);
             }
         }
-        paymentInformation();
-    }, [order])
-    //GET CANCEL ORDER
-    useEffect(() => {
+
+        //GET CANCEL ORDER
         const getCancelOrder = async () => {
             try {
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/orders/cancelOrder/${order._id}`)
@@ -59,7 +58,13 @@ const OrderProduct = ({user, order, statusInformation, paymentInformation}) => {
                 console.log(err);
             }
         }
+        paymentInformation();
         getCancelOrder();
+    }, [order])
+
+    useEffect(() => {
+
+
     }, [order])
 
 
@@ -98,14 +103,14 @@ const OrderProduct = ({user, order, statusInformation, paymentInformation}) => {
                 <div className="flex flex-row  gap-2 py-6 text-payneGray border-b-[1.11px]">
                     <p className="basis-[18.09%] cursor-pointer hover:underline">HHP{order.conversationId.slice(0, 6)}</p>
                     <p className="basis-[23.45%]">{moment(order.createdAt).locale('tr').format('YYYY-MM-DD dddd')}</p>
-                    <p className="basis-[21.45%]">{status}</p>
+                    <p className="basis-[21.45%]">{statusInformation[status]}</p>
                     <p className="basis-[21.45%]">{paymentInformation[String(order.completed)]}</p>
                     <p className="basis-[13.71%]"> {new Intl.NumberFormat('tr-TR', {
                         style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                     }).format((MainPrice))}</p>
 
                 </div>
-                {order.status !== "-9" && !beforeCancelOrder && (
+                {status !== "-9" && !beforeCancelOrder && (
                     <div className="w-full flex items-center justify-end mt-5">
                         <p className="flex items-center justify-center py-3 px-4 font-light rounded-xl
                     border-primary  text-tertiary cursor-pointer bg-primary hover:bg-primaryBold "
@@ -133,17 +138,17 @@ const OrderProduct = ({user, order, statusInformation, paymentInformation}) => {
                             <div className="basis-1/2 flex flex-col gap-4 text-[14px] py-5  text-payneGray">
                                 <p className=" cursor-pointer hover:underline">HHP{order.conversationId.slice(0, 6)}</p>
                                 <p className="">{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</p>
-                                <p className="">{status}</p>
+                                <p className="">{statusInformation[status]}</p>
                                 <p className="">{paymentInformation[String(order.completed)]}</p>
                                 <p className="">{new Intl.NumberFormat('tr-TR', {
                                     style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                                 }).format((MainPrice))}</p>
-                                <p>{cargoStatusInformation[order.status]}</p>
+                                <p>{cargoStatusInformation[status]}</p>
 
                             </div>
                         </div>
 
-                        {!beforeCancelOrder && order.status !== "-9" && (<div
+                        {!beforeCancelOrder && status !== "-9" && (<div
                             className=" flex items-center justify-center  rounded-xl text-tertiary bg-primaryBold  p-2.5 cursor-pointer"
                             onClick={() => {
                                 setCancelOrder(true)
@@ -205,7 +210,7 @@ const OrderProduct = ({user, order, statusInformation, paymentInformation}) => {
 
                         </div>
                         <div
-                            className="basis-1/12 self-center mt-8 tracking-normal  ">{productStatusInformation[item.status]}
+                            className="basis-1/12 self-center mt-8 tracking-normal  ">{productStatusInformation[status]}
 
                         </div>
                         <div className="basis-2/12 self-start mt-8 tracking-normal mx-2.5"></div>
@@ -310,7 +315,7 @@ const OrderProduct = ({user, order, statusInformation, paymentInformation}) => {
                 <div className="flex flex-col gap-1 w-64">
                     <div className="font-semibold py-4">Kargo Bilgileri</div>
                     <div>{order.cargo} </div>
-                    <div>{cargoStatusInformation[order.status]}</div>
+                    <div>{cargoStatusInformation[status]}</div>
                 </div>
                 <div className="flex flex-col gap-1">
                     <div className="font-semibold py-4">Kargo Bilgileri</div>
@@ -322,7 +327,7 @@ const OrderProduct = ({user, order, statusInformation, paymentInformation}) => {
             </div>
 
         </div>
-        {cancelOrder && <CancelOrder setCancelOrder={setCancelOrder} user={user} order={order} setStatus={setStatus()}/>}
+        {cancelOrder && <CancelOrder setCancelOrder={setCancelOrder} user={user} order={order} setStatus={setStatus}/>}
     </div>
 
 }

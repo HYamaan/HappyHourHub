@@ -32,12 +32,15 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
     }
 
     //const [actionStep,setActionStep]=useState(productActionStep[order.status + 1]);
+    const [order,setOrder]=useState(oldOrder);
+    const [statusFalse,setStatusFalse]=useState(false);
+    const [orderStatus,setOrderStatus]=useState(order.status);
     const [cartPaymentLog, setCartPaymentLog] = useState({});
     const [cancelOrder, setCancelOrder] = useState(false);
     const [userIp,setUserIp]=useState("");
-    const [order,setOrder]=useState(oldOrder);
 
-    const statusControl = order.status < Object.keys(productActionStep).length;
+
+    const statusControl = orderStatus < Object.keys(productActionStep).length;
 
     const KDV = order.productOrder.reduce((totalKdv, item) => {
         const kdv = parseFloat(item.product.kdv).toFixed(2) * parseFloat(item.price).toFixed(2);
@@ -109,9 +112,11 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
 
     const cancelOrderPage =async ()=>{
         if(!showCancelRequest){
+
             setCancelOrder(true)
         }else{
             try {
+                setStatusFalse(true);
                 const cancel= await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/payment/cancel?paymentSuccessId=${order.paymentSuccessId}`,{
                     userIp:userIp,
                     orderId:order._id,
@@ -123,7 +128,7 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
                 if(cancel.status===200){
                     await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/orders/cancelOrder/${order._id}`)
                     toast.success("Sipariş iptal edildi.")
-                    order.status= "-9";
+                    setOrderStatus(-9);
                 }
             }catch (err){
                 console.log(err)
@@ -149,7 +154,7 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
                 <div className="flex flex-row  gap-2 py-6 text-payneGray border-b-[1.11px]">
                     <p className="basis-[18.09%] cursor-pointer hover:underline">HHP{order.conversationId.slice(0, 6)}</p>
                     <p className="basis-[23.45%]">{moment(order.createdAt).locale('tr').format('YYYY-MM-DD dddd')}</p>
-                    <p className="basis-[21.45%]">{statusInformation[order.status]}</p>
+                    <p className="basis-[21.45%]">{statusInformation[orderStatus]}</p>
                     <p className="basis-[21.45%]">{paymentInformation[String(order.completed)]}</p>
                     <p className="basis-[13.71%]">{`${new Intl.NumberFormat('tr-TR', {
                         style: 'currency',
@@ -170,7 +175,7 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
                         </div></>)
                 }
 
-                {order.status !== -9
+                {orderStatus !== -9
                     && (
                     <div className="flex items-center justify-between w-full ">
                         {
@@ -217,14 +222,14 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
                             <div className="basis-1/2 flex flex-col gap-4 text-[14px] py-5  text-payneGray">
                                 <p className=" cursor-pointer hover:underline">HHP{order.conversationId.slice(0, 6)}</p>
                                 <p className="">{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</p>
-                                <p className="">{statusInformation[order.status]}</p>
+                                <p className="">{statusInformation[orderStatus]}</p>
                                 <p className="">{paymentInformation[String(order.completed)]}</p>
                                 <p className="">{`${new Intl.NumberFormat('tr-TR', {
                                     style: 'currency',
                                     currency: order.currency,
                                     minimumFractionDigits: 2
                                 }).format((order.price))} `}</p>
-                                <p>{cargoStatusInformation[order.status]}</p>
+                                <p>{cargoStatusInformation[orderStatus]}</p>
 
                             </div>
                         </div>
@@ -404,7 +409,7 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
                 <div className="flex flex-col gap-1 w-64">
                     <div className="font-semibold py-4">Kargo Bilgileri</div>
                     <div>{order.cargo} </div>
-                    <div>{cargoStatusInformation[order.status]}</div>
+                    <div>{cargoStatusInformation[orderStatus]}</div>
                 </div>
                 <div className="flex flex-col gap-1">
                     <div className="font-semibold py-4">Kargo Bilgileri</div>

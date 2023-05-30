@@ -111,7 +111,7 @@ const CustomerService = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             refetch();
-        }, 20 * 1000);
+        },  1000);
 
         return () => clearInterval(interval);
     }, [refetch]);

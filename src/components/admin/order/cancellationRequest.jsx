@@ -8,7 +8,8 @@ const CancellationRequest = ({handleClickDetails,statusInformation,paymentInform
     useEffect(() => {
         const getCancelOrder = async () => {
             try {
-                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/orders/cancelStatus`)
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/orders/cancelOrder?cancelStatus`)
+
                 if (res.status === 200) {
                     setCancelOrders(res.data);
                 }
