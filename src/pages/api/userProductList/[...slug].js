@@ -21,9 +21,11 @@ const handler = async (req, res) => {
                             path: "userId",
                             model: "User"
                         });
-                    const filteredProducts = favoriteList.products.filter(item => item.product );
-                    favoriteList.products =[...filteredProducts]
-                    res.status(200).json(favoriteList);
+                    if(favoriteList){
+                        const filteredProducts = favoriteList.products.filter(item => item.product );
+                        favoriteList.products =[...filteredProducts]
+                        res.status(200).json(favoriteList);
+                    }
                 }
                 if (userId) {
                     const favoriteList = await UserFavoritesList.findOne({userId})
@@ -34,12 +36,17 @@ const handler = async (req, res) => {
                             path: "userId",
                             model: "User"
                         });
-                    const filteredProducts = favoriteList.products.filter(item => item.product );
-                    favoriteList.products =[...filteredProducts]
-                    res.status(200).json(favoriteList);
+                    if (favoriteList){
+                        const filteredProducts = favoriteList.products.filter(item => item.product );
+                        favoriteList.products =[...filteredProducts]
+                        res.status(200).json(favoriteList);
+                    }else{
+                        res.status(400).json({status:false})
+                    }
                 }
             } catch (err) {
                 console.log(err);
+                res.status(400).json({status:false})
             }
         }
         if (method === "POST") {
@@ -51,7 +58,7 @@ const handler = async (req, res) => {
                 let favoriteList = await UserFavoritesList.findOne({userId});
 
                 if (!favoriteList) {
-                    favoriteList = await UserFavoritesList({userId});
+                    favoriteList = await UserFavoritesList.create({userId:userId});
                 }
                 if (favoriteList.products.includes(productId)) {
                     return res.status(200).json({success: false, message: 'Ürün zaten var'});
@@ -168,8 +175,8 @@ const handler = async (req, res) => {
                     }
 
                 })
-                const filteredProducts = userShoppingCart.includes(item => item.products );
-                if(filteredProducts){
+                const filteredProducts = userShoppingCart.filter(item => item.products === productId);
+                if(filteredProducts.length > 0){
                     await userShoppingCart.save();
                     return res.status(201).json({message: "Product added to Redux list successfully"});
                 }else{
@@ -184,13 +191,18 @@ const handler = async (req, res) => {
         if (method === "PATCH") {
 
             if (req.query?.updateProductTotal) {
-
                 try {
+                    console.log("req",req.query)
                     if (!userId) {
                         res.status(400).json({success: false, message: 'Kullancı bulunamadı.'})
                     }
                     let userShoppingCart = await ShoppingCartUser.findOne({userId});
-                    const productToUpdate = userShoppingCart.products.find(product => product._id.toString() === req.query.productId);
+                    const productToUpdate = userShoppingCart.products.find(product => {
+                        console.log("product",product)
+                        console.log("productToUpdate",product.product.toString(),req.query.productId,product.product.toString() === req.query.productId)
+                        return  product.product.toString() === req.query.productId;
+                        }
+                    );
                     if (!productToUpdate) {
                         return res.status(404).json({success: false, message: 'Ürün bulunamadı.'});
                     }

@@ -36,7 +36,7 @@ const Cart = ({ productList}) => {
     const [cargoPrice, setCargoPrice] = useState( 0);
     const [menuItemClickForCart, setMenuItemClickForCart] = useState(false);
     const [isLoading,setIsLoading]=useState(false);
-
+    console.log("Cart",cart)
 
     useEffect(() => {
         if (cart.total < 1000) {
@@ -233,10 +233,11 @@ const Cart = ({ productList}) => {
                 if (updateProduct) {
                         setIsLoading(true);
                     try {
-                        console.log(updateProduct)
+                        console.log("update",updateProduct)
                         const queryParams = `userId=${session?.user?.id}?updateProductTotal=${updateProduct.data.productTotal}&productId=${updateProduct.data._id}`;
                         const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
                         if (session?.user) {
+                            console.log("update",url)
                            const res = await axios.patch(url);
                            if (res.status===200){
                                setIsLoading(false);

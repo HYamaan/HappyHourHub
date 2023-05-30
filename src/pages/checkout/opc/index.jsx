@@ -82,7 +82,10 @@ const OPC = () => {
                 dispatch(cartActions.reset());
                 dispatch(cartActions.resetOther());
                 res.data.products.map((item, index) => {
-                    const {product, ...rest} = item;
+                    const {product,_id,...rest} = item;
+                    console.log("OPC",product)
+                    console.log("OPCREST",rest)
+
                     dispatch(cartIndexActions.addToCartIndex());
                     dispatch(cartActions.addProductbyDb({...product, ...rest, addIndex: index}))
                 })

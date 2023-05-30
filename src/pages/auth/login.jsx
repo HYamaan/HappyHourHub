@@ -43,7 +43,7 @@ const Login = () => {
                 console.log("RES", res.data);
                 dispatch(cartActions.reset());
                 res.data.products.map((item, index) => {
-                    const {product, ...rest} = item;
+                    const {product,_id, ...rest} = item;
                     dispatch(cartIndexActions.addToCartIndex());
                     dispatch(cartActions.addProductbyDb({...product, ...rest, addIndex: index}))
                 });
