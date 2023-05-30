@@ -117,9 +117,9 @@ const UserSchema = new mongoose.Schema(
             select: false
         },
         cardUserKey: {
-            type: String,
-
+            type: String, index:true, unique:true,sparse:true
         },
+
         ip:{
             type:String,
             required:true,
@@ -132,8 +132,7 @@ const UserSchema = new mongoose.Schema(
 UserSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
     this.password = await bcrypt.hash(this.password, 10);
-        this.confirmPassword = "";
-
+    this.confirmPassword = "";
     next();
 });
 

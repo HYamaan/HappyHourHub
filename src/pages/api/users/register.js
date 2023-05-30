@@ -16,7 +16,7 @@ const handler = async (req, res) => {
             res.status(400).json({message: "User is valid"});
             return;
         }
-
+        console.log("req",req.body)
         const newUser = await new User(body);
         newUser.ip = ip;
 
