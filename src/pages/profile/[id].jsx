@@ -1,21 +1,21 @@
 import React, {useEffect, useState} from "react";
 
 import Image from "next/image";
-import Account from "../../components/profile/Account";
-import Password from "../../components/profile/Password";
-import UploadImage from "../../components/profile/UploadImage";
+import Account from "../../components/profile/Account/Account";
+import Password from "../../components/profile/passwordChange/Password";
+import UploadImage from "../../components/profile/uploadImage/UploadImage";
 import {getSession, signOut} from "next-auth/react";
 import {useRouter} from "next/router";
 import axios from "axios";
 import {toast} from "react-toastify";
-import MyAddresses from "../../components/profile/Adreslerim";
-import FavoriteList from "../../components/profile/FavoriteList";
-import {useDispatch, useSelector} from "react-redux";
+import MyAddresses from "../../components/profile/MyAddress/Adreslerim";
+import FavoriteList from "../../components/profile/FavoriteList/FavoriteList";
+import {useDispatch} from "react-redux";
 import {cartActions} from "../../redux/cartSlice";
 import {cartIndexActions} from "../../redux/cartIndex";
 import {ProductExtrasActions} from "../../redux/ProductExtras";
 import {userInfoActions} from "../../redux/userInfo";
-import NewOrder from "../../components/profile/newOrder";
+import NewOrder from "../../components/profile/Orders/newOrder";
 
 
 

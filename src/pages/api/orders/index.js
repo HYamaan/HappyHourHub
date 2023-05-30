@@ -12,7 +12,18 @@ const handler = async (req, res) => {
             if("paymentId" in req.query){
                 const paymentSuccess = await PaymentSuccess.find({paymentId:req.query.paymentId});
                 orders = await Orders.find({paymentSuccessId:paymentSuccess[0]._id});
-            }else{
+            }else if("status" in req.query){
+                orders = await Orders.find({
+                    status:req.query.status
+                });
+
+            }else if("cancelOrder" in req.query){
+                let boolValue = (/true/i).test(req.query.cancelOrder);
+                orders = await Orders.find({
+                    cancelOrder:boolValue
+                });
+            }
+            else{
                 orders = await Orders.find();
             }
 

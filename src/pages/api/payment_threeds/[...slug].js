@@ -1,11 +1,11 @@
 import {nanoid} from 'nanoid'
 import Iyzipay from 'iyzipay';
 import User from '../../../models/User';
-import ShoppingCartUser from "../../../models/shoppingCartUser";
+
 import moment from "moment";
 import Order from "../../../models/Order";
 import CompletePayment from "../../../utilities/payments";
-import {fi} from "timeago.js/lib/lang";
+
 
 const handler = async (req,res)=> {
     const {method} = req;
@@ -137,7 +137,7 @@ const handler = async (req,res)=> {
                    }
 
                    const findOrder = await Order.findOne({basketId:data.basketId});
-                   console.log("findOrder",findOrder)
+
                    if(!findOrder){
                        await Order.create({
                            conversationId: data?.conversationId,
@@ -176,7 +176,7 @@ const handler = async (req,res)=> {
                    }
                    console.log("res",result)
                    const html = Buffer.from(result.threeDSHtmlContent,"base64").toString();
-                   console.log("html",html)
+
                    res.send(html);
 
 

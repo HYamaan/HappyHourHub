@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, { useState} from "react";
 import OutsideClickHandler from "react-outside-click-handler";
-import Title from "../UI/Title";
+
 
 import PacmanLoader from "react-spinners/PacmanLoader";
 import axios from "axios";
 import {toast} from "react-toastify";
-import {use} from "bcrypt/promises";
+
 
 
 const UploadImage=({setUploadImageShow,user,setUploadImage})=>{
@@ -42,8 +42,6 @@ const UploadImage=({setUploadImageShow,user,setUploadImage})=>{
                 setUploadImageShow(false);
                 toast.success("Product created successfully");
                 setUploadImage(true);
-            }else{
-                throw new Error();
             }
         }catch (err){
             console.log(err);

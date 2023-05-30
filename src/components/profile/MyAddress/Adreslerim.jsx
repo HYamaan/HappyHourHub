@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 
 import UploadNewAddresses from "./uploadNewAddress";
 import axios from "axios";
-import Title from "../UI/Title";
+import Title from "../../UI/Title";
 
 const Addresses = ({ user }) => {
     const [userAddresses,setUserAddresses]=useState([]);

@@ -110,6 +110,10 @@ const OrderSchema = new mongoose.Schema(
         isComment:{
             type:Boolean,
             default:false
+        },
+        cancelOrder:{
+            type:Boolean,
+            default:false
         }
 
     },

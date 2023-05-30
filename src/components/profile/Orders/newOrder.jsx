@@ -1,4 +1,4 @@
-import Title from "../UI/Title";
+import Title from "../../UI/Title";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import moment from "moment/moment";

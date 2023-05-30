@@ -4,10 +4,12 @@ import 'moment/locale/tr';
 import Image from "next/image";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import CancelOrder from "../../profile/cancelOrder";
+import CancelOrder from "../../profile/Orders/cancelOrder";
+import {toast} from "react-toastify";
 
 
-const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation}) => {
+const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation,showCancelRequest,cancelRequestOrderDetails}) => {
+
     const productStatusInformation = {
         "-1": "Ödeme Yapılmadı",
         "0": "işleme Alındı",
@@ -32,7 +34,9 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
     //const [actionStep,setActionStep]=useState(productActionStep[order.status + 1]);
     const [cartPaymentLog, setCartPaymentLog] = useState({});
     const [cancelOrder, setCancelOrder] = useState(false);
-    const [order,setOrder]=useState(oldOrder)
+    const [userIp,setUserIp]=useState("");
+    const [order,setOrder]=useState(oldOrder);
+
     const statusControl = order.status < Object.keys(productActionStep).length;
 
     const KDV = order.productOrder.reduce((totalKdv, item) => {
@@ -79,7 +83,6 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
                     status:status
                 });
                 if(res.status === 200){
-                    console.log("newOrder",res.data)
                     setOrder(res.data);
                     //setActionStep(productActionStep[res.data.status + 1])
                 }
@@ -90,6 +93,45 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
     }
 
 
+    useEffect(()=>{
+        const getUser = async ()=>{
+            try {
+                const user = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users?basketId=${order.email}`)
+                if(user.status === 200){
+                    setUserIp(user.data[0].ip)
+                }
+            }catch (err){
+                console.log(err);
+            }
+        }
+        getUser();
+    },[order])
+
+    const cancelOrderPage =async ()=>{
+        if(!showCancelRequest){
+            setCancelOrder(true)
+        }else{
+            try {
+                const cancel= await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/payment/cancel?paymentSuccessId=${order.paymentSuccessId}`,{
+                    userIp:userIp,
+                    orderId:order._id,
+                    conversationId:order.conversationId,
+                    reason:cancelRequestOrderDetails[0].reason,
+                    description:cancelRequestOrderDetails[0].description
+                });
+                console.log("cancel",cancel)
+                if(cancel.status===200){
+                    await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/orders/cancelOrder/${order._id}`)
+                    toast.success("Sipariş iptal edildi.")
+                    order.status= "-9";
+                }
+            }catch (err){
+                console.log(err)
+            }
+
+        }
+    }
+    console.log("order",order)
 
     return <div className="flex flex-col h-full w-full lg:px-4">
 
@@ -102,9 +144,7 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
                     <p className="basis-[23.45%]">Sipariş Durumu</p>
                     <p className="basis-[21.45%] lg:pl-4">Ödeme Durumu</p>
                     <p className="basis-[17.71%]">Sipariş Toplamı</p>
-
                 </div>
-
 
                 <div className="flex flex-row  gap-2 py-6 text-payneGray border-b-[1.11px]">
                     <p className="basis-[18.09%] cursor-pointer hover:underline">HHP{order.conversationId.slice(0, 6)}</p>
@@ -116,13 +156,25 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
                         currency: order.currency,
                         minimumFractionDigits: 2
                     }).format((order.price))} `}</p>
-
                 </div>
+                {
+                    showCancelRequest && (<>
+                        <div className="flex   gap-2 text-[14px] py-8 font-semibold text-cadetGray border-b-[1.11px]">
+                            <p className="basis-[23.7675%]">Reason</p>
+                            <p className="basis-[25.45%]">Description</p>
+                        </div>
 
-                {order.status !== "-9" && (
+                        <div className="flex flex-row  gap-2 py-6 text-payneGray border-b-[1.11px]">
+                            <p className="basis-[18.09%] cursor-pointer hover:underline">{cancelRequestOrderDetails[0].reason}</p>
+                            <p className="basis-[23.45%]">{cancelRequestOrderDetails[0].description}</p>
+                        </div></>)
+                }
+
+                {order.status !== -9
+                    && (
                     <div className="flex items-center justify-between w-full ">
                         {
-                             statusControl && (
+                             statusControl && !showCancelRequest && (
                                 <div className="w-full flex items-center justify-start mt-5">
                                     <p className="flex items-center justify-center py-3 px-4 font-light rounded-xl
                     border-primary  text-tertiary font-semibold cursor-pointer bg-success  hover:bg-opacity-60  "
@@ -134,12 +186,12 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
                             )
                         }
                         {
-                            statusControl && (        <div className="w-full flex items-center justify-end mt-5">
+                            statusControl && (
+
+                                <div className="w-full flex items-center justify-end mt-5">
                                 <p className="flex items-center justify-center py-3 px-4 font-light rounded-xl
                     border-primary  text-tertiary cursor-pointer bg-primary hover:bg-primaryBold "
-                                   onClick={() => {
-                                       setCancelOrder(true)
-                                   }}
+                                   onClick={cancelOrderPage }
                                 >SİPARİŞ İPTALİ</p>
                             </div>)
                         }
@@ -177,13 +229,27 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
                             </div>
                         </div>
 
-                        <div
-                            className=" flex items-center justify-center  rounded-xl text-tertiary bg-primaryBold  p-2.5 cursor-pointer"
-                            onClick={() => {
-                                setCancelOrder(true)
-                            }}
-                        >SİPARİŞ İPTALİ
-                        </div>
+                            <div>
+                                {
+                                    statusControl && !showCancelRequest && (
+                                        <div className="w-full flex items-center justify-start mt-5">
+                                            <p className="flex items-center justify-center py-3 px-4 font-light rounded-xl
+                    border-primary  text-tertiary font-semibold cursor-pointer bg-success  hover:bg-opacity-60  "
+                                               onClick={() => {
+                                                   nextStepOrder()
+                                               }}
+                                            >{productActionStep[order.status + 1]}</p>
+                                        </div>
+                                    )
+                                }
+                                {
+                                    statusControl && ( <div
+                                        className=" flex items-center justify-center  rounded-xl text-tertiary bg-primaryBold  p-2.5 cursor-pointer"
+                                        onClick={cancelOrderPage}
+                                    >SİPARİŞ İPTALİ
+                                    </div>)
+                                }
+                            </div>
                     </>
                 }
             </div>
@@ -202,7 +268,7 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
                 <div className="basis-1/12 text-left">Fatura</div>
             </div>
             {
-                order.productOrder.map((item, index) => {
+                order.productOrder.map((item) => {
                     return <div key={item._id}
                                 className="lg:flex hidden items-center lg:flex-row w-full h-[10.625rem]  text-sm  border-b-2">
                         <div className="basis-6/12 flex flex-row  text-left mx-2.5">
@@ -249,7 +315,7 @@ const NewOrderProductDetails = ({oldOrder, statusInformation, paymentInformation
 
             <div className="h-full w-full lg:hidden flex flex-col pt-2 pb-7 font-workSans font-light text-sm">
                 {
-                    order.productOrder.map((item, index) => {
+                    order.productOrder.map((item) => {
                         return <div key={item._id} className="flex flex-row h-[8.438rem]  border-b-2">
                             <div className="flex items-center h-full">
                                 <Image

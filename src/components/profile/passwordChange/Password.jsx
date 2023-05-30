@@ -1,9 +1,9 @@
 import React from "react";
-import Title from "../UI/Title";
-import Input from "../form/Input";
+import Title from "../../UI/Title";
+import Input from "../../form/Input";
 
 import {useFormik} from "formik";
-import {changePasswordSchema} from "../../schema/changePasswordSchema";
+import {changePasswordSchema} from "../../../schema/changePasswordSchema";
 import axios from "axios";
 
 import {toast} from "react-toastify";

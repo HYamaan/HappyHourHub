@@ -11,7 +11,7 @@ const handler = async (req, res) => {
     const {method} = req;
     const query = req.query.slug[1];
     const ip = req.connection.remoteAddress || req.headers["x-forwarded-for"];
-    console.log("ip", ip)
+
 
 
     const iyzipay = new Iyzipay({
@@ -93,7 +93,7 @@ const handler = async (req, res) => {
                             }
                         });
                     });
-                    console.log("iyzipay.checkoutFormInitialize", result)
+
 
                     if (result.status !== 'success') {
                         return res.status(500).json({success: 'fail', message: result.errorMessage});

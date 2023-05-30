@@ -66,7 +66,6 @@ const CompletePayment = async (result,shoppingBasketId) => {
             updatedDocument.cargoPrice=undefined;
 
              await updatedDocument.save();
-            console.log("updatedOrder.couponId",updatedOrder.couponId)
              if(updatedOrder){
                  await CouponCode.findByIdAndDelete(updatedOrder.couponId)
              }

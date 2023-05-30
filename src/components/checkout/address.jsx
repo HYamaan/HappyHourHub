@@ -4,7 +4,7 @@ import {FiEdit,FiTrash} from "react-icons/fi";
 import {CiTrash} from "react-icons/ci";
 import {RxCircle} from "react-icons/rx";
 import axios from "axios";
-import UploadNewAddresses from "../profile/uploadNewAddress";
+import UploadNewAddresses from "../profile/MyAddress/uploadNewAddress";
 import {useDispatch} from "react-redux";
 import {ShoppingOrderActions} from "../../redux/shoppingOrder";
 

@@ -2,7 +2,7 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import Image from "next/image";
 import {useRouter} from "next/router";
-import Title from "../UI/Title";
+import Title from "../../UI/Title";
 import {toast} from "react-toastify";
 
 

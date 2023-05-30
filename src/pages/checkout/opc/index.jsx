@@ -48,7 +48,6 @@ const OPC = () => {
 
     const [preInformationForm, setPreInformationForm] = useState(false);
     const [distanceSalesContract, setDistanceSalesContract] = useState(false);
-    const [htmlContent, setHtmlContent] = useState('');
 
     const cargoName = "GKN Kargo";
 
@@ -79,7 +78,7 @@ const OPC = () => {
                 const url = `${process.env.NEXT_PUBLIC_API_URL}/userProductList/user-shopping-cart/${queryParams}`;
                 const res = await axios.get(url);
                 setUserInfo(() => [res.data.products, res.data.userId, res.data.shoppingCartId, res.data.currency]);
-                console.log("res.data",res.data)
+
                 dispatch(cartActions.reset());
                 dispatch(cartActions.resetOther());
                 res.data.products.map((item, index) => {
@@ -121,9 +120,7 @@ const OPC = () => {
 
                 const e_invoice = shoppingOrder[0].e_invoice;
                 const cargoAddress = shoppingOrder[0].cargoAddress;
-                if (e_invoice && cargoAddress) {
 
-                }
 
                 if (checkOutPaymentMethod === 0) {
 
@@ -169,7 +166,7 @@ const OPC = () => {
                             const res = await axios.post(url, notSelectCard)
                             if (res.status === 200){
                                 toast.success("Creating Your Order")
-                                await router.push("/")
+                                await router.push(`complete/${res.data.data.paymentId}`)
                                 dispatch(cartActions.reset())
                                 dispatch(cartActions.resetOther());
                                 dispatch(ShoppingOrderActions.deleteShoppingOrder())
@@ -215,8 +212,8 @@ const OPC = () => {
                             url = `${process.env.NEXT_PUBLIC_API_URL}/payment_threeds/payments/cart-addPayment?${queryParams}`
                             const res3D = await axios.post(url, selectCardOrder)
                             if (res3D.status === 200){
-                                console.log("Res3D",res3D.data)
-                                await router.push("/")
+                                toast.success("Creating Your Order")
+                                await router.push(`complete/${res.data.data.paymentId}`)
                                 dispatch(cartActions.reset())
                                 dispatch(cartActions.resetOther());
                                 dispatch(ShoppingOrderActions.deleteShoppingOrder())
@@ -227,7 +224,8 @@ const OPC = () => {
                             const res = await axios.post(url, selectCardOrder)
                             if (res.status === 200){
                                 toast.success("Creating Your Order")
-                                await router.push("/")
+
+                                await router.push(`complete/${res.data.data.paymentId}`)
                                 dispatch(cartActions.reset())
                                 dispatch(cartActions.resetOther());
                                 dispatch(ShoppingOrderActions.deleteShoppingOrder())
@@ -271,8 +269,6 @@ const OPC = () => {
                         const url = `${process.env.NEXT_PUBLIC_API_URL}/checkout/payments/cart-addPayment`
                         if (userInfo) {
                             const res=await axios.post(url, selectCardOrder)
-
-
                             if (res.status === 200){
                                 toast.success("Creating Your Order")
                                 await router.push(res.data);

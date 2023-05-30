@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
-import dataCity from "../../libs/countryData/CityAndDistrictData.json";
+import dataCity from "../../../libs/countryData/CityAndDistrictData.json";
 import axios from "axios";
 import {toast} from "react-toastify";
 import {useFormik} from "formik";
-import {addAddresses} from "../../schema/addAddresses";
+import {addAddresses} from "../../../schema/addAddresses";
 
-import Input from "../form/Input";
+import Input from "../../form/Input";
 
 
 const UploadNewAddresses=(props)=>{

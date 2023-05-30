@@ -8,7 +8,7 @@ const handler = async (req, res) => {
     const {method, query:{id}} = req;
 
     if (method === "GET") {
-        console.log("req.query",req.query)
+
         try {
             let orders;
             if("email" in req.query){

@@ -1,18 +1,18 @@
-import Title from "../UI/Title";
+import Title from "../../UI/Title";
 import moment from "moment";
 import 'moment/locale/tr';
 import Image from "next/image";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {useSession} from "next-auth/react";
-import AddOrderComment from "../order/addOrderComment";
+
 import CancelOrder from "./cancelOrder";
 
-const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
+const OrderProduct = ({user, order, statusInformation, paymentInformation}) => {
 
-    const {data: session} = useSession();
     const [cartPaymentLog, setCartPaymentLog] = useState({});
-    const [cancelOrder,setCancelOrder]=useState(false);
+    const [cancelOrder, setCancelOrder] = useState(false);
+    const [beforeCancelOrder, setBeforeCancelOrder] = useState(false);
+    const [status,setStatus]=useState(statusInformation[order.status]);
 
 
     const KDV = order.productOrder.reduce((totalKdv, item) => {
@@ -24,15 +24,13 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
     const MainPrice = parseFloat(order.paidPrice) + KDV;
 
 
-
-
+    //GET ORDER
     useEffect(() => {
         const paymentInformation = async () => {
             try {
 
                 if (order.paymentSuccessId) {
                     const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/payment-success/${order.paymentSuccessId}`)
-
 
                     if (res.status === 200) {
                         const cartPaymentLog = {};
@@ -49,7 +47,20 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
         }
         paymentInformation();
     }, [order])
-
+    //GET CANCEL ORDER
+    useEffect(() => {
+        const getCancelOrder = async () => {
+            try {
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/orders/cancelOrder/${order._id}`)
+                if (res.status === 200) {
+                    setBeforeCancelOrder(true);
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        getCancelOrder();
+    }, [order])
 
 
     const productStatusInformation = {
@@ -68,7 +79,6 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
         "3": "Teslim Edildi",
     }
 
-    console.log("order",order)
 
     return <div className="flex flex-col h-full w-full lg:px-4">
 
@@ -88,53 +98,59 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
                 <div className="flex flex-row  gap-2 py-6 text-payneGray border-b-[1.11px]">
                     <p className="basis-[18.09%] cursor-pointer hover:underline">HHP{order.conversationId.slice(0, 6)}</p>
                     <p className="basis-[23.45%]">{moment(order.createdAt).locale('tr').format('YYYY-MM-DD dddd')}</p>
-                    <p className="basis-[21.45%]">{statusInformation[order.status]}</p>
+                    <p className="basis-[21.45%]">{status}</p>
                     <p className="basis-[21.45%]">{paymentInformation[String(order.completed)]}</p>
                     <p className="basis-[13.71%]"> {new Intl.NumberFormat('tr-TR', {
                         style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                     }).format((MainPrice))}</p>
 
                 </div>
-                {order.status !== "-9" && (
+                {order.status !== "-9" && !beforeCancelOrder && (
                     <div className="w-full flex items-center justify-end mt-5">
                         <p className="flex items-center justify-center py-3 px-4 font-light rounded-xl
                     border-primary  text-tertiary cursor-pointer bg-primary hover:bg-primaryBold "
-                           onClick={()=>{setCancelOrder(true)}}
+                           onClick={() => {
+                               setCancelOrder(true)
+                           }}
                         >SİPARİŞ İPTALİ</p>
                     </div>)}
 
             </div>
             <div className="w-full lg:hidden flex flex-col justify-between  border-b-[1.11px] py-4">
                 {
-                   <>
-                       <div className="flex flex-row border-b-[1.11px] py-2 mb-4 border-b-2">
-                           <div className="basis-1/2 flex flex-col gap-4 text-[14px] py-5 font-semibold text-cadetGray">
-                               <p className="">Sipariş Numarası</p>
-                               <p className="">Sipariş Tarihi</p>
-                               <p className="">Sipariş Durumu</p>
-                               <p className="">Ödeme Durumu</p>
-                               <p className="">Gönderim Durumu</p>
-                               <p className="">Sipariş Toplamı</p>
+                    <>
+                        <div className="flex flex-row border-b-[1.11px] py-2 mb-4 border-b-2">
+                            <div
+                                className="basis-1/2 flex flex-col gap-4 text-[14px] py-5 font-semibold text-cadetGray">
+                                <p className="">Sipariş Numarası</p>
+                                <p className="">Sipariş Tarihi</p>
+                                <p className="">Sipariş Durumu</p>
+                                <p className="">Ödeme Durumu</p>
+                                <p className="">Gönderim Durumu</p>
+                                <p className="">Sipariş Toplamı</p>
 
-                           </div>
-                           <div className="basis-1/2 flex flex-col gap-4 text-[14px] py-5  text-payneGray">
-                               <p className=" cursor-pointer hover:underline">HHP{order.conversationId.slice(0, 6)}</p>
-                               <p className="">{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</p>
-                               <p className="">{statusInformation[order.status]}</p>
-                               <p className="">{paymentInformation[String(order.completed)]}</p>
-                               <p className="">{new Intl.NumberFormat('tr-TR', {
-                                   style: 'currency', currency: 'TRY', minimumFractionDigits: 2
-                               }).format((MainPrice))}</p>
-                               <p>{cargoStatusInformation[order.status]}</p>
+                            </div>
+                            <div className="basis-1/2 flex flex-col gap-4 text-[14px] py-5  text-payneGray">
+                                <p className=" cursor-pointer hover:underline">HHP{order.conversationId.slice(0, 6)}</p>
+                                <p className="">{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</p>
+                                <p className="">{status}</p>
+                                <p className="">{paymentInformation[String(order.completed)]}</p>
+                                <p className="">{new Intl.NumberFormat('tr-TR', {
+                                    style: 'currency', currency: 'TRY', minimumFractionDigits: 2
+                                }).format((MainPrice))}</p>
+                                <p>{cargoStatusInformation[order.status]}</p>
 
-                           </div>
-                       </div>
+                            </div>
+                        </div>
 
-                       <div className=" flex items-center justify-center  rounded-xl text-tertiary bg-primaryBold  p-2.5 cursor-pointer"
-                            onClick={()=>{setCancelOrder(true)}}
-                       >SİPARİŞ İPTALİ
-                       </div>
-                   </>
+                        {!beforeCancelOrder && order.status !== "-9" && (<div
+                            className=" flex items-center justify-center  rounded-xl text-tertiary bg-primaryBold  p-2.5 cursor-pointer"
+                            onClick={() => {
+                                setCancelOrder(true)
+                            }}
+                        >SİPARİŞ İPTALİ
+                        </div>)}
+                    </>
                 }
             </div>
         </div>
@@ -152,7 +168,7 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
                 <div className="basis-1/12 text-left">Fatura</div>
             </div>
             {
-                order.productOrder.map((item, index) => {
+                order.productOrder.map((item) => {
                     return <div key={item._id}
                                 className="lg:flex hidden items-center lg:flex-row w-full h-[10.625rem]  text-sm  border-b-2">
                         <div className="basis-6/12 flex flex-row  text-left mx-2.5">
@@ -199,30 +215,32 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
 
             <div className="h-full w-full lg:hidden flex flex-col pt-2 pb-7 font-workSans font-light text-sm">
                 {
-                    order.productOrder.map((item, index) => {
-                      return   <div key={item._id} className="flex flex-row h-[8.438rem]  border-b-2">
-                          <div className="flex items-center h-full">
-                              <Image
-                                  src={item.product.image}
-                                  alt={item.product.image.toString()}
-                                  width={100}
-                                  height={100}
-                                  priority={true}
-                                  style={{objectFit: "cover"}}
-                                  className="rounded-full object-contain"
-                              />
-                          </div>
-                          <div className="max-w-[12.063rem] p-3 self-start tracking-normal text-xs">
-                              <p className="my-1">      {new Intl.NumberFormat('tr-TR', {
-                                  style: 'currency', currency: 'TRY', minimumFractionDigits: 2
-                              }).format((item.price))}</p>
-                              <p className="max-w-[10.063rem] text-secondary mr-2 font-semibold">MEN BASIC KOTON - SİYAH</p>
-                              <p className="my-1">Ürün Kodu: <span>HHH{item.sku}</span></p>
-                              <p>Options:<span> {item.extras.length > 0 ? `${item.extras.map(ext => ext.text).join(', ')}` : "STD"}</span></p>
-                              <p>Adet: <span>{item.productTotal}</span></p>
-                          </div>
+                    order.productOrder.map((item) => {
+                        return <div key={item._id} className="flex flex-row h-[8.438rem]  border-b-2">
+                            <div className="flex items-center h-full">
+                                <Image
+                                    src={item.product.image}
+                                    alt={item.product.image.toString()}
+                                    width={100}
+                                    height={100}
+                                    priority={true}
+                                    style={{objectFit: "cover"}}
+                                    className="rounded-full object-contain"
+                                />
+                            </div>
+                            <div className="max-w-[12.063rem] p-3 self-start tracking-normal text-xs">
+                                <p className="my-1">      {new Intl.NumberFormat('tr-TR', {
+                                    style: 'currency', currency: 'TRY', minimumFractionDigits: 2
+                                }).format((item.price))}</p>
+                                <p className="max-w-[10.063rem] text-secondary mr-2 font-semibold">MEN BASIC KOTON -
+                                    SİYAH</p>
+                                <p className="my-1">Ürün Kodu: <span>HHH{item.sku}</span></p>
+                                <p>Options:<span> {item.extras.length > 0 ? `${item.extras.map(ext => ext.text).join(', ')}` : "STD"}</span>
+                                </p>
+                                <p>Adet: <span>{item.productTotal}</span></p>
+                            </div>
 
-                      </div>
+                        </div>
                     })
 
                 }
@@ -248,8 +266,8 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
                             }).format((CargoPrice))}</>)}</p>
                             {order?.couponCodePrice != 0 && (
                                 <p> {new Intl.NumberFormat('tr-TR', {
-                                style: 'currency', currency: 'TRY', minimumFractionDigits: 2
-                            }).format((order.couponCodePrice) * -1)}</p>)}
+                                    style: 'currency', currency: 'TRY', minimumFractionDigits: 2
+                                }).format((order.couponCodePrice) * -1)}</p>)}
                             <p> {new Intl.NumberFormat('tr-TR', {
                                 style: 'currency', currency: 'TRY', minimumFractionDigits: 2
                             }).format((KDV))}</p>
@@ -304,7 +322,7 @@ const OrderProduct = ({user,order, statusInformation, paymentInformation}) => {
             </div>
 
         </div>
-        {cancelOrder && <CancelOrder setCancelOrder={setCancelOrder} user={user} order={order}/>}
+        {cancelOrder && <CancelOrder setCancelOrder={setCancelOrder} user={user} order={order} setStatus={setStatus()}/>}
     </div>
 
 }

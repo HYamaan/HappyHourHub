@@ -1,45 +1,33 @@
-import React, {useEffect, useState} from "react";
+import React, { useState} from "react";
 import OutsideClickHandler from "react-outside-click-handler";
-import Title from "../UI/Title";
+import Title from "../../UI/Title";
 
 import PacmanLoader from "react-spinners/PacmanLoader";
 import axios from "axios";
 import {toast} from "react-toastify";
 
 
-const CancelOrder=({setCancelOrder,order})=>{
+const CancelOrder=({setCancelOrder,order,setStatus})=>{
 
     const [isLoading,setIsLoading]=useState(false);
     const [desc, setDescription] = useState("");
     const [reasonText,setReasonText]=useState("");
-    const [userIp,setUserIp]=useState("");
     const reasonEnum = ["double_payment", "buyer_request", "fraud", "other"];
 
-    useEffect(()=>{
-            const getUser = async ()=>{
-                try {
-                    const user = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users?basketId=${order.email}`)
-                    console.log("user",user.data)
-                    if(user.status === 200){
-                        setUserIp(user.data[0].ip)
-                    }
-                }catch (err){
-                    console.log(err);
-                }
-            }
-        getUser();
-    },[order])
+
     const handleCrate= async ()=>{
         try {
-            const cancel= await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/payment/cancel?paymentSuccessId=${order.paymentSuccessId}`,{
-                userIp:userIp,
-                orderId:order._id,
-                conversationId:order.conversationId,
-                reason:reasonText,
-                description:desc
-            });
-            if (cancel.status===200){
-                toast.success("Siparişiniz iptal edilmiştir")
+
+            if(reasonText !== "cancel"){
+                const cancel = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders/cancelOrder/${order._id}`,{
+                    reason:reasonText,
+                    description:desc
+                });
+                if (cancel.status===201){
+                    setCancelOrder(false)
+                    setStatus("-9")
+                    toast.success("Siparişiniz Onaylanınca iptal edilicektir")
+                }
             }
 
         }catch (err){
@@ -69,6 +57,7 @@ const CancelOrder=({setCancelOrder,order})=>{
                                   focus:ring-opacity-50 shadow-2xl shadow-cadetGray"
 
                                 >
+                                    <option key="cancel" value="cancel">Reason for cancellation</option>
                                     {reasonEnum.map((option,index) => (
                                         <option key={index} value={option}>
                                             {option}
