@@ -4,22 +4,22 @@ const nodemailer = require("nodemailer");
 const sendEmail = async (options)=>{
     //create reusable transporter object using the default SMTP transport
 
-    let transporter = nodemailer.createTransport({
-        host: "sandbox.smtp.mailtrap.io",
-        port: 2525,
-        auth: {
-            user: "3c5975fa6eb177",
-            pass: "d7b170b3ff99bb"
-        }
-    });
-    //
     // let transporter = nodemailer.createTransport({
-    //    service:'gmail',
+    //     host: "sandbox.smtp.mailtrap.io",
+    //     port: 2525,
     //     auth: {
-    //         user: process.env.EMAIL,
-    //         pass: process.env.EMAIL_PASS
+    //         user: "3c5975fa6eb177",
+    //         pass: "d7b170b3ff99bb"
     //     }
     // });
+
+    let transporter = nodemailer.createTransport({
+       service:'gmail',
+        auth: {
+            user: process.env.EMAIL,
+            pass: process.env.EMAIL_PASS
+        }
+    });
 
     //DEFINE THE EMAIL OPTİONS
     const mailOptions = {
